@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Cap Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Market Cap Tracker</h1>
+
+    <h2>Market Cap Tracker</h2>
+
+    <input type="text" id="coinASearch" placeholder="Search First Crypto" oninput="filterDropdown('coinASearch', 'coinA')" data-coin-id="">
+    <select id="coinA" size="5" onclick="selectCoin('coinASearch', 'coinA')"></select>
+
+    <input type="text" id="coinBSearch" placeholder="Search Second Crypto" oninput="filterDropdown('coinBSearch', 'coinB')" data-coin-id="">
+    <select id="coinB" size="5" onclick="selectCoin('coinBSearch', 'coinB')"></select>
+
+    <button onclick="compareMarketCaps()">Compare</button>
+    <div id="comparisonResult"></div>
+
+    <!-- Market Cap Chart -->
+    <h2>Market Cap Comparison Chart</h2>
+    <canvas id="marketCapChart"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>
