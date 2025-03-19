@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Compare cryptocurrency market caps easily">
-    <title>Market Cap Comparison</title>
+    <title>Crypto Market Cap Comparison</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -12,7 +12,7 @@
 <body>
     <header>
         <div class="header-container">
-            <h1>Market Cap Comparison</h1>
+            <h1>Crypto Market Cap Comparison</h1>
         </div>
     </header>
     
@@ -23,34 +23,36 @@
             <div class="comparison-grid">
                 <!-- First crypto selection -->
                 <div class="crypto-selector">
-                    <label for="coinASearch">First Coin</label>
+                    <label for="coinASearch">First Cryptocurrency</label>
                     <div class="search-container">
                         <i class="fas fa-search search-icon"></i>
                         <input 
                             type="text" 
                             id="coinASearch" 
                             placeholder="Search crypto..." 
-                            oninput="filterDropdown('coinASearch', 'coinA')" 
-                            aria-controls="coinA"
+                            oninput="filterDropdown('coinASearch', 'coinADropdown')"
+                            aria-autocomplete="list"
+                            aria-controls="coinADropdown"
                             data-coin-id="">
                     </div>
-                    <select id="coinA" class="coin-dropdown" size="5" onclick="selectCoin('coinASearch', 'coinA')" aria-label="Available cryptocurrencies"></select>
+                    <div id="coinADropdown" class="coin-dropdown" role="listbox"></div>
                 </div>
                 
                 <!-- Second crypto selection -->
                 <div class="crypto-selector">
-                    <label for="coinBSearch">Second Coin</label>
+                    <label for="coinBSearch">Second Cryptocurrency</label>
                     <div class="search-container">
                         <i class="fas fa-search search-icon"></i>
                         <input 
                             type="text" 
                             id="coinBSearch" 
                             placeholder="Search crypto..." 
-                            oninput="filterDropdown('coinBSearch', 'coinB')" 
-                            aria-controls="coinB"
+                            oninput="filterDropdown('coinBSearch', 'coinBDropdown')"
+                            aria-autocomplete="list"
+                            aria-controls="coinBDropdown"
                             data-coin-id="">
                     </div>
-                    <select id="coinB" class="coin-dropdown" size="5" onclick="selectCoin('coinBSearch', 'coinB')" aria-label="Available cryptocurrencies"></select>
+                    <div id="coinBDropdown" class="coin-dropdown" role="listbox"></div>
                 </div>
             </div>
             

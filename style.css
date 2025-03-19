@@ -127,33 +127,39 @@ input[type="text"]:focus {
   box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.5);
 }
 
-/* Dropdown Styling */
+/* Custom Dropdown Styling */
 .coin-dropdown {
   width: 100%;
   max-width: 350px;
-  max-height: 180px;
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 10px;
+  max-height: 200px;
   background-color: #1a1a1a;
   color: white;
-  border: none;
-  display: none;
+  border-radius: 10px;
   overflow-y: auto;
-  transition: 0.3s;
-  margin-top: 5px;
-  z-index: 100;
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Dropdown hover effect */
-.coin-dropdown option {
-  padding: 12px;
-  background-color: #1a1a1a;
+.dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.coin-dropdown option:hover {
+.dropdown-item:hover {
   background-color: #ff8c00;
   color: white;
+}
+
+.dropdown-item.disabled {
+  cursor: not-allowed;
+  color: #888;
+  background-color: #1a1a1a;
 }
 
 /* Button Container */
@@ -188,7 +194,7 @@ input[type="text"]:focus {
 
 /* Results Section */
 .results-section {
-  display: none; /* Initially hidden, show when results available */
+  display: none;
 }
 
 .comparison-result {
@@ -302,6 +308,11 @@ footer {
   .chart-container {
     height: 250px;
   }
+  
+  .coin-dropdown {
+    width: 90%;
+    max-width: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -321,22 +332,9 @@ footer {
     padding: 12px 25px;
     font-size: 0.95rem;
   }
-}
-
-/* Ensure dropdown positioning is correct */
-@media (max-width: 768px) {
-  .crypto-selector {
-    position: relative;
-  }
   
-  .coin-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
+  .search-container {
     max-width: 100%;
-    z-index: 10;
   }
 }
 

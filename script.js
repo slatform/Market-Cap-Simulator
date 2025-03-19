@@ -17,15 +17,15 @@ async function initApp() {
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.crypto-selector')) {
-                document.getElementById('coinA').style.display = 'none';
-                document.getElementById('coinB').style.display = 'none';
+                document.getElementById('coinADropdown').style.display = 'none';
+                document.getElementById('coinBDropdown').style.display = 'none';
             }
         });
         
-        // Add focus event to show dropdown with existing matches
+        // Show dropdown on focus if there's input
         input.addEventListener('focus', () => {
             const searchInputId = input.id;
-            const dropdownId = searchInputId.replace('Search', '');
+            const dropdownId = searchInputId.replace('Search', 'Dropdown');
             if (input.value) {
                 filterDropdown(searchInputId, dropdownId);
             }
@@ -91,69 +91,59 @@ async function loadCryptoList() {
 
 // Filter dropdown based on user input
 function filterDropdown(searchInputId, dropdownId) {
-    const input = document.getElementById(searchInputId).value.toLowerCase();
-    const select = document.getElementById(dropdownId);
+    const input = document.getElementById(searchInputId);
+    const dropdown = document.getElementById(dropdownId);
+    const searchValue = input.value.toLowerCase();
 
-    if (input === "" && !document.getElementById(searchInputId).matches(':focus')) {
-        select.style.display = "none"; // Hide dropdown if input is empty and not focused
+    if (searchValue === "" && !input.matches(':focus')) {
+        dropdown.style.display = "none";
         return;
     }
 
-    select.innerHTML = ""; // Clear previous results
+    dropdown.innerHTML = ""; // Clear previous results
     
-    // Add a "Loading..." option if we're still fetching data
     if (isLoading || cryptoList.length === 0) {
-        const option = document.createElement("option");
-        option.text = "Loading cryptocurrencies...";
-        option.disabled = true;
-        select.appendChild(option);
-        select.style.display = "block";
+        const item = document.createElement("div");
+        item.className = "dropdown-item disabled";
+        item.textContent = "Loading cryptocurrencies...";
+        dropdown.appendChild(item);
+        dropdown.style.display = "block";
         return;
     }
     
     // Filter the list based on input
-    const filteredList = cryptoList
-        .filter(coin => 
-            coin.name.toLowerCase().includes(input) || 
-            coin.symbol.toLowerCase().includes(input)
-        );
+    const filteredList = cryptoList.filter(coin => 
+        coin.name.toLowerCase().includes(searchValue) || 
+        coin.symbol.toLowerCase().includes(searchValue)
+    );
     
-    // Show "No results" if no matches
     if (filteredList.length === 0) {
-        const option = document.createElement("option");
-        option.text = "No matching cryptocurrencies";
-        option.disabled = true;
-        select.appendChild(option);
+        const item = document.createElement("div");
+        item.className = "dropdown-item disabled";
+        item.textContent = "No matching cryptocurrencies";
+        dropdown.appendChild(item);
     } else {
-        // Add matching cryptocurrencies
         filteredList.forEach(coin => {
-            const option = document.createElement("option");
-            option.value = coin.id;  // Store the correct coin ID
-            option.text = `${coin.name} (${coin.symbol.toUpperCase()})`;
-            option.dataset.symbol = coin.symbol.toUpperCase();
-            option.dataset.image = coin.image;
-            select.appendChild(option);
+            const item = document.createElement("div");
+            item.className = "dropdown-item";
+            item.textContent = `${coin.name} (${coin.symbol.toUpperCase()})`;
+            item.dataset.id = coin.id;
+            item.dataset.symbol = coin.symbol.toUpperCase();
+            item.dataset.image = coin.image;
+            
+            // Add click event to select item
+            item.addEventListener('click', () => {
+                input.value = item.textContent;
+                input.dataset.coinId = coin.id;
+                input.dataset.symbol = coin.symbol.toUpperCase();
+                dropdown.style.display = "none";
+            });
+            
+            dropdown.appendChild(item);
         });
     }
     
-    // Adjust size and display
-    select.size = Math.min(filteredList.length || 1, 5); // Adjust size dynamically
-    select.style.display = "block"; // Show dropdown
-}
-
-// Select a coin from dropdown and store its ID
-function selectCoin(searchInputId, dropdownId) {
-    const select = document.getElementById(dropdownId);
-    const searchInput = document.getElementById(searchInputId);
-
-    if (select.selectedIndex !== -1 && !select.options[select.selectedIndex].disabled) {
-        // Store coin ID and update display
-        const selectedOption = select.options[select.selectedIndex];
-        searchInput.dataset.coinId = selectedOption.value;
-        searchInput.dataset.symbol = selectedOption.dataset.symbol;
-        searchInput.value = selectedOption.text;
-        select.style.display = "none"; // Hide dropdown after selection
-    }
+    dropdown.style.display = "block";
 }
 
 // Compare Market Caps
@@ -163,10 +153,7 @@ async function compareMarketCaps() {
     const resultsSection = document.getElementById("results-section");
     const comparisonResult = document.getElementById("comparisonResult");
     
-    // Clear previous results
     comparisonResult.innerHTML = "";
-    
-    // Show results section 
     resultsSection.style.display = "block";
 
     const coinA = searchInputA.dataset.coinId;
@@ -193,7 +180,6 @@ async function compareMarketCaps() {
         const data = await response.json();
 
         if (data[coinA] && data[coinB]) {
-            // Extract data
             const marketCapA = data[coinA].usd_market_cap;
             const marketCapB = data[coinB].usd_market_cap;
             const priceA = data[coinA].usd;
@@ -201,18 +187,13 @@ async function compareMarketCaps() {
             const change24hA = data[coinA].usd_24h_change || 0;
             const change24hB = data[coinB].usd_24h_change || 0;
             
-            // Calculate hypothetical price
             const newPriceA = (marketCapB / marketCapA) * priceA;
-            
-            // Percentage difference
             const marketCapDiff = ((marketCapB / marketCapA) - 1) * 100;
             const marketCapRatio = marketCapA / marketCapB;
             
-            // Format values
             const formattedMarketCapA = formatMarketCap(marketCapA);
             const formattedMarketCapB = formatMarketCap(marketCapB);
             
-            // Build HTML result
             comparisonResult.innerHTML = `
                 <div class="comparison-details">
                     <div class="coin-comparison">
@@ -241,7 +222,6 @@ async function compareMarketCaps() {
                 </div>
             `;
             
-            // Create chart
             createComparisonChart(
                 searchInputA.dataset.symbol || coinA.toUpperCase(), 
                 searchInputB.dataset.symbol || coinB.toUpperCase(), 
@@ -281,12 +261,10 @@ function formatPrice(price) {
 function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB) {
     const ctx = document.getElementById('comparisonChart').getContext('2d');
     
-    // Destroy previous chart if it exists
     if (chart) {
         chart.destroy();
     }
     
-    // Create new chart
     chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -345,7 +323,6 @@ function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB)
         }
     });
     
-    // Make sure chart container is visible
     document.getElementById('chartContainer').style.display = 'block';
 }
 
