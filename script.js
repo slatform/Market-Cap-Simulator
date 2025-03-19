@@ -381,3 +381,53 @@ function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB)
 
 // Load crypto list on page load
 window.onload = initApp;
+
+// Ensure dropdown appears as user types
+function filterDropdown(searchInputId, dropdownId) {
+    const input = document.getElementById(searchInputId).value.toLowerCase();
+    const select = document.getElementById(dropdownId);
+
+    if (input === "") {
+        select.style.display = "none"; // Hide dropdown if input is empty
+        return;
+    }
+
+    select.innerHTML = ""; // Clear previous results
+    select.style.display = "block"; // Ensure dropdown remains visible while typing
+
+    const filteredList = cryptoList.filter(coin =>
+        coin.name.toLowerCase().includes(input) || coin.symbol.toLowerCase().includes(input)
+    );
+
+    if (filteredList.length === 0) {
+        const option = document.createElement("option");
+        option.text = "No matching cryptocurrencies";
+        option.disabled = true;
+        select.appendChild(option);
+    } else {
+        filteredList.forEach(coin => {
+            const option = document.createElement("option");
+            option.value = coin.id;
+            option.text = `${coin.name} (${coin.symbol.toUpperCase()})`;
+            select.appendChild(option);
+        });
+    }
+
+    select.size = Math.min(select.options.length, 6); // Show up to 6 options at a time
+
+    // Force dropdown to stay open (especially on mobile)
+    select.focus();
+}
+
+// Ensure dropdown stays open on input focus
+document.querySelectorAll('.search-container input').forEach(input => {
+    input.addEventListener('input', function () {
+        const dropdownId = this.id.replace('Search', '');
+        filterDropdown(this.id, dropdownId);
+    });
+
+    input.addEventListener('focus', function () {
+        const dropdownId = this.id.replace('Search', '');
+        filterDropdown(this.id, dropdownId);
+    });
+});

@@ -357,3 +357,14 @@ footer {
 .coin-dropdown::-webkit-scrollbar-thumb:hover {
   background: #ff8c00;
 }
+
+/* Ensure dropdown appears above the keyboard on mobile */
+@media (max-width: 768px) {
+    .coin-dropdown {
+        position: absolute;
+        width: 100%;
+        max-width: 100%;
+        z-index: 999;
+        display: block !important; /* Force it to show */
+    }
+}
