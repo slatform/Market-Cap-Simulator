@@ -396,3 +396,32 @@ footer {
         font-size: 1.1rem;
     }
 }
+/* 🔹 Fix Mobile Dropdown Visibility */
+.coin-dropdown {
+    width: 100%;
+    background-color: #222;
+    border-radius: 8px;
+    padding: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 1000;
+    display: none; /* Hidden until typing */
+}
+
+/* Keep dropdown always visible when typing on mobile */
+@media (max-width: 768px) {
+    .coin-dropdown {
+        width: 90%;
+        max-width: 400px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1rem;
+        display: block !important;
+    }
+
+    .search-container input {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+}

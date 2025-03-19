@@ -390,6 +390,7 @@ function filterDropdown(searchInputId, dropdownId) {
 
     // Always show the dropdown when typing
     select.style.display = "block";
+    select.setAttribute("size", "6"); // Ensures dropdown remains open
 
     // If input is empty, show the top 10 cryptocurrencies
     if (searchValue === "") {
@@ -430,9 +431,12 @@ function filterDropdown(searchInputId, dropdownId) {
 
     // Adjust dropdown size dynamically
     select.size = Math.min(select.options.length, 6);
+
+    // Force focus on input to keep keyboard active on mobile
+    input.focus();
 }
 
-// Ensure dropdown stays open while typing
+// Ensure dropdown opens immediately on input
 document.querySelectorAll('.search-container input').forEach(input => {
     input.addEventListener('input', function () {
         const dropdownId = this.id.replace('Search', '');
@@ -442,6 +446,11 @@ document.querySelectorAll('.search-container input').forEach(input => {
     input.addEventListener('focus', function () {
         const dropdownId = this.id.replace('Search', '');
         filterDropdown(this.id, dropdownId);
+    });
+
+    // Prevent dropdown from hiding on mobile when interacting
+    input.addEventListener('click', function (e) {
+        e.stopPropagation();
     });
 });
 
@@ -457,3 +466,12 @@ function selectCoin(searchInputId, dropdownId) {
         select.style.display = "none"; // Hide dropdown after selection
     }
 }
+
+// Prevent dropdown from disappearing on mobile when selecting an option
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-container')) {
+        document.querySelectorAll('.coin-dropdown').forEach(select => {
+            select.style.display = "none";
+        });
+    }
+});
