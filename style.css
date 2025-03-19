@@ -368,3 +368,31 @@ footer {
         display: block !important; /* Force it to show */
     }
 }
+/* 🔹 Mobile Dropdown Fix */
+.coin-dropdown {
+    width: 100%;
+    background-color: #222;
+    border-radius: 8px;
+    padding: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 1000;
+    display: none; /* Hidden until typing */
+}
+
+/* Make dropdown more mobile-friendly */
+@media (max-width: 768px) {
+    .coin-dropdown {
+        width: 90%;
+        max-width: 400px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1rem;
+    }
+
+    .search-container input {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+}

@@ -384,24 +384,39 @@ window.onload = initApp;
 
 // Ensure dropdown appears as user types
 function filterDropdown(searchInputId, dropdownId) {
-    const input = document.getElementById(searchInputId).value.toLowerCase();
+    const input = document.getElementById(searchInputId);
     const select = document.getElementById(dropdownId);
+    const searchValue = input.value.toLowerCase();
 
-    if (input === "") {
-        select.style.display = "none"; // Hide dropdown if input is empty
+    // Always show the dropdown when typing
+    select.style.display = "block";
+
+    // If input is empty, show the top 10 cryptocurrencies
+    if (searchValue === "") {
+        select.innerHTML = ""; // Clear dropdown
+        const topCoins = cryptoList.slice(0, 10); // Show top 10 coins
+
+        topCoins.forEach(coin => {
+            const option = document.createElement("option");
+            option.value = coin.id;
+            option.text = `${coin.name} (${coin.symbol.toUpperCase()})`;
+            select.appendChild(option);
+        });
+
         return;
     }
 
-    select.innerHTML = ""; // Clear previous results
-    select.style.display = "block"; // Ensure dropdown remains visible while typing
-
+    // Filter cryptocurrencies based on input
     const filteredList = cryptoList.filter(coin =>
-        coin.name.toLowerCase().includes(input) || coin.symbol.toLowerCase().includes(input)
+        coin.name.toLowerCase().includes(searchValue) ||
+        coin.symbol.toLowerCase().includes(searchValue)
     );
+
+    select.innerHTML = ""; // Clear dropdown
 
     if (filteredList.length === 0) {
         const option = document.createElement("option");
-        option.text = "No matching cryptocurrencies";
+        option.text = "No matches found";
         option.disabled = true;
         select.appendChild(option);
     } else {
@@ -413,13 +428,11 @@ function filterDropdown(searchInputId, dropdownId) {
         });
     }
 
-    select.size = Math.min(select.options.length, 6); // Show up to 6 options at a time
-
-    // Force dropdown to stay open (especially on mobile)
-    select.focus();
+    // Adjust dropdown size dynamically
+    select.size = Math.min(select.options.length, 6);
 }
 
-// Ensure dropdown stays open on input focus
+// Ensure dropdown stays open while typing
 document.querySelectorAll('.search-container input').forEach(input => {
     input.addEventListener('input', function () {
         const dropdownId = this.id.replace('Search', '');
@@ -431,3 +444,16 @@ document.querySelectorAll('.search-container input').forEach(input => {
         filterDropdown(this.id, dropdownId);
     });
 });
+
+// Select coin from dropdown & store correct ID
+function selectCoin(searchInputId, dropdownId) {
+    const select = document.getElementById(dropdownId);
+    const searchInput = document.getElementById(searchInputId);
+
+    if (select.selectedIndex !== -1 && !select.options[select.selectedIndex].disabled) {
+        const selectedOption = select.options[select.selectedIndex];
+        searchInput.dataset.coinId = selectedOption.value;
+        searchInput.value = selectedOption.text;
+        select.style.display = "none"; // Hide dropdown after selection
+    }
+}
