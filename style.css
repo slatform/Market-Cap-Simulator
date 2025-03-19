@@ -35,11 +35,32 @@ header {
 h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  background: linear-gradient(90deg, #ff8c00, #ff2e63);
+  text-align: center;
+  margin: 0;
+}
+
+h1 span {
+  display: inline-block;
+  background: linear-gradient(90deg, #ff8c00, #ff2e63, #ff8c00);
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 1px;
   text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(255, 140, 0, 0.5), 0 4px 20px rgba(255, 46, 99, 0.3);
+  animation: gradientShift 4s ease infinite, bounceIn 1s ease-out;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
 }
 
 /* Main Content */
@@ -103,7 +124,7 @@ label {
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: #aaa Ald;
+  color: #aaa;
   z-index: 1;
 }
 
