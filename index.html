@@ -3,25 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Market Cap Comparison</title>
+    <meta name="description" content="Compare cryptocurrency market caps easily">
+    <title>Market Cap Comparison</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <h1>Crypto Market Cap Comparison</h1>
-
-    <div class="container">
-        <h2>Compare Market Caps</h2>
-
-        <input type="text" id="coinASearch" placeholder="Search First Crypto" oninput="filterDropdown('coinASearch', 'coinA')" data-coin-id="">
-        <select id="coinA" size="5" onclick="selectCoin('coinASearch', 'coinA')"></select>
-
-        <input type="text" id="coinBSearch" placeholder="Search Second Crypto" oninput="filterDropdown('coinBSearch', 'coinB')" data-coin-id="">
-        <select id="coinB" size="5" onclick="selectCoin('coinBSearch', 'coinB')"></select>
-
-        <button onclick="compareMarketCaps()">Compare</button>
-        <div id="comparisonResult"></div>
-    </div>
+    <header>
+        <div class="header-container">
+            <h1>Market Cap Comparison</h1>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section class="comparison-tool">
+            <h2>Compare Market Caps</h2>
+            
+            <div class="comparison-grid">
+                <!-- First crypto selection -->
+                <div class="crypto-selector">
+                    <label for="coinASearch">First Coin</label>
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="coinASearch" 
+                            placeholder="Search crypto..." 
+                            oninput="filterDropdown('coinASearch', 'coinA')" 
+                            aria-controls="coinA"
+                            data-coin-id="">
+                    </div>
+                    <select id="coinA" class="coin-dropdown" size="5" onclick="selectCoin('coinASearch', 'coinA')" aria-label="Available cryptocurrencies"></select>
+                </div>
+                
+                <!-- Second crypto selection -->
+                <div class="crypto-selector">
+                    <label for="coinBSearch">Second Coin</label>
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="coinBSearch" 
+                            placeholder="Search crypto..." 
+                            oninput="filterDropdown('coinBSearch', 'coinB')" 
+                            aria-controls="coinB"
+                            data-coin-id="">
+                    </div>
+                    <select id="coinB" class="coin-dropdown" size="5" onclick="selectCoin('coinBSearch', 'coinB')" aria-label="Available cryptocurrencies"></select>
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <button id="compareButton" class="compare-button" onclick="compareMarketCaps()">
+                    <i class="fas fa-exchange-alt"></i> Compare
+                </button>
+            </div>
+        </section>
+        
+        <section id="results-section" class="results-section">
+            <div id="comparisonResult" class="comparison-result"></div>
+            <div id="chartContainer" class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-container">
+            <p>Data provided by CoinGecko API</p>
+            <p id="lastUpdated"></p>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
