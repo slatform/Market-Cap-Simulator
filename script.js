@@ -22,13 +22,18 @@ async function initApp() {
             }
         });
         
-        // Add focus event to show dropdown with existing matches
+        // Ensure dropdown appears on input focus
         input.addEventListener('focus', () => {
             const searchInputId = input.id;
             const dropdownId = searchInputId.replace('Search', '');
-            if (input.value) {
-                filterDropdown(searchInputId, dropdownId);
-            }
+            filterDropdown(searchInputId, dropdownId);
+        });
+        
+        // Ensure dropdown updates as user types (for mobile)
+        input.addEventListener('input', () => {
+            const searchInputId = input.id;
+            const dropdownId = searchInputId.replace('Search', '');
+            filterDropdown(searchInputId, dropdownId);
         });
     });
 }
@@ -94,8 +99,12 @@ function filterDropdown(searchInputId, dropdownId) {
     const input = document.getElementById(searchInputId).value.toLowerCase();
     const select = document.getElementById(dropdownId);
 
-    if (input === "" && !document.getElementById(searchInputId).matches(':focus')) {
-        select.style.display = "none"; // Hide dropdown if input is empty and not focused
+    // Always show dropdown when input is focused, even if empty
+    // This ensures the dropdown works on mobile devices
+    if (document.getElementById(searchInputId).matches(':focus') || input !== "") {
+        select.style.display = "block";
+    } else {
+        select.style.display = "none";
         return;
     }
 
@@ -107,38 +116,59 @@ function filterDropdown(searchInputId, dropdownId) {
         option.text = "Loading cryptocurrencies...";
         option.disabled = true;
         select.appendChild(option);
-        select.style.display = "block";
         return;
     }
     
-    // Filter the list based on input
-    const filteredList = cryptoList
-        .filter(coin => 
-            coin.name.toLowerCase().includes(input) || 
-            coin.symbol.toLowerCase().includes(input)
-        );
-    
-    // Show "No results" if no matches
-    if (filteredList.length === 0) {
-        const option = document.createElement("option");
-        option.text = "No matching cryptocurrencies";
-        option.disabled = true;
-        select.appendChild(option);
-    } else {
-        // Add matching cryptocurrencies
-        filteredList.forEach(coin => {
+    // If input is empty but focused, show top cryptocurrencies
+    if (input === "") {
+        const topCoins = cryptoList.slice(0, 10); // Show top 10 coins
+        
+        // Add "Top Cryptocurrencies" header
+        const headerOption = document.createElement("option");
+        headerOption.text = "Top Cryptocurrencies";
+        headerOption.disabled = true;
+        headerOption.style.fontWeight = "bold";
+        headerOption.style.backgroundColor = "#333";
+        select.appendChild(headerOption);
+        
+        // Add top coins
+        topCoins.forEach(coin => {
             const option = document.createElement("option");
-            option.value = coin.id;  // Store the correct coin ID
+            option.value = coin.id;
             option.text = `${coin.name} (${coin.symbol.toUpperCase()})`;
             option.dataset.symbol = coin.symbol.toUpperCase();
             option.dataset.image = coin.image;
             select.appendChild(option);
         });
+    } else {
+        // Filter the list based on input
+        const filteredList = cryptoList
+            .filter(coin => 
+                coin.name.toLowerCase().includes(input) || 
+                coin.symbol.toLowerCase().includes(input)
+            );
+        
+        // Show "No results" if no matches
+        if (filteredList.length === 0) {
+            const option = document.createElement("option");
+            option.text = "No matching cryptocurrencies";
+            option.disabled = true;
+            select.appendChild(option);
+        } else {
+            // Add matching cryptocurrencies
+            filteredList.forEach(coin => {
+                const option = document.createElement("option");
+                option.value = coin.id;  // Store the correct coin ID
+                option.text = `${coin.name} (${coin.symbol.toUpperCase()})`;
+                option.dataset.symbol = coin.symbol.toUpperCase();
+                option.dataset.image = coin.image;
+                select.appendChild(option);
+            });
+        }
     }
     
     // Adjust size and display
-    select.size = Math.min(filteredList.length || 1, 5); // Adjust size dynamically
-    select.style.display = "block"; // Show dropdown
+    select.size = Math.min(select.options.length, 5); // Adjust size dynamically
 }
 
 // Select a coin from dropdown and store its ID
