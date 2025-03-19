@@ -29,8 +29,9 @@
                         <input 
                             type="text" 
                             id="coinASearch" 
-                            placeholder="Search crypto..." 
+                            placeholder="Search crypto (e.g., BTC)" 
                             oninput="filterDropdown('coinASearch', 'coinADropdown')"
+                            onkeydown="navigateDropdown(event, 'coinADropdown')"
                             aria-autocomplete="list"
                             aria-controls="coinADropdown"
                             data-coin-id="">
@@ -46,8 +47,9 @@
                         <input 
                             type="text" 
                             id="coinBSearch" 
-                            placeholder="Search crypto..." 
+                            placeholder="Search crypto (e.g., ETH)" 
                             oninput="filterDropdown('coinBSearch', 'coinBDropdown')"
+                            onkeydown="navigateDropdown(event, 'coinBDropdown')"
                             aria-autocomplete="list"
                             aria-controls="coinBDropdown"
                             data-coin-id="">
@@ -59,6 +61,9 @@
             <div class="button-container">
                 <button id="compareButton" class="compare-button" onclick="compareMarketCaps()">
                     <i class="fas fa-exchange-alt"></i> Compare
+                </button>
+                <button id="resetButton" class="reset-button" onclick="resetForm()">
+                    <i class="fas fa-sync-alt"></i> Reset
                 </button>
             </div>
         </section>
@@ -77,6 +82,10 @@
             <p id="lastUpdated"></p>
         </div>
     </footer>
+
+    <div id="globalLoader" class="global-loader">
+        <div class="loader-circle"></div>
+    </div>
 
     <script src="script.js"></script>
 </body>
