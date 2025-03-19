@@ -103,7 +103,7 @@ label {
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: #aaa;
+  color: #aaa Ald;
   z-index: 1;
 }
 
@@ -178,12 +178,11 @@ input[type="text"]:focus {
 .button-container {
   display: flex;
   justify-content: center;
-  gap: 15px;
   margin-top: 20px;
 }
 
 /* Button Styling */
-.compare-button, .reset-button {
+.compare-button {
   padding: 14px 30px;
   border: none;
   border-radius: 12px;
@@ -195,9 +194,6 @@ input[type="text"]:focus {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.compare-button {
   background: linear-gradient(135deg, #ff8c00, #ff2e63);
   box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
 }
@@ -205,16 +201,6 @@ input[type="text"]:focus {
 .compare-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 140, 0, 0.6);
-}
-
-.reset-button {
-  background: linear-gradient(135deg, #666, #888);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
-}
-
-.reset-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
 }
 
 /* Results Section */
@@ -352,7 +338,7 @@ footer {
   h1 { font-size: 1.8rem; }
   input[type="text"] { padding: 12px 12px 12px 40px; }
   .comparison-grid { gap: 20px; }
-  .compare-button, .reset-button { padding: 12px 20px; font-size: 0.95rem; }
+  .compare-button { padding: 12px 20px; font-size: 0.95rem; }
   .search-container { max-width: 100%; }
 }
 

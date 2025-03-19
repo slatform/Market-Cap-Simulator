@@ -181,20 +181,6 @@ function selectCoin(input, coin, dropdown) {
     dropdown.style.display = "none";
 }
 
-// Reset form
-function resetForm() {
-    const inputs = [document.getElementById('coinASearch'), document.getElementById('coinBSearch')];
-    inputs.forEach(input => {
-        input.value = '';
-        input.dataset.coinId = '';
-        input.dataset.symbol = '';
-    });
-    document.getElementById('coinADropdown').style.display = 'none';
-    document.getElementById('coinBDropdown').style.display = 'none';
-    document.getElementById('results-section').style.display = 'none';
-    if (chart) chart.destroy();
-}
-
 // Compare Market Caps
 async function compareMarketCaps() {
     const searchInputA = document.getElementById("coinASearch");
