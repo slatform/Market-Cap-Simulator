@@ -25,7 +25,7 @@
                 <div class="crypto-selector">
                     <label for="coinASearch">First Cryptocurrency</label>
                     <div class="search-container">
-                        <i class="fas fa-search search-icon"></i>
+                        <i class="fas fa-search search-icon" data-tooltip="Search for a coin"></i>
                         <input 
                             type="text" 
                             id="coinASearch" 
@@ -43,7 +43,7 @@
                 <div class="crypto-selector">
                     <label for="coinBSearch">Second Cryptocurrency</label>
                     <div class="search-container">
-                        <i class="fas fa-search search-icon"></i>
+                        <i class="fas fa-search search-icon" data-tooltip="Search for a coin"></i>
                         <input 
                             type="text" 
                             id="coinBSearch" 
@@ -59,12 +59,14 @@
             </div>
             
             <div class="button-container">
-                <button id="compareButton" class="compare-button" onclick="compareMarketCaps()">
+                <button id="compareButton" class="compare-button" onclick="compareMarketCaps()" data-tooltip="Compare the selected coins">
                     <i class="fas fa-exchange-alt"></i> Compare
                 </button>
             </div>
         </section>
         
+        <div class="section-divider"></div>
+
         <section id="results-section" class="results-section">
             <div id="comparisonResult" class="comparison-result"></div>
             <div id="chartContainer" class="chart-container">
@@ -72,6 +74,8 @@
             </div>
         </section>
     </main>
+
+    <a href="#compare" class="floating-cta">Compare Now</a>
     
     <footer>
         <div class="footer-container">
