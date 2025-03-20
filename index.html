@@ -5,15 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Compare cryptocurrency market caps easily">
     <title>Market Cap Simulator</title>
-    
-    <!-- Google Analytics (gtag.js) -->
+
+    <!-- Google Analytics (gtag.js) - Corrected -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WSSWV49R83"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-WSSWV49R83');
+        gtag('config', 'G-WSSWV49R83', {
+            'debug_mode': true
+        });
     </script>
 
     <link rel="stylesheet" href="style.css">
