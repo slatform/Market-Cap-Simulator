@@ -1033,3 +1033,65 @@ footer::before {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+/* Responsive Design Enhancements */
+@media (max-width: 1024px) {
+  .comparison-tool, .results-section { 
+    padding: var(--space-2xl); 
+  }
+  .comparison-grid { 
+    grid-template-columns: 1fr; 
+  }
+  .coin-dropdown { 
+    width: 100%; 
+    left: 0;
+    transform: none;
+  }
+  .chart-container { 
+    height: 300px; 
+  }
+  .button-container {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: var(--space-md);
+  }
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+  nav {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+  .floating-cta {
+    right: var(--space-md);
+    bottom: var(--space-md);
+    font-size: var(--font-size-md);
+  }
+}
+
+@media (max-width: 480px) {
+  input[type="text"] { 
+    padding: var(--space-md); 
+    font-size: var(--font-size-md); 
+  }
+  .comparison-grid { 
+    gap: var(--space-xl); 
+  }
+  .compare-button { 
+    padding: var(--space-md) var(--space-xl); 
+    font-size: var(--font-size-md); 
+  }
+  .search-container { 
+    width: 100%; 
+  }
+  .crypto-selector {
+    width: 100%;
+  }
+}
