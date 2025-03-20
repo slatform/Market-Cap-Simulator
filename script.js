@@ -79,7 +79,7 @@ function updateLastUpdated() {
 
 // Fetch top 500 cryptos (changed from 200 to 500)
 async function loadCryptoList() {
-    const apiUrl = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=500&page=1&sparkline=false";
+    const apiUrl = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false";
     
     try {
         const response = await fetch(apiUrl);
