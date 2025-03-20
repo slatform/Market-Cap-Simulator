@@ -227,69 +227,6 @@ h1 {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Enhanced navigation */
-nav {
-  display: flex;
-  gap: var(--space-xl);
-  margin-top: var(--space-md); /* Add spacing between h1 and nav */
-  flex-wrap: wrap; /* Allow wrapping for mobile */
-  justify-content: center; /* Center navigation links */
-}
-
-nav a {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-md);
-  position: relative;
-  isolation: isolate;
-  transition: color var(--duration-normal);
-}
-
-nav a::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--color-accent-primary);
-  border-radius: var(--radius-md);
-  z-index: -1;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: transform var(--duration-normal), opacity var(--duration-normal);
-}
-
-nav a:hover {
-  color: #fff;
-}
-
-nav a:hover::before {
-  opacity: 0.15;
-  transform: scale(1);
-}
-
-nav a.active {
-  color: var(--color-accent-secondary);
-}
-
-nav a.active::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 3px;
-  background: var(--color-accent-primary);
-  border-radius: var(--radius-full);
-}
-
-nav a:focus-visible {
-  outline: 2px solid var(--color-accent-secondary);
-  outline-offset: 2px;
-}
-
 /* Main content styling */
 main {
   flex: 1;
@@ -375,9 +312,9 @@ h2::after {
 /* Comparison grid with enhanced styling */
 .comparison-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: var(--space-3xl);
-  margin-bottom: var(--space-3xl);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
 }
 
 .crypto-selector {
@@ -436,10 +373,10 @@ label::after {
 /* Enhanced search inputs */
 input[type="text"] {
   width: 100%;
-  padding: var(--space-lg) var(--space-lg) var(--space-lg) var(--space-4xl);
+  padding: var(--space-md) var(--space-md) var(--space-md) var(--space-3xl);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-lg);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-family: var(--font-primary);
   background: rgba(255, 255, 255, 0.06);
   color: var(--color-text-primary);
@@ -467,14 +404,14 @@ input[type="text"]:focus + .search-icon {
 .coin-dropdown {
   width: 100%;
   max-width: 500px;
-  max-height: 350px;
+  max-height: 300px;
   background: var(--color-bg-secondary);
   color: var(--color-text-primary);
   border-radius: var(--radius-lg);
   overflow-y: auto;
   display: none;
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-dropdown);
@@ -502,7 +439,7 @@ input[type="text"]:focus + .search-icon {
 .dropdown-item {
   display: flex;
   align-items: center;
-  padding: var(--space-lg) var(--space-xl);
+  padding: var(--space-md) var(--space-lg);
   cursor: pointer;
   transition: all var(--duration-normal);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -546,9 +483,9 @@ input[type="text"]:focus + .search-icon {
 }
 
 .coin-icon {
-  width: 32px;
-  height: 32px;
-  margin-right: var(--space-md);
+  width: 28px;
+  height: 28px;
+  margin-right: var(--space-sm);
   border-radius: 50%;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
@@ -564,16 +501,16 @@ input[type="text"]:focus + .search-icon {
 .button-container {
   display: flex;
   justify-content: center;
-  margin-top: var(--space-3xl);
+  margin-top: var(--space-2xl);
 }
 
 /* Enhanced 3D button with hover effects */
 .compare-button {
-  padding: var(--space-lg) var(--space-3xl);
+  padding: var(--space-md) var(--space-xl);
   border: none;
   border-radius: var(--radius-lg);
   font-family: var(--font-secondary);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: 600;
   letter-spacing: 0.5px;
   color: #fff;
@@ -649,13 +586,12 @@ input[type="text"]:focus + .search-icon {
 }
 
 /* Icon inside button */
-.compare-button svg {
-  width: 20px;
-  height: 20px;
+.compare-button i {
+  font-size: var(--font-size-md);
   transition: transform var(--duration-normal);
 }
 
-.compare-button:hover svg {
+.compare-button:hover i {
   transform: translateX(3px);
 }
 
@@ -680,8 +616,8 @@ input[type="text"]:focus + .search-icon {
 }
 
 .comparison-result {
-  margin-bottom: var(--space-3xl);
-  padding: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+  padding: var(--space-xl);
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-lg);
   text-align: center;
@@ -708,12 +644,12 @@ input[type="text"]:focus + .search-icon {
 /* Enhanced chart container */
 .chart-container {
   width: 100%;
-  height: 450px;
-  margin-top: var(--space-3xl);
+  height: 400px;
+  margin-top: var(--space-2xl);
   position: relative;
   background: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-lg);
-  padding: var(--space-xl);
+  padding: var(--space-lg);
   box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.05);
   overflow: hidden;
@@ -736,7 +672,7 @@ input[type="text"]:focus + .search-icon {
 /* Highlighted market cap styling */
 .highlight {
   font-family: var(--font-secondary);
-  font-size: var(--font-size-5xl);
+  font-size: var(--font-size-4xl);
   font-weight: 700;
   color: var(--color-accent-primary);
   text-shadow: 0 2px 10px var(--color-accent-glow);
@@ -759,18 +695,18 @@ input[type="text"]:focus + .search-icon {
 /* Coin label */
 .coin-label {
   font-family: var(--font-secondary);
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-weight: 600;
   color: var(--color-text-primary);
-  margin: var(--space-md) 0;
+  margin: var(--space-sm) 0;
 }
 
 /* Price detail */
 .price-detail {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   color: var(--color-text-secondary);
   display: inline-block;
-  padding: var(--space-xs) var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.05);
 }
@@ -808,7 +744,7 @@ footer {
   background: rgba(15, 23, 42, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: var(--space-xl) var(--space-xl);
+  padding: var(--space-lg) var(--space-xl);
   margin-top: auto;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
@@ -834,7 +770,7 @@ footer::before {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
@@ -855,10 +791,10 @@ footer::before {
 }
 
 .loader-circle {
-  width: 60px;
-  height: 60px;
-  border: 6px solid var(--color-accent-primary);
-  border-top: 6px solid transparent;
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--color-accent-primary);
+  border-top: 5px solid transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   will-change: transform;
@@ -866,9 +802,9 @@ footer::before {
 
 /* Loading Spinner */
 .loading {
-  width: 28px;
-  height: 28px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
   border-top-color: var(--color-accent-primary);
   border-radius: 50%;
   animation: spin 1s ease-in-out infinite;
@@ -887,32 +823,6 @@ footer::before {
   border-radius: var(--radius-md);
   margin: var(--space-md) 0;
   box-shadow: 0 0 8px rgba(220, 53, 69, 0.2);
-}
-
-/* Floating CTA */
-.floating-cta {
-  position: fixed;
-  bottom: var(--space-md);
-  right: var(--space-md);
-  padding: var(--space-sm) 25px;
-  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
-  color: #fff;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-accent);
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  z-index: 1000;
-}
-
-.floating-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
-}
-
-.floating-cta:focus {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
 }
 
 /* Section Divider */
@@ -950,49 +860,34 @@ footer::before {
   }
 
   header {
-    padding: var(--space-md);
-  }
-
-  .header-container {
-    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
   }
 
   h1 {
     font-size: var(--font-size-2xl); /* Smaller title on mobile */
   }
 
-  nav {
-    gap: var(--space-md);
-    margin-top: var(--space-sm);
-  }
-
-  nav a {
-    font-size: var(--font-size-sm);
-    padding: var(--space-xs);
-  }
-
   main {
-    padding: var(--space-2xl) var(--space-md);
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  h2 {
+    font-size: var(--font-size-2xl);
   }
 
   .comparison-tool, .results-section { 
     padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
   }
 
-  .comparison-result { 
-    font-size: var(--font-size-md);
-    padding: var(--space-md);
+  .comparison-grid { 
+    grid-template-columns: 1fr; /* Stack selectors vertically */
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
   }
 
-  .chart-container { 
-    height: 350px;
-  }
-
-  .coin-dropdown { 
-    width: 100%;
-    max-width: none;
-    left: 0;
-    transform: none;
+  .crypto-selector {
+    align-items: stretch; /* Ensure inputs stretch to full width */
   }
 
   .search-container {
@@ -1000,42 +895,113 @@ footer::before {
   }
 
   input[type="text"] {
-    font-size: var(--font-size-md);
-    padding: var(--space-md) var(--space-md) var(--space-md) var(--space-3xl);
+    font-size: var(--font-size-sm);
+    padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-2xl);
+  }
+
+  .search-icon {
+    left: var(--space-sm);
+  }
+
+  .coin-dropdown {
+    width: 100%;
+    max-width: none;
+    left: 0;
+    transform: none;
+    max-height: 250px;
+  }
+
+  .dropdown-item {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .coin-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .button-container {
+    margin-top: var(--space-lg);
   }
 
   .compare-button {
-    padding: var(--space-md) var(--space-xl);
-    font-size: var(--font-size-md);
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--font-size-sm);
   }
 
-  .floating-cta { 
-    padding: 12px 20px;
-    font-size: 0.9rem;
+  .compare-button i {
+    font-size: var(--font-size-sm);
+  }
+
+  .comparison-result { 
+    font-size: var(--font-size-sm);
+    padding: var(--space-md);
+  }
+
+  .chart-container { 
+    height: 300px;
+    padding: var(--space-md);
+  }
+
+  .highlight {
+    font-size: var(--font-size-2xl);
+  }
+
+  .coin-label {
+    font-size: var(--font-size-lg);
+  }
+
+  .price-detail {
+    font-size: var(--font-size-sm);
+  }
+
+  footer {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .footer-container {
+    flex-direction: column;
+    gap: var(--space-sm);
+    text-align: center;
   }
 }
 
 @media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+
   h1 {
     font-size: var(--font-size-xl);
   }
 
-  nav {
-    gap: var(--space-sm);
+  h2 {
+    font-size: var(--font-size-xl);
   }
 
-  .comparison-grid { 
-    gap: var(--space-xl);
-    grid-template-columns: 1fr; /* Stack selectors vertically */
+  main {
+    padding: var(--space-lg) var(--space-sm);
   }
 
-  input[type="text"] { 
-    padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-2xl);
+  .comparison-tool, .results-section {
+    padding: var(--space-md);
   }
 
-  .compare-button { 
-    padding: var(--space-sm) var(--space-lg);
-    font-size: var(--font-size-sm);
+  .comparison-grid {
+    gap: var(--space-md);
+  }
+
+  input[type="text"] {
+    padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-xl);
+  }
+
+  .compare-button {
+    padding: var(--space-xs) var(--space-md);
+    font-size: var(--font-size-xs);
+  }
+
+  .chart-container {
+    height: 250px;
   }
 }
 
@@ -1059,7 +1025,7 @@ footer::before {
 
 /* Scrollbar Styling */
 .coin-dropdown::-webkit-scrollbar {
-  width: 12px;
+  width: 10px;
 }
 
 .coin-dropdown::-webkit-scrollbar-track {
