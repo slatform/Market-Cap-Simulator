@@ -3,6 +3,9 @@ let cryptoList = [];
 let isLoading = false;
 let chart = null;
 let selectedIndex = -1;
+// New globals for portfolio feature
+let coinAData = null;
+let coinBData = null;
 
 // Initialize the application
 async function initApp() {
@@ -265,6 +268,20 @@ async function compareMarketCaps() {
                 marketCapA, 
                 marketCapB
             );
+
+            // Store data for portfolio calculation
+            coinAData = {
+                symbol: searchInputA.dataset.symbol,
+                marketCap: marketCapA,
+                price: priceA
+            };
+            coinBData = {
+                symbol: searchInputB.dataset.symbol,
+                marketCap: marketCapB,
+                price: priceB
+            };
+            // Trigger portfolio calculation
+            calculatePortfolioWorth();
         } else {
             showError("Could not fetch data for the selected cryptocurrencies.");
         }
@@ -362,6 +379,63 @@ function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB)
     
     document.getElementById('chartContainer').style.display = 'block';
 }
+
+// New Portfolio Worth Calculation Function
+function calculatePortfolioWorth() {
+    const portfolioSection = document.getElementById('portfolio-section');
+    const portfolioResult = document.getElementById('portfolioResult');
+    
+    if (!coinAData || !coinBData) {
+        portfolioResult.innerHTML = '<p>Please compare two coins first.</p>';
+        portfolioSection.style.display = 'block';
+        return;
+    }
+
+    const coinAAmount = parseFloat(document.getElementById('coinAAmount').value) || 0;
+    const coinBAmount = parseFloat(document.getElementById('coinBAmount').value) || 0;
+
+    const coinACurrentPrice = coinAData.price;
+    const coinBCurrentPrice = coinBData.price;
+    const coinAMarketCap = coinAData.marketCap;
+    const coinBMarketCap = coinBData.marketCap;
+
+    // Calculate prices at each other's market cap
+    const coinASupply = coinAMarketCap / coinACurrentPrice; // Derived circulating supply
+    const coinBSupply = coinBMarketCap / coinBCurrentPrice;
+    const coinAPriceAtBMarketCap = coinBMarketCap / coinASupply;
+    const coinBPriceAtAMarketCap = coinAMarketCap / coinBSupply;
+
+    // Calculate portfolio values
+    const coinACurrentValue = coinAAmount * coinACurrentPrice;
+    const coinAValueAtBMarketCap = coinAAmount * coinAPriceAtBMarketCap;
+    const coinBCurrentValue = coinBAmount * coinBCurrentPrice;
+    const coinBValueAtAMarketCap = coinBAmount * coinBPriceAtAMarketCap;
+
+    const totalCurrentValue = coinACurrentValue + coinBCurrentValue;
+    const totalValueAtB = coinAValueAtBMarketCap + coinBCurrentValue;
+    const totalValueAtA = coinACurrentValue + coinBValueAtAMarketCap;
+
+    // Format results
+    const portfolioHTML = `
+        <p>Current Portfolio Value: $${formatPrice(totalCurrentValue)}</p>
+        <p>If ${coinAData.symbol} reaches ${coinBData.symbol}'s Market Cap: $${formatPrice(totalValueAtB)} 
+            (${coinAAmount > 0 ? (coinAValueAtBMarketCap - coinACurrentValue > 0 ? '+' : '') + '$' + formatPrice(coinAValueAtBMarketCap - coinACurrentValue) : 'N/A'})</p>
+        <p>If ${coinBData.symbol} reaches ${coinAData.symbol}'s Market Cap: $${formatPrice(totalValueAtA)} 
+            (${coinBAmount > 0 ? (coinBValueAtAMarketCap - coinBCurrentValue > 0 ? '+' : '') + '$' + formatPrice(coinBValueAtAMarketCap - coinBCurrentValue) : 'N/A'})</p>
+    `;
+    
+    portfolioResult.innerHTML = portfolioHTML;
+    portfolioSection.style.display = 'block';
+    portfolioSection.classList.remove('fade-in');
+    void portfolioSection.offsetWidth; // Trigger reflow
+    portfolioSection.classList.add('fade-in');
+}
+
+// Add event listeners for real-time portfolio updates
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('coinAAmount').addEventListener('input', calculatePortfolioWorth);
+    document.getElementById('coinBAmount').addEventListener('input', calculatePortfolioWorth);
+});
 
 // Load crypto list on page load
 window.onload = initApp;

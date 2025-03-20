@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Compare cryptocurrency market caps easily">
     <title>Market Cap Simulator</title>
 
@@ -84,6 +84,37 @@
             <div id="chartContainer" class="chart-container">
                 <canvas id="comparisonChart"></canvas>
             </div>
+        </section>
+    </main>
+    <main>
+        <section class="comparison-tool">
+            <h2>Compare Market Caps</h2>
+            <!-- Your existing comparison-tool content -->
+        </section>
+        
+        <div class="section-divider"></div>
+    
+        <section id="results-section" class="results-section">
+            <div id="comparisonResult" class="comparison-result"></div>
+            <div id="chartContainer" class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </section>
+    
+        <!-- New Portfolio Section -->
+        <section id="portfolio-section" class="portfolio-section">
+            <h2>Your Portfolio Worth</h2>
+            <div class="portfolio-inputs">
+                <div class="portfolio-input">
+                    <label for="coinAAmount">Amount of First Crypto (e.g., ETH):</label>
+                    <input type="number" id="coinAAmount" min="0" step="0.0001" placeholder="e.g., 1000">
+                </div>
+                <div class="portfolio-input">
+                    <label for="coinBAmount">Amount of Second Crypto (e.g., BTC):</label>
+                    <input type="number" id="coinBAmount" min="0" step="0.0001" placeholder="e.g., 0">
+                </div>
+            </div>
+            <div id="portfolioResult" class="portfolio-result"></div>
         </section>
     </main>
     
