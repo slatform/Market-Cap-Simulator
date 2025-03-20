@@ -1083,6 +1083,9 @@ footer::before {
   border: 1px solid rgba(30, 144, 255, 0.1);
   text-align: center;
   display: none; /* Hidden by default, shown after comparison */
+  .portfolio-section.fade-in {
+    animation-delay: 0.2s; /* Slight delay after results-section fades in */
+  }
 }
 
 .portfolio-section h2 {

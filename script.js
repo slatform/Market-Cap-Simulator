@@ -182,6 +182,8 @@ function selectCoin(input, coin, dropdown) {
     input.dataset.coinId = coin.id;
     input.dataset.symbol = coin.symbol.toUpperCase();
     dropdown.style.display = "none";
+    // Update portfolio labels when a coin is selected
+    updatePortfolioLabels();
 }
 
 // Compare Market Caps
@@ -380,6 +382,17 @@ function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB)
     document.getElementById('chartContainer').style.display = 'block';
 }
 
+// New Function to Update Portfolio Labels
+function updatePortfolioLabels() {
+    const searchInputA = document.getElementById("coinASearch");
+    const searchInputB = document.getElementById("coinBSearch");
+    const coinALabel = document.getElementById("coinALabel");
+    const coinBLabel = document.getElementById("coinBLabel");
+
+    coinALabel.textContent = searchInputA.dataset.symbol ? `${searchInputA.dataset.symbol} (First Crypto)` : 'First Crypto';
+    coinBLabel.textContent = searchInputB.dataset.symbol ? `${searchInputB.dataset.symbol} (Second Crypto)` : 'Second Crypto';
+}
+
 // New Portfolio Worth Calculation Function
 function calculatePortfolioWorth() {
     const portfolioSection = document.getElementById('portfolio-section');
@@ -393,6 +406,12 @@ function calculatePortfolioWorth() {
 
     const coinAAmount = parseFloat(document.getElementById('coinAAmount').value) || 0;
     const coinBAmount = parseFloat(document.getElementById('coinBAmount').value) || 0;
+
+    if (coinAAmount === 0 && coinBAmount === 0) {
+        portfolioResult.innerHTML = '<p>Please enter the amount of at least one cryptocurrency.</p>';
+        portfolioSection.style.display = 'block';
+        return;
+    }
 
     const coinACurrentPrice = coinAData.price;
     const coinBCurrentPrice = coinBData.price;
@@ -415,13 +434,17 @@ function calculatePortfolioWorth() {
     const totalValueAtB = coinAValueAtBMarketCap + coinBCurrentValue;
     const totalValueAtA = coinACurrentValue + coinBValueAtAMarketCap;
 
-    // Format results
+    // Format results with gain/loss styling
     const portfolioHTML = `
-        <p>Current Portfolio Value: $${formatPrice(totalCurrentValue)}</p>
-        <p>If ${coinAData.symbol} reaches ${coinBData.symbol}'s Market Cap: $${formatPrice(totalValueAtB)} 
-            (${coinAAmount > 0 ? (coinAValueAtBMarketCap - coinACurrentValue > 0 ? '+' : '') + '$' + formatPrice(coinAValueAtBMarketCap - coinACurrentValue) : 'N/A'})</p>
-        <p>If ${coinBData.symbol} reaches ${coinAData.symbol}'s Market Cap: $${formatPrice(totalValueAtA)} 
-            (${coinBAmount > 0 ? (coinBValueAtAMarketCap - coinBCurrentValue > 0 ? '+' : '') + '$' + formatPrice(coinBValueAtAMarketCap - coinBCurrentValue) : 'N/A'})</p>
+        <p>Current Portfolio Value: <span class="highlight">$${formatPrice(totalCurrentValue)}</span></p>
+        <p>If ${coinAData.symbol} reaches ${coinBData.symbol}'s Market Cap: <span class="highlight">$${formatPrice(totalValueAtB)}</span> 
+            <span class="change ${totalValueAtB - totalCurrentValue >= 0 ? 'positive' : 'negative'}">
+                (${coinAAmount > 0 ? (totalValueAtB - totalCurrentValue > 0 ? '+' : '') + '$' + formatPrice(totalValueAtB - totalCurrentValue) : 'N/A'})
+            </span></p>
+        <p>If ${coinBData.symbol} reaches ${coinAData.symbol}'s Market Cap: <span class="highlight">$${formatPrice(totalValueAtA)}</span> 
+            <span class="change ${totalValueAtA - totalCurrentValue >= 0 ? 'positive' : 'negative'}">
+                (${coinBAmount > 0 ? (totalValueAtA - totalCurrentValue > 0 ? '+' : '') + '$' + formatPrice(totalValueAtA - totalCurrentValue) : 'N/A'})
+            </span></p>
     `;
     
     portfolioResult.innerHTML = portfolioHTML;
@@ -435,6 +458,8 @@ function calculatePortfolioWorth() {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('coinAAmount').addEventListener('input', calculatePortfolioWorth);
     document.getElementById('coinBAmount').addEventListener('input', calculatePortfolioWorth);
+    // Initial label update
+    updatePortfolioLabels();
 });
 
 // Load crypto list on page load
