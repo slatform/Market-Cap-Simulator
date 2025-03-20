@@ -1033,3 +1033,152 @@ footer::before {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+/* Improved Header Integration and Mobile Responsiveness */
+
+/* Update header to blend more seamlessly with the page */
+header {
+  background: rgba(15, 23, 42, 0.6); /* More transparent background */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03); /* Subtler border */
+  padding: var(--space-md) var(--space-md); /* Reduced padding */
+  transition: all var(--duration-normal);
+}
+
+/* Responsive header container */
+.header-container {
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+/* Make nav more responsive */
+nav {
+  display: flex;
+  gap: var(--space-md); /* Reduced gap on mobile */
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%; /* Takes full width on small screens */
+}
+
+/* Responsive typography adjustments */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px; /* Slightly smaller base font size for mobile */
+  }
+  
+  h1 {
+    font-size: var(--font-size-2xl); /* Smaller heading on mobile */
+  }
+  
+  h2 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--space-xl);
+  }
+  
+  .highlight {
+    font-size: var(--font-size-4xl); /* Smaller highlight text */
+  }
+  
+  main {
+    padding: var(--space-2xl) var(--space-md); /* Reduced padding */
+  }
+}
+
+/* Enhanced mobile layout for comparison tools */
+@media (max-width: 768px) {
+  .comparison-tool, .results-section { 
+    padding: var(--space-xl) var(--space-lg);
+    border-radius: var(--radius-lg); /* Slightly smaller radius */
+  }
+  
+  .comparison-grid {
+    grid-template-columns: 1fr; /* Stack on mobile */
+    gap: var(--space-xl);
+  }
+  
+  .chart-container { 
+    height: 300px; /* Shorter on mobile */
+    padding: var(--space-md);
+  }
+  
+  .coin-dropdown { 
+    width: 100%; /* Full width */
+    max-height: 300px; /* Shorter dropdown */
+  }
+  
+  .compare-button {
+    width: 100%; /* Full width button on mobile */
+    padding: var(--space-md) var(--space-lg);
+  }
+  
+  .dropdown-item {
+    padding: var(--space-md) var(--space-lg); /* More compact dropdown items */
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  nav {
+    gap: var(--space-sm);
+  }
+  
+  nav a {
+    font-size: var(--font-size-sm);
+    padding: var(--space-xs) var(--space-sm);
+  }
+  
+  .comparison-tool, .results-section {
+    padding: var(--space-lg) var(--space-md);
+  }
+  
+  input[type="text"] {
+    font-size: var(--font-size-md);
+    padding: var(--space-md) var(--space-md) var(--space-md) var(--space-3xl);
+  }
+  
+  .search-icon {
+    left: var(--space-md);
+  }
+  
+  .coin-label {
+    font-size: var(--font-size-xl);
+  }
+  
+  .price-detail {
+    font-size: var(--font-size-md);
+  }
+  
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Improved background for better integration */
+body::before {
+  opacity: 0.6; /* Reduced opacity for a more subtle effect */
+}
+
+/* Add touch-friendly improvements */
+.dropdown-item {
+  min-height: 50px; /* Ensures touch targets are at least 48px */
+}
+
+.compare-button {
+  min-height: 50px; /* Better touch target */
+}
+
+/* Responsive footer */
+@media (max-width: 768px) {
+  .footer-container {
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-md) 0;
+  }
+}
