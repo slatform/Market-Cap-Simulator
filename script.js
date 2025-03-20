@@ -17,8 +17,8 @@ async function initApp() {
     document.querySelectorAll('.search-container input').forEach(input => {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.crypto-selector')) {
-                document.getElementById('coinADropdown').style.display = 'none';
-                document.getElementById('coinBDropdown').style.display = 'none';
+                document.getElementById('coinADropdown').classList.remove('active');
+                document.getElementById('coinBDropdown').classList.remove('active');
             }
         });
         
@@ -102,7 +102,7 @@ function filterDropdown(searchInputId, dropdownId) {
     selectedIndex = -1; // Reset selected index
 
     if (searchValue === "" && !input.matches(':focus')) {
-        dropdown.style.display = "none";
+        dropdown.classList.remove('active');
         return;
     }
 
@@ -113,7 +113,7 @@ function filterDropdown(searchInputId, dropdownId) {
         item.className = "dropdown-item disabled";
         item.textContent = "Loading cryptocurrencies...";
         dropdown.appendChild(item);
-        dropdown.style.display = "block";
+        dropdown.classList.add('active');
         return;
     }
     
@@ -145,7 +145,7 @@ function filterDropdown(searchInputId, dropdownId) {
         });
     }
     
-    dropdown.style.display = "block";
+    dropdown.classList.add('active');
 }
 
 // Handle keyboard navigation
@@ -181,12 +181,12 @@ function selectCoin(input, coin, dropdown) {
     input.value = `${coin.name} (${coin.symbol.toUpperCase()})`;
     input.dataset.coinId = coin.id;
     input.dataset.symbol = coin.symbol.toUpperCase();
-    dropdown.style.display = "none";
+    dropdown.classList.remove('active');
     // Update portfolio labels when a coin is selected
     updatePortfolioLabels();
 }
 
-// Compare Market Caps
+// Compare Market Caps (Updated to Match Screenshot)
 async function compareMarketCaps() {
     const searchInputA = document.getElementById("coinASearch");
     const searchInputB = document.getElementById("coinBSearch");
@@ -226,61 +226,70 @@ async function compareMarketCaps() {
             const marketCapB = data[coinB].usd_market_cap;
             const priceA = data[coinA].usd;
             const priceB = data[coinB].usd;
-            const change24hA = data[coinA].usd_24h_change || 0;
-            const change24hB = data[coinB].usd_24h_change || 0;
             
             const newPriceA = (marketCapB / marketCapA) * priceA;
-            const marketCapDiff = ((marketCapB / marketCapA) - 1) * 100;
             const marketCapRatio = marketCapA / marketCapB;
-            
-            const formattedMarketCapA = formatMarketCap(marketCapA);
-            const formattedMarketCapB = formatMarketCap(marketCapB);
-            
+            const barPercentage = marketCapRatio >= 1 ? (marketCapB / marketCapA) * 100 : (marketCapA / marketCapB) * 100;
+
+            // Fetch coin images from cryptoList
+            const coinAInfo = cryptoList.find(coin => coin.id === coinA);
+            const coinBInfo = cryptoList.find(coin => coin.id === coinB);
+            const coinAImage = coinAInfo ? coinAInfo.image : '';
+            const coinBImage = coinBInfo ? coinBInfo.image : '';
+
             comparisonResult.innerHTML = `
-                <div class="comparison-details">
-                    <div class="coin-comparison">
-                        <div class="coin-detail">
-                            <span class="coin-label">${searchInputA.dataset.symbol}</span>
-                            <span class="highlight">$${formattedMarketCapA}</span>
-                            <div class="price-detail">Price: $${formatPrice(priceA)} <span class="change ${change24hA >= 0 ? 'positive' : 'negative'}">(${change24hA >= 0 ? '+' : ''}${change24hA.toFixed(2)}%)</span></div>
-                        </div>
-                        <div class="vs-separator">vs</div>
-                        <div class="coin-detail">
-                            <span class="coin-label">${searchInputB.dataset.symbol}</span>
-                            <span class="highlight">$${formattedMarketCapB}</span>
-                            <div class="price-detail">Price: $${formatPrice(priceB)} <span class="change ${change24hB >= 0 ? 'positive' : 'negative'}">(${change24hB >= 0 ? '+' : ''}${change24hB.toFixed(2)}%)</span></div>
+                <div class="coin-comparison">
+                    <div class="coin-detail">
+                        <img src="${coinAImage}" alt="${searchInputA.dataset.symbol}">
+                        <span class="coin-label">${searchInputA.dataset.symbol}</span>
+                        <span class="highlight">$${formatMarketCap(marketCapA)}</span>
+                    </div>
+                    <div class="vs-separator">vs</div>
+                    <div class="coin-detail">
+                        <img src="${coinBImage}" alt="${searchInputB.dataset.symbol}">
+                        <span class="coin-label">${searchInputB.dataset.symbol}</span>
+                        <span class="highlight">$${formatMarketCap(marketCapB)}</span>
+                    </div>
+                </div>
+                <div class="hypothetical">
+                    <h3>${searchInputA.dataset.symbol} with the Market Cap of ${searchInputB.dataset.symbol}</h3>
+                    <span class="price">$${formatPrice(newPriceA)}</span>
+                    <span class="multiplier">(${(newPriceA / priceA).toFixed(2)}x)</span>
+                </div>
+                <div class="marketcap-comparison">
+                    <div class="comparison-text">
+                        ${marketCapRatio >= 1 ? searchInputA.dataset.symbol : searchInputB.dataset.symbol} is <span class="highlight">${Math.abs(marketCapRatio).toFixed(2)}x</span> above ${marketCapRatio >= 1 ? searchInputB.dataset.symbol : searchInputA.dataset.symbol}
+                    </div>
+                    <div class="marketcap-bar">
+                        <div class="bar-container">
+                            <div class="bar ${marketCapRatio >= 1 ? 'first' : 'second'}" style="width: ${barPercentage}%"></div>
                         </div>
                     </div>
-                    <div class="ratio-detail">
-                        <span class="ratio-label">Market Cap Ratio:</span>
-                        <span class="ratio-value">${marketCapRatio.toFixed(2)}x</span>
-                        <span class="difference ${marketCapDiff >= 0 ? 'positive' : 'negative'}">(${marketCapDiff >= 0 ? '+' : ''}${marketCapDiff.toFixed(2)}%)</span>
-                    </div>
-                    <div class="hypothetical-price">
-                        <span class="coin-label">${searchInputA.dataset.symbol}</span> @ 
-                        <span class="coin-label">${searchInputB.dataset.symbol}</span> Cap: 
-                        <span class="highlight">$${formatPrice(newPriceA)}</span>
+                    <div class="marketcap-values">
+                        <div class="value">
+                            <img src="${coinAImage}" alt="${searchInputA.dataset.symbol}">
+                            <span>$${marketCapA.toLocaleString()}</span>
+                        </div>
+                        <div class="value">
+                            <img src="${coinBImage}" alt="${searchInputB.dataset.symbol}">
+                            <span>$${marketCapB.toLocaleString()}</span>
+                        </div>
                     </div>
                 </div>
             `;
-            
-            createComparisonChart(
-                searchInputA.dataset.symbol, 
-                searchInputB.dataset.symbol, 
-                marketCapA, 
-                marketCapB
-            );
 
             // Store data for portfolio calculation
             coinAData = {
                 symbol: searchInputA.dataset.symbol,
                 marketCap: marketCapA,
-                price: priceA
+                price: priceA,
+                image: coinAImage
             };
             coinBData = {
                 symbol: searchInputB.dataset.symbol,
                 marketCap: marketCapB,
-                price: priceB
+                price: priceB,
+                image: coinBImage
             };
             // Trigger portfolio calculation
             calculatePortfolioWorth();
@@ -313,7 +322,7 @@ function formatPrice(price) {
     return price.toLocaleString(undefined, { minimumFractionDigits: 8, maximumFractionDigits: 8 });
 }
 
-// Create comparison chart
+// Create comparison chart (Original)
 function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB) {
     const ctx = document.getElementById('comparisonChart').getContext('2d');
     
@@ -393,7 +402,7 @@ function updatePortfolioLabels() {
     coinBLabel.textContent = searchInputB.dataset.symbol ? `${searchInputB.dataset.symbol} (Second Crypto)` : 'Second Crypto';
 }
 
-// New Portfolio Worth Calculation Function
+// New Portfolio Worth Calculation Function (Original)
 function calculatePortfolioWorth() {
     const portfolioSection = document.getElementById('portfolio-section');
     const portfolioResult = document.getElementById('portfolioResult');
@@ -425,28 +434,24 @@ function calculatePortfolioWorth() {
     const coinBPriceAtAMarketCap = coinAMarketCap / coinBSupply;
 
     // Calculate portfolio values
-    const coinACurrentValue = coinAAmount * coinACurrentPrice;
     const coinAValueAtBMarketCap = coinAAmount * coinAPriceAtBMarketCap;
-    const coinBCurrentValue = coinBAmount * coinBCurrentPrice;
     const coinBValueAtAMarketCap = coinBAmount * coinBPriceAtAMarketCap;
 
-    const totalCurrentValue = coinACurrentValue + coinBCurrentValue;
-    const totalValueAtB = coinAValueAtBMarketCap + coinBCurrentValue;
-    const totalValueAtA = coinACurrentValue + coinBValueAtAMarketCap;
+    // Format the results
+    let portfolioHTML = '';
 
-    // Format results with gain/loss styling
-    const portfolioHTML = `
-        <p>Current Portfolio Value: <span class="highlight">$${formatPrice(totalCurrentValue)}</span></p>
-        <p>If ${coinAData.symbol} reaches ${coinBData.symbol}'s Market Cap: <span class="highlight">$${formatPrice(totalValueAtB)}</span> 
-            <span class="change ${totalValueAtB - totalCurrentValue >= 0 ? 'positive' : 'negative'}">
-                (${coinAAmount > 0 ? (totalValueAtB - totalCurrentValue > 0 ? '+' : '') + '$' + formatPrice(totalValueAtB - totalCurrentValue) : 'N/A'})
-            </span></p>
-        <p>If ${coinBData.symbol} reaches ${coinAData.symbol}'s Market Cap: <span class="highlight">$${formatPrice(totalValueAtA)}</span> 
-            <span class="change ${totalValueAtA - totalCurrentValue >= 0 ? 'positive' : 'negative'}">
-                (${coinBAmount > 0 ? (totalValueAtA - totalCurrentValue > 0 ? '+' : '') + '$' + formatPrice(totalValueAtA - totalCurrentValue) : 'N/A'})
-            </span></p>
-    `;
-    
+    if (coinAAmount > 0) {
+        portfolioHTML += `
+            <p>${coinAData.symbol} with the Market Cap of ${coinBData.symbol}: $${formatPrice(coinAValueAtBMarketCap)}</p>
+        `;
+    }
+
+    if (coinBAmount > 0) {
+        portfolioHTML += `
+            <p>${coinBData.symbol} with the Market Cap of ${coinAData.symbol}: $${formatPrice(coinBValueAtAMarketCap)}</p>
+        `;
+    }
+
     portfolioResult.innerHTML = portfolioHTML;
     portfolioSection.style.display = 'block';
     portfolioSection.classList.remove('fade-in');
