@@ -78,7 +78,7 @@ main {
   padding: var(--space-lg);
 }
 
-/* New Intro Section */
+/* Intro Section */
 .intro {
   max-width: 800px;
   margin: 0 auto var(--space-2xl);
@@ -101,13 +101,13 @@ main {
 .comparison-tool {
   max-width: 800px;
   margin: 0 auto;
+  text-align: center; /* Ensure centering on all screens */
 }
 
 .comparison-tool h2 {
   font-family: var(--font-secondary);
   font-size: var(--font-size-xl);
   font-weight: 500;
-  text-align: center;
   margin-bottom: var(--space-2xl);
 }
 
@@ -121,6 +121,7 @@ main {
 
 .crypto-selector {
   position: relative;
+  text-align: left; /* Left-align labels and inputs for usability */
 }
 
 .crypto-selector label {
@@ -536,6 +537,7 @@ footer {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+  text-align: left; /* Left-align labels for readability */
 }
 
 .portfolio-input label {
@@ -603,6 +605,7 @@ footer {
   font-weight: 500;
   margin-bottom: var(--space-md);
   color: var(--color-text-primary);
+  text-align: center; /* Center subheadings */
 }
 
 .crypto-table {
@@ -614,6 +617,7 @@ footer {
 .crypto-table p {
   font-size: var(--font-size-md);
   color: var(--color-text-secondary);
+  text-align: center; /* Center fallback text */
 }
 
 .crypto-table .table-row {
@@ -672,15 +676,17 @@ footer {
 
   .results-section {
     padding: var(--space-xl);
+    text-align: center; /* Ensure centering */
   }
 
   .comparison-result .coin-comparison {
     flex-direction: column;
     gap: var(--space-md);
+    justify-content: center;
   }
 
-  .comparison-result .coin-detail .highlight {
-    font-size: var(--font-size-lg);
+  .comparison-result .coin-detail {
+    justify-content: center;
   }
 
   .comparison-result .hypothetical h3 {
@@ -701,28 +707,30 @@ footer {
 
   .comparison-result .marketcap-values {
     font-size: var(--font-size-sm);
-    flex-wrap: wrap;
+    flex-direction: column; /* Stack values vertically */
     gap: var(--space-sm);
     justify-content: center;
+    align-items: center;
   }
 
   .comparison-result .marketcap-values .value {
-    flex: 1 1 45%;
     justify-content: center;
-  }
-
-  .comparison-result .marketcap-values .value span {
-    font-size: var(--font-size-sm);
-    white-space: nowrap;
   }
 
   .portfolio-section {
     padding: var(--space-xl);
+    text-align: center; /* Ensure centering */
+  }
+
+  .portfolio-input {
+    align-items: center; /* Center inputs and labels */
   }
 
   .portfolio-input input {
     padding: var(--space-sm);
     font-size: var(--font-size-sm);
+    width: 100%; /* Full width for consistency */
+    max-width: 300px; /* Limit width */
   }
 
   .coin-dropdown {
@@ -734,8 +742,8 @@ footer {
     gap: var(--space-md);
   }
 
-  .gainers-table h3, .losers-table h3 {
-    font-size: var(--font-size-md);
+  .gainers-table, .losers-table {
+    text-align: center; /* Center content */
   }
 }
 
@@ -758,10 +766,16 @@ footer {
 
   .crypto-selector label {
     font-size: var(--font-size-sm);
+    text-align: center; /* Center labels */
+  }
+
+  .search-container {
+    justify-content: center; /* Center input and icon */
   }
 
   .search-container input {
     font-size: var(--font-size-sm);
+    text-align: center; /* Center placeholder text */
   }
 
   .coin-icon {
@@ -771,6 +785,7 @@ footer {
 
   .dropdown-item {
     padding: var(--space-sm);
+    justify-content: center; /* Center dropdown items */
   }
 
   .results-section {
@@ -798,17 +813,13 @@ footer {
     height: 16px;
   }
 
-  .comparison-result .marketcap-values .value {
-    flex: 1 1 100%;
-    justify-content: center;
-  }
-
   .portfolio-section {
     padding: var(--space-lg);
   }
 
   .portfolio-input label {
     font-size: var(--font-size-sm);
+    text-align: center; /* Center labels */
   }
 
   .gainers-losers-section {
@@ -817,6 +828,14 @@ footer {
 
   .gainers-losers-section h2 {
     font-size: var(--font-size-lg);
+  }
+
+  .gainers-table h3, .losers-table h3 {
+    font-size: var(--font-size-md);
+  }
+
+  .crypto-table .coin-info {
+    justify-content: center; /* Center coin info */
   }
 
   .crypto-table .coin-info img {
