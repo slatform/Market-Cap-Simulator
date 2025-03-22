@@ -93,19 +93,48 @@ function updateLastUpdated() {
     document.getElementById('lastUpdated').textContent = `Last dynamic update: ${now.toLocaleString()}`;
 }
 
-// Fetch top 250 cryptos
+// Fetch top 500 cryptos (2 pages of 250 each)
 async function loadCryptoList() {
-    const apiUrl = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false";
-    
+    const coinsPerPage = 250; // Maximum allowed by CoinGecko API
+    const totalCoins = 500; // Target number of coins
+    const pagesNeeded = Math.ceil(totalCoins / coinsPerPage); // 2 pages (500 / 250)
+    let allCoins = [];
+
     try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+        // Loop through the required pages
+        for (let page = 1; page <= pagesNeeded; page++) {
+            const apiUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${coinsPerPage}&page=${page}&sparkline=false`;
+            console.log(`Fetching page ${page} of ${pagesNeeded}: ${apiUrl}`);
+
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error(`API error on page ${page}: ${response.status}`);
+            }
+
+            const coins = await response.json();
+            console.log(`Received ${coins.length} coins on page ${page}`);
+
+            // Add coins from this page to the total list
+            allCoins = allCoins.concat(coins);
+
+            // Stop if we've reached the desired number of coins
+            if (allCoins.length >= totalCoins) {
+                allCoins = allCoins.slice(0, totalCoins); // Trim to exactly 500
+                break;
+            }
         }
-        cryptoList = await response.json();
+
+        cryptoList = allCoins;
+        console.log(`Total coins fetched: ${cryptoList.length}`);
+
+        // If we didn't get enough coins, log a warning
+        if (cryptoList.length < totalCoins) {
+            console.warn(`Only fetched ${cryptoList.length} coins, expected ${totalCoins}. API may have fewer coins available.`);
+        }
     } catch (error) {
         console.error("Error fetching crypto list:", error);
         showError("Unable to fetch cryptocurrency data at this time. Use static features below.");
+        cryptoList = []; // Ensure cryptoList is empty on failure
     }
 }
 
