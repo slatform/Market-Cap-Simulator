@@ -22,6 +22,7 @@ async function initApp() {
     loadPortfolioTracker(); // Load static tracker first for immediate content
     await loadCryptoList();
     await loadTopGainersLosers();
+    setupThemeToggle(); // Set up theme toggle after content loads
     hideGlobalLoader();
     
     document.querySelectorAll('.search-container input').forEach(input => {
@@ -565,6 +566,27 @@ async function refreshTrackerPrices() {
 function clearTracker() {
     localStorage.removeItem('cryptoPortfolio');
     loadPortfolioTracker();
+}
+
+// Theme Toggle Function
+function setupThemeToggle() {
+    const toggleButton = document.getElementById('themeToggle');
+    const body = document.body;
+    const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
+
+    if (savedTheme === 'light') {
+        body.classList.add('light-mode');
+        toggleButton.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        toggleButton.innerHTML = '<i class="fas fa-moon"></i>';
+    }
+
+    toggleButton.addEventListener('click', () => {
+        body.classList.toggle('light-mode');
+        const isLightMode = body.classList.contains('light-mode');
+        toggleButton.innerHTML = isLightMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+    });
 }
 
 // Event listeners for real-time portfolio updates
