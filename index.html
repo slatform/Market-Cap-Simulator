@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Compare cryptocurrency market caps easily">
+    <meta name="description" content="Compare cryptocurrency market caps, calculate portfolio worth, and track top gainers and losers with real-time data from CoinGecko.">
     <title>Market Cap Simulator</title>
 
-    <!-- Google Analytics (gtag.js) - Corrected -->
+    <!-- Google Analytics (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WSSWV49R83"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -17,7 +17,7 @@
         });
     </script>
 
-    <!-- Google Fonts for Roboto Mono (needed for Results tab) -->
+    <!-- Google Fonts for Roboto Mono -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
@@ -35,6 +35,12 @@
     </header>
     
     <main>
+        <!-- New Static Intro Section -->
+        <section class="intro">
+            <h2>Welcome to Market Cap Simulator</h2>
+            <p>Explore the world of cryptocurrencies with our powerful tools. Compare market caps of your favorite coins, calculate what your portfolio could be worth under different market conditions, and stay updated with the top 10 gainers and losers in the crypto market over the past 24 hours. All data is sourced in real-time.</p>
+        </section>
+
         <section class="comparison-tool">
             <h2>Compare Market Caps</h2>
             
@@ -86,7 +92,10 @@
         <div class="section-divider"></div>
 
         <section id="results-section" class="results-section">
-            <div id="comparisonResult" class="comparison-result"></div>
+            <div id="comparisonResult" class="comparison-result">
+                <!-- Static Fallback -->
+                <p>Select two cryptocurrencies above to compare their market caps and see hypothetical price scenarios.</p>
+            </div>
             <div id="chartContainer" class="chart-container">
                 <canvas id="comparisonChart"></canvas>
             </div>
@@ -108,7 +117,10 @@
                     <input type="number" id="coinBAmount" min="0" step="0.0001" placeholder="e.g., 0">
                 </div>
             </div>
-            <div id="portfolioResult" class="portfolio-result"></div>
+            <div id="portfolioResult" class="portfolio-result">
+                <!-- Static Fallback -->
+                <p>Enter amounts above after comparing coins to calculate your portfolio's potential value.</p>
+            </div>
         </section>
 
         <div class="section-divider"></div>
@@ -119,11 +131,17 @@
             <div class="gainers-losers-grid">
                 <div class="gainers-table">
                     <h3>Top Gainers</h3>
-                    <div id="topGainers" class="crypto-table"></div>
+                    <div id="topGainers" class="crypto-table">
+                        <!-- Static Fallback -->
+                        <p>Live data on the top 10 cryptocurrencies with the highest 24-hour gains will appear here.</p>
+                    </div>
                 </div>
                 <div class="losers-table">
                     <h3>Top Losers</h3>
-                    <div id="topLosers" class="crypto-table"></div>
+                    <div id="topLosers" class="crypto-table">
+                        <!-- Static Fallback -->
+                        <p>Live data on the top 10 cryptocurrencies with the largest 24-hour losses will appear here.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -132,7 +150,7 @@
     <footer>
         <div class="footer-container">
             <p>Data provided by CoinGecko API</p>
-            <p id="lastUpdated"></p>
+            <p id="lastUpdated">Last updated: Loading...</p>
         </div>
     </footer>
 

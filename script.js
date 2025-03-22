@@ -3,7 +3,6 @@ let cryptoList = [];
 let isLoading = false;
 let chart = null;
 let selectedIndex = -1;
-// New globals for portfolio feature
 let coinAData = null;
 let coinBData = null;
 
@@ -12,7 +11,7 @@ async function initApp() {
     showGlobalLoader();
     updateLastUpdated();
     await loadCryptoList();
-    await loadTopGainersLosers(); // Load gainers and losers on init
+    await loadTopGainersLosers();
     hideGlobalLoader();
     
     document.querySelectorAll('.search-container input').forEach(input => {
@@ -63,16 +62,18 @@ function hideLoading(elementId) {
 }
 
 // Show error message
-function showError(message) {
+function showError(message, targetId = 'comparisonResult') {
     const errorElement = document.createElement('div');
     errorElement.className = 'error-message';
     errorElement.textContent = message;
     
-    const comparisonResult = document.getElementById('comparisonResult');
-    comparisonResult.innerHTML = '';
-    comparisonResult.appendChild(errorElement);
+    const target = document.getElementById(targetId);
+    target.innerHTML = '';
+    target.appendChild(errorElement);
     
-    document.getElementById('results-section').style.display = 'block';
+    if (targetId === 'comparisonResult') {
+        document.getElementById('results-section').style.display = 'block';
+    }
 }
 
 // Update last updated timestamp
@@ -81,27 +82,31 @@ function updateLastUpdated() {
     document.getElementById('lastUpdated').textContent = `Last updated: ${now.toLocaleString()}`;
 }
 
-// Fetch top 250 cryptos (kept at 250 as per your latest code)
+// Fetch top 250 cryptos
 async function loadCryptoList() {
     const apiUrl = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false";
     
     try {
         const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error(`API error: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
         cryptoList = await response.json();
     } catch (error) {
         console.error("Error fetching crypto list:", error);
-        showError("Unable to fetch cryptocurrency data. Please try again later.");
+        showError("Unable to fetch cryptocurrency data at this time. Please check back later.");
     }
 }
 
-// New function to load top gainers and losers
+// Load top gainers and losers
 async function loadTopGainersLosers() {
     const gainersSection = document.getElementById('topGainers');
     const losersSection = document.getElementById('topLosers');
     
     try {
-        // Use existing cryptoList data
+        if (cryptoList.length === 0) {
+            throw new Error("Crypto list not loaded");
+        }
         const sortedByChange = [...cryptoList]
             .filter(coin => coin.price_change_percentage_24h !== null)
             .sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
@@ -109,7 +114,6 @@ async function loadTopGainersLosers() {
         const topGainers = sortedByChange.slice(0, 10);
         const topLosers = sortedByChange.slice(-10).reverse();
 
-        // Render gainers
         gainersSection.innerHTML = topGainers.map(coin => `
             <div class="table-row">
                 <div class="coin-info">
@@ -120,7 +124,6 @@ async function loadTopGainersLosers() {
             </div>
         `).join('');
 
-        // Render losers
         losersSection.innerHTML = topLosers.map(coin => `
             <div class="table-row">
                 <div class="coin-info">
@@ -134,8 +137,8 @@ async function loadTopGainersLosers() {
         document.getElementById('gainers-losers-section').style.display = 'block';
     } catch (error) {
         console.error("Error loading gainers and losers:", error);
-        gainersSection.innerHTML = '<p>Unable to load data.</p>';
-        losersSection.innerHTML = '<p>Unable to load data.</p>';
+        gainersSection.innerHTML = '<p>Unable to load gainers data. Please try again later.</p>';
+        losersSection.innerHTML = '<p>Unable to load losers data. Please try again later.</p>';
         document.getElementById('gainers-losers-section').style.display = 'block';
     }
 }
@@ -145,7 +148,7 @@ function filterDropdown(searchInputId, dropdownId) {
     const input = document.getElementById(searchInputId);
     const dropdown = document.getElementById(dropdownId);
     const searchValue = input.value.toLowerCase();
-    selectedIndex = -1; // Reset selected index
+    selectedIndex = -1;
 
     if (searchValue === "" && !input.matches(':focus')) {
         dropdown.classList.remove('active');
@@ -184,7 +187,7 @@ function filterDropdown(searchInputId, dropdownId) {
             item.dataset.id = coin.id;
             item.dataset.symbol = coin.symbol.toUpperCase();
             item.dataset.image = coin.image;
-            item.tabIndex = 0; // Make focusable
+            item.tabIndex = 0;
             
             item.addEventListener('click', () => selectCoin(input, coin, dropdown));
             dropdown.appendChild(item);
@@ -228,11 +231,10 @@ function selectCoin(input, coin, dropdown) {
     input.dataset.coinId = coin.id;
     input.dataset.symbol = coin.symbol.toUpperCase();
     dropdown.classList.remove('active');
-    // Update portfolio labels when a coin is selected
     updatePortfolioLabels();
 }
 
-// Compare Market Caps (Updated to Match Screenshot)
+// Compare Market Caps
 async function compareMarketCaps() {
     const searchInputA = document.getElementById("coinASearch");
     const searchInputB = document.getElementById("coinBSearch");
@@ -242,7 +244,7 @@ async function compareMarketCaps() {
     comparisonResult.innerHTML = "";
     resultsSection.style.display = "block";
     resultsSection.classList.remove('fade-in');
-    void resultsSection.offsetWidth; // Trigger reflow
+    void resultsSection.offsetWidth;
     resultsSection.classList.add('fade-in');
 
     const coinA = searchInputA.dataset.coinId;
@@ -264,7 +266,9 @@ async function compareMarketCaps() {
 
     try {
         const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+        }
         const data = await response.json();
 
         if (data[coinA] && data[coinB]) {
@@ -277,7 +281,6 @@ async function compareMarketCaps() {
             const marketCapRatio = marketCapA / marketCapB;
             const barPercentage = marketCapRatio >= 1 ? (marketCapB / marketCapA) * 100 : (marketCapA / marketCapB) * 100;
 
-            // Fetch coin images from cryptoList
             const coinAInfo = cryptoList.find(coin => coin.id === coinA);
             const coinBInfo = cryptoList.find(coin => coin.id === coinB);
             const coinAImage = coinAInfo ? coinAInfo.image : '';
@@ -324,7 +327,6 @@ async function compareMarketCaps() {
                 </div>
             `;
 
-            // Store data for portfolio calculation
             coinAData = {
                 symbol: searchInputA.dataset.symbol,
                 marketCap: marketCapA,
@@ -337,7 +339,6 @@ async function compareMarketCaps() {
                 price: priceB,
                 image: coinBImage
             };
-            // Trigger portfolio calculation
             calculatePortfolioWorth();
         } else {
             showError("Could not fetch data for the selected cryptocurrencies.");
@@ -368,7 +369,7 @@ function formatPrice(price) {
     return price.toLocaleString(undefined, { minimumFractionDigits: 8, maximumFractionDigits: 8 });
 }
 
-// Create comparison chart (Original)
+// Create comparison chart
 function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB) {
     const ctx = document.getElementById('comparisonChart').getContext('2d');
     
@@ -437,7 +438,7 @@ function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB)
     document.getElementById('chartContainer').style.display = 'block';
 }
 
-// New Function to Update Portfolio Labels
+// Update Portfolio Labels
 function updatePortfolioLabels() {
     const searchInputA = document.getElementById("coinASearch");
     const searchInputB = document.getElementById("coinBSearch");
@@ -448,13 +449,13 @@ function updatePortfolioLabels() {
     coinBLabel.textContent = searchInputB.dataset.symbol ? `${searchInputB.dataset.symbol} (Second Crypto)` : 'Second Crypto';
 }
 
-// New Portfolio Worth Calculation Function (Original)
+// Portfolio Worth Calculation
 function calculatePortfolioWorth() {
     const portfolioSection = document.getElementById('portfolio-section');
     const portfolioResult = document.getElementById('portfolioResult');
     
     if (!coinAData || !coinBData) {
-        portfolioResult.innerHTML = '<p>Please compare two coins first.</p>';
+        portfolioResult.innerHTML = '<p>Please compare two coins first to calculate portfolio worth.</p>';
         portfolioSection.style.display = 'block';
         return;
     }
@@ -473,17 +474,14 @@ function calculatePortfolioWorth() {
     const coinAMarketCap = coinAData.marketCap;
     const coinBMarketCap = coinBData.marketCap;
 
-    // Calculate prices at each other's market cap
-    const coinASupply = coinAMarketCap / coinACurrentPrice; // Derived circulating supply
+    const coinASupply = coinAMarketCap / coinACurrentPrice;
     const coinBSupply = coinBMarketCap / coinBCurrentPrice;
     const coinAPriceAtBMarketCap = coinBMarketCap / coinASupply;
     const coinBPriceAtAMarketCap = coinAMarketCap / coinBSupply;
 
-    // Calculate portfolio values
     const coinAValueAtBMarketCap = coinAAmount * coinAPriceAtBMarketCap;
     const coinBValueAtAMarketCap = coinBAmount * coinBPriceAtAMarketCap;
 
-    // Format the results
     let portfolioHTML = '';
 
     if (coinAAmount > 0) {
@@ -501,15 +499,14 @@ function calculatePortfolioWorth() {
     portfolioResult.innerHTML = portfolioHTML;
     portfolioSection.style.display = 'block';
     portfolioSection.classList.remove('fade-in');
-    void portfolioSection.offsetWidth; // Trigger reflow
+    void portfolioSection.offsetWidth;
     portfolioSection.classList.add('fade-in');
 }
 
-// Add event listeners for real-time portfolio updates
+// Event listeners for real-time portfolio updates
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('coinAAmount').addEventListener('input', calculatePortfolioWorth);
     document.getElementById('coinBAmount').addEventListener('input', calculatePortfolioWorth);
-    // Initial label update
     updatePortfolioLabels();
 });
 

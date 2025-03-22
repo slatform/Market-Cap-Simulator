@@ -78,6 +78,25 @@ main {
   padding: var(--space-lg);
 }
 
+/* New Intro Section */
+.intro {
+  max-width: 800px;
+  margin: 0 auto var(--space-2xl);
+  text-align: center;
+}
+
+.intro h2 {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-xl);
+  font-weight: 500;
+  margin-bottom: var(--space-md);
+}
+
+.intro p {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+}
+
 /* Comparison Tool */
 .comparison-tool {
   max-width: 800px;
@@ -97,11 +116,11 @@ main {
   grid-template-columns: 1fr 1fr;
   gap: var(--space-lg);
   margin-bottom: var(--space-xl);
-  position: static; /* Prevent interference with dropdown positioning */
+  position: static;
 }
 
 .crypto-selector {
-  position: relative; /* Ensure the dropdown is positioned relative to this container */
+  position: relative;
 }
 
 .crypto-selector label {
@@ -112,7 +131,7 @@ main {
 }
 
 .search-container {
-  position: relative; /* Establish positioning context for the dropdown */
+  position: relative;
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.05);
@@ -172,7 +191,7 @@ main {
 
 .coin-dropdown {
   position: absolute;
-  top: 100%; /* Position directly below the search container */
+  top: 100%;
   left: 0;
   right: 0;
   background: var(--gradient-card);
@@ -181,17 +200,17 @@ main {
   max-height: 300px;
   overflow-y: auto;
   z-index: 1000;
-  display: none; /* Controlled by JavaScript */
+  display: none;
   box-shadow: var(--shadow-lg);
-  opacity: 0; /* For transition */
-  transform: translateY(5px); /* Slight downward shift for animation */
-  transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease; /* Smooth transition */
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease;
 }
 
 .coin-dropdown.active {
-  display: block; /* Show the dropdown */
-  opacity: 1; /* Fade in */
-  transform: translateY(0); /* Slide into place */
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .dropdown-item {
@@ -281,7 +300,13 @@ main {
   }
 }
 
-/* Updated Comparison Result to Match Screenshot */
+.comparison-result p,
+.portfolio-result p {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+}
+
+/* Updated Comparison Result */
 .comparison-result .coin-comparison {
   display: flex;
   justify-content: center;
@@ -544,7 +569,7 @@ footer {
   margin: var(--space-3xl) 0;
 }
 
-/* New Gainers & Losers Section */
+/* Gainers & Losers Section */
 .gainers-losers-section {
   margin-top: var(--space-4xl);
   padding: var(--space-3xl);
@@ -584,6 +609,11 @@ footer {
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-md);
   padding: var(--space-md);
+}
+
+.crypto-table p {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
 }
 
 .crypto-table .table-row {
@@ -714,6 +744,14 @@ footer {
     font-size: var(--font-size-xl);
   }
 
+  .intro h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .intro p {
+    font-size: var(--font-size-sm);
+  }
+
   .comparison-tool h2 {
     font-size: var(--font-size-lg);
   }
@@ -794,51 +832,52 @@ footer {
     font-size: var(--font-size-sm);
   }
 }
+
 /* Enhanced Header Styles */
 .header-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 header h1 {
-  font-family: var(--font-secondary);
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  transition: transform var(--duration-fast) ease;
+    font-family: var(--font-secondary);
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    transition: transform var(--duration-fast) ease;
 }
 
 header h1:hover {
-  transform: scale(1.05); /* Subtle zoom on hover */
+    transform: scale(1.05);
 }
 
 .header-icon {
-  color: var(--color-accent-primary);
-  font-size: var(--font-size-xl);
-  transition: color var(--duration-normal);
+    color: var(--color-accent-primary);
+    font-size: var(--font-size-xl);
+    transition: color var(--duration-normal);
 }
 
 header h1:hover .header-icon {
-  color: var(--color-accent-secondary); /* Color shift on hover */
+    color: var(--color-accent-secondary);
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 800; /* Bolder for emphasis */
+    background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
 }
 
 /* Adjust font size for mobile */
 @media (max-width: 480px) {
-  header h1 {
-      font-size: var(--font-size-xl);
-  }
-  .header-icon {
-      font-size: var(--font-size-lg);
-  }
+    header h1 {
+        font-size: var(--font-size-xl);
+    }
+    .header-icon {
+        font-size: var(--font-size-lg);
+    }
 }
