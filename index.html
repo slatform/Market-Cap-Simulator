@@ -27,7 +27,10 @@
 <body>
     <header>
         <div class="header-container">
-            <h1>Market Cap Simulator</h1>
+            <h1>
+                <i class="fas fa-coins header-icon"></i>
+                <span class="gradient-text">Market Cap Simulator</span>
+            </h1>
         </div>
     </header>
     
@@ -84,19 +87,13 @@
 
         <section id="results-section" class="results-section">
             <div id="comparisonResult" class="comparison-result"></div>
-        </section>
-    </main>
-    <main>
-        
-        
-        <div class="section-divider"></div>
-    
-        <section id="results-section" class="results-section">
-            <div id="comparisonResult" class="comparison-result"></div>
             <div id="chartContainer" class="chart-container">
                 <canvas id="comparisonChart"></canvas>
             </div>
         </section>
+    </main>
+    <main>
+        <div class="section-divider"></div>
     
         <!-- Portfolio Section -->
         <section id="portfolio-section" class="portfolio-section">
@@ -113,6 +110,23 @@
             </div>
             <div id="portfolioResult" class="portfolio-result"></div>
         </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Top Gainers & Losers Section -->
+        <section id="gainers-losers-section" class="gainers-losers-section">
+            <h2>Top 10 Gainers & Losers (24h)</h2>
+            <div class="gainers-losers-grid">
+                <div class="gainers-table">
+                    <h3>Top Gainers</h3>
+                    <div id="topGainers" class="crypto-table"></div>
+                </div>
+                <div class="losers-table">
+                    <h3>Top Losers</h3>
+                    <div id="topLosers" class="crypto-table"></div>
+                </div>
+            </div>
+        </section>
     </main>
     
     <footer>
@@ -127,5 +141,5 @@
     </div>
 
     <script src="script.js"></script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9241cdca188d674a',t:'MTc0MjYwNTc2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

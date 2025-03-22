@@ -544,6 +544,90 @@ footer {
   margin: var(--space-3xl) 0;
 }
 
+/* New Gainers & Losers Section */
+.gainers-losers-section {
+  margin-top: var(--space-4xl);
+  padding: var(--space-3xl);
+  background: var(--gradient-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(30, 144, 255, 0.1);
+  text-align: center;
+}
+
+.gainers-losers-section h2 {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-xl);
+  font-weight: 500;
+  margin-bottom: var(--space-xl);
+}
+
+.gainers-losers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.gainers-table, .losers-table {
+  text-align: left;
+}
+
+.gainers-table h3, .losers-table h3 {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  margin-bottom: var(--space-md);
+  color: var(--color-text-primary);
+}
+
+.crypto-table {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.crypto-table .table-row {
+  display: flex;
+  align-items: center;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.crypto-table .table-row:last-child {
+  border-bottom: none;
+}
+
+.crypto-table .coin-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.crypto-table .coin-info img {
+  width: 20px;
+  height: 20px;
+  margin-right: var(--space-sm);
+}
+
+.crypto-table .coin-info span {
+  font-size: var(--font-size-md);
+  font-weight: 400;
+}
+
+.crypto-table .percentage {
+  font-family: 'Roboto Mono', monospace;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+}
+
+.crypto-table .percentage.positive {
+  color: var(--color-positive);
+}
+
+.crypto-table .percentage.negative {
+  color: var(--color-negative);
+}
+
 /* Mobile Adjustments */
 @media (max-width: 768px) {
   .comparison-grid {
@@ -585,22 +669,21 @@ footer {
     font-size: var(--font-size-md);
   }
 
-  /* Adjusted marketcap-values for mobile to fix overflow */
   .comparison-result .marketcap-values {
     font-size: var(--font-size-sm);
-    flex-wrap: wrap; /* Allow wrapping to prevent overflow */
-    gap: var(--space-sm); /* Add gap between wrapped items */
-    justify-content: center; /* Center items when wrapped */
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    justify-content: center;
   }
 
   .comparison-result .marketcap-values .value {
-    flex: 1 1 45%; /* Allow each value to take up roughly half the width */
-    justify-content: center; /* Center the content within each value */
+    flex: 1 1 45%;
+    justify-content: center;
   }
 
   .comparison-result .marketcap-values .value span {
     font-size: var(--font-size-sm);
-    white-space: nowrap; /* Prevent the text from breaking mid-word */
+    white-space: nowrap;
   }
 
   .portfolio-section {
@@ -612,9 +695,17 @@ footer {
     font-size: var(--font-size-sm);
   }
 
-  /* Ensure dropdown width matches the input on mobile */
   .coin-dropdown {
     width: 100%;
+  }
+
+  .gainers-losers-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .gainers-table h3, .losers-table h3 {
+    font-size: var(--font-size-md);
   }
 }
 
@@ -669,9 +760,8 @@ footer {
     height: 16px;
   }
 
-  /* Further adjustments for smaller screens */
   .comparison-result .marketcap-values .value {
-    flex: 1 1 100%; /* Stack values on very small screens */
+    flex: 1 1 100%;
     justify-content: center;
   }
 
@@ -681,5 +771,74 @@ footer {
 
   .portfolio-input label {
     font-size: var(--font-size-sm);
+  }
+
+  .gainers-losers-section {
+    padding: var(--space-lg);
+  }
+
+  .gainers-losers-section h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .crypto-table .coin-info img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .crypto-table .coin-info span {
+    font-size: var(--font-size-sm);
+  }
+
+  .crypto-table .percentage {
+    font-size: var(--font-size-sm);
+  }
+}
+/* Enhanced Header Styles */
+.header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header h1 {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  transition: transform var(--duration-fast) ease;
+}
+
+header h1:hover {
+  transform: scale(1.05); /* Subtle zoom on hover */
+}
+
+.header-icon {
+  color: var(--color-accent-primary);
+  font-size: var(--font-size-xl);
+  transition: color var(--duration-normal);
+}
+
+header h1:hover .header-icon {
+  color: var(--color-accent-secondary); /* Color shift on hover */
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800; /* Bolder for emphasis */
+}
+
+/* Adjust font size for mobile */
+@media (max-width: 480px) {
+  header h1 {
+      font-size: var(--font-size-xl);
+  }
+  .header-icon {
+      font-size: var(--font-size-lg);
   }
 }

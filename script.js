@@ -12,6 +12,7 @@ async function initApp() {
     showGlobalLoader();
     updateLastUpdated();
     await loadCryptoList();
+    await loadTopGainersLosers(); // Load gainers and losers on init
     hideGlobalLoader();
     
     document.querySelectorAll('.search-container input').forEach(input => {
@@ -80,7 +81,7 @@ function updateLastUpdated() {
     document.getElementById('lastUpdated').textContent = `Last updated: ${now.toLocaleString()}`;
 }
 
-// Fetch top 500 cryptos (changed from 200 to 500)
+// Fetch top 250 cryptos (kept at 250 as per your latest code)
 async function loadCryptoList() {
     const apiUrl = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false";
     
@@ -91,6 +92,51 @@ async function loadCryptoList() {
     } catch (error) {
         console.error("Error fetching crypto list:", error);
         showError("Unable to fetch cryptocurrency data. Please try again later.");
+    }
+}
+
+// New function to load top gainers and losers
+async function loadTopGainersLosers() {
+    const gainersSection = document.getElementById('topGainers');
+    const losersSection = document.getElementById('topLosers');
+    
+    try {
+        // Use existing cryptoList data
+        const sortedByChange = [...cryptoList]
+            .filter(coin => coin.price_change_percentage_24h !== null)
+            .sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
+        
+        const topGainers = sortedByChange.slice(0, 10);
+        const topLosers = sortedByChange.slice(-10).reverse();
+
+        // Render gainers
+        gainersSection.innerHTML = topGainers.map(coin => `
+            <div class="table-row">
+                <div class="coin-info">
+                    <img src="${coin.image}" alt="${coin.symbol}">
+                    <span>${coin.symbol.toUpperCase()}</span>
+                </div>
+                <span class="percentage positive">${coin.price_change_percentage_24h.toFixed(2)}%</span>
+            </div>
+        `).join('');
+
+        // Render losers
+        losersSection.innerHTML = topLosers.map(coin => `
+            <div class="table-row">
+                <div class="coin-info">
+                    <img src="${coin.image}" alt="${coin.symbol}">
+                    <span>${coin.symbol.toUpperCase()}</span>
+                </div>
+                <span class="percentage negative">${coin.price_change_percentage_24h.toFixed(2)}%</span>
+            </div>
+        `).join('');
+
+        document.getElementById('gainers-losers-section').style.display = 'block';
+    } catch (error) {
+        console.error("Error loading gainers and losers:", error);
+        gainersSection.innerHTML = '<p>Unable to load data.</p>';
+        losersSection.innerHTML = '<p>Unable to load data.</p>';
+        document.getElementById('gainers-losers-section').style.display = 'block';
     }
 }
 
