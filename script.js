@@ -19,9 +19,9 @@ const staticPrices = {
 async function initApp() {
     showGlobalLoader();
     updateLastUpdated();
+    loadPortfolioTracker(); // Load static tracker first for immediate content
     await loadCryptoList();
     await loadTopGainersLosers();
-    loadPortfolioTracker();
     hideGlobalLoader();
     
     document.querySelectorAll('.search-container input').forEach(input => {
@@ -91,7 +91,7 @@ function showError(message, targetId = 'comparisonResult') {
 // Update last updated timestamp
 function updateLastUpdated() {
     const now = new Date();
-    document.getElementById('lastUpdated').textContent = `Last updated: ${now.toLocaleString()}`;
+    document.getElementById('lastUpdated').textContent = `Last dynamic update: ${now.toLocaleString()}`;
 }
 
 // Fetch top 250 cryptos
@@ -106,7 +106,7 @@ async function loadCryptoList() {
         cryptoList = await response.json();
     } catch (error) {
         console.error("Error fetching crypto list:", error);
-        showError("Unable to fetch cryptocurrency data at this time. Please check back later.");
+        showError("Unable to fetch cryptocurrency data at this time. Use static features below.");
     }
 }
 
@@ -149,8 +149,8 @@ async function loadTopGainersLosers() {
         document.getElementById('gainers-losers-section').style.display = 'block';
     } catch (error) {
         console.error("Error loading gainers and losers:", error);
-        gainersSection.innerHTML = '<p>Unable to load gainers data. Please try again later.</p>';
-        losersSection.innerHTML = '<p>Unable to load losers data. Please try again later.</p>';
+        gainersSection.innerHTML = '<p>Unable to load live gainers data. Check back later.</p>';
+        losersSection.innerHTML = '<p>Unable to load live losers data. Check back later.</p>';
         document.getElementById('gainers-losers-section').style.display = 'block';
     }
 }
@@ -452,7 +452,7 @@ function loadPortfolioTracker() {
     const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
     
     if (savedPortfolio.length === 0) {
-        trackerList.innerHTML = '<p>Your portfolio is empty. Add coins above to track their value.</p>';
+        trackerList.innerHTML = '<p>Your portfolio is empty. Add coins like Bitcoin or Ethereum to track their value offline or with live updates.</p>';
     } else {
         renderTrackerList(savedPortfolio);
     }
@@ -493,7 +493,7 @@ function renderTrackerList(portfolio) {
     trackerList.innerHTML = '';
 
     if (portfolio.length === 0) {
-        trackerList.innerHTML = '<p>Your portfolio is empty. Add coins above to track their value.</p>';
+        trackerList.innerHTML = '<p>Your portfolio is empty. Add coins like Bitcoin or Ethereum to track their value offline or with live updates.</p>';
         return;
     }
 
@@ -574,5 +574,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePortfolioLabels();
 });
 
-// Load crypto list on page load
+// Load app on page load
 window.onload = initApp;

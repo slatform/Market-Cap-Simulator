@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Compare cryptocurrency market caps, calculate portfolio worth, track your holdings, and monitor top gainers and losers with real-time data from CoinGecko.">
-    <title>Market Cap Simulator</title>
+    <meta name="description" content="Compare cryptocurrency market caps, calculate portfolio worth, track your holdings offline or with real-time CoinGecko data, and monitor top gainers and losers. A comprehensive crypto toolset updated March 2025.">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="cryptocurrency, market cap simulator, portfolio tracker, crypto prices, CoinGecko, top gainers losers">
+    <title>Market Cap Simulator - Crypto Tools & Portfolio Tracker</title>
 
     <!-- Google Analytics (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WSSWV49R83"></script>
@@ -37,7 +39,7 @@
     <main>
         <section class="intro">
             <h2>Welcome to Market Cap Simulator</h2>
-            <p>Compare market caps of your favorite coins, calculate what your portfolio could be worth under different market conditions, and stay updated with the top 10 gainers and losers in the crypto market over the past 24 hours. All data is sourced in real-time.</p>
+            <p>Explore the world of cryptocurrencies with our tools. Compare market caps of your favorite coins, calculate what your portfolio could be worth under different market conditions, track your crypto holdings offline or with real-time data, and stay updated with the top 10 gainers and losers in the crypto market over the past 24 hours. Whether you're a beginner or an expert, use our simulator to understand market cap dynamics and manage your investments.</p>
         </section>
 
         <section class="comparison-tool">
@@ -87,7 +89,7 @@
 
         <section id="results-section" class="results-section">
             <div id="comparisonResult" class="comparison-result">
-                <p>Select two cryptocurrencies above to compare their market caps and see hypothetical price scenarios.</p>
+                <p>Select two cryptocurrencies above to compare their market caps and see hypothetical price scenarios based on real-time data.</p>
             </div>
             <div id="chartContainer" class="chart-container">
                 <canvas id="comparisonChart"></canvas>
@@ -99,6 +101,7 @@
     
         <section id="portfolio-section" class="portfolio-section">
             <h2>Your Portfolio Worth</h2>
+            <p>Input your holdings below to calculate their value if they matched the market cap of another coin.</p>
             <div class="portfolio-inputs">
                 <div class="portfolio-input">
                     <label for="coinAAmount">Amount of <span id="coinALabel">First Crypto</span>:</label>
@@ -116,9 +119,9 @@
 
         <div class="section-divider"></div>
 
-        <!-- New Portfolio Tracker Section -->
         <section id="tracker-section" class="tracker-section">
             <h2>Track Your Portfolio</h2>
+            <p>Add your cryptocurrency holdings below to track their value using static prices or refresh with live CoinGecko data.</p>
             <div class="tracker-inputs">
                 <input type="text" id="trackerCoinName" placeholder="Coin Name (e.g., Bitcoin)">
                 <input type="number" id="trackerCoinAmount" min="0" step="0.0001" placeholder="Amount">
@@ -127,7 +130,7 @@
                 </button>
             </div>
             <div id="trackerList" class="tracker-list">
-                <p>Your portfolio is empty. Add coins above to track their value.</p>
+                <p>Your portfolio is empty. Add coins like Bitcoin or Ethereum to track their value offline or with live updates.</p>
             </div>
             <div class="tracker-actions">
                 <button id="refreshTrackerButton" class="refresh-button" onclick="refreshTrackerPrices()">
@@ -143,17 +146,18 @@
 
         <section id="gainers-losers-section" class="gainers-losers-section">
             <h2>Top 10 Gainers & Losers (24h)</h2>
+            <p>View the top 10 cryptocurrencies with the highest gains and largest losses over the past 24 hours, updated in real-time.</p>
             <div class="gainers-losers-grid">
                 <div class="gainers-table">
                     <h3>Top Gainers</h3>
                     <div id="topGainers" class="crypto-table">
-                        <p>Live data on the top 10 cryptocurrencies with the highest 24-hour gains will appear here.</p>
+                        <p>Live data on the top 10 cryptocurrencies with the highest 24-hour gains will appear here once loaded.</p>
                     </div>
                 </div>
                 <div class="losers-table">
                     <h3>Top Losers</h3>
                     <div id="topLosers" class="crypto-table">
-                        <p>Live data on the top 10 cryptocurrencies with the largest 24-hour losses will appear here.</p>
+                        <p>Live data on the top 10 cryptocurrencies with the largest 24-hour losses will appear here once loaded.</p>
                     </div>
                 </div>
             </div>
@@ -162,8 +166,8 @@
     
     <footer>
         <div class="footer-container">
-            <p>Data provided by CoinGecko API</p>
-            <p id="lastUpdated">Last updated: Loading...</p>
+            <p>Data provided by CoinGecko API | Static content updated March 21, 2025</p>
+            <p id="lastUpdated">Last dynamic update: Loading...</p>
         </div>
     </footer>
 
@@ -171,6 +175,22 @@
         <div class="loader-circle"></div>
     </div>
 
+    <!-- Noscript fallback for basic content -->
+    <noscript>
+        <style>
+            .results-section, .portfolio-section, .tracker-section, .gainers-losers-section {
+                display: block !important;
+            }
+            .global-loader {
+                display: none !important;
+            }
+        </style>
+        <div class="noscript-notice">
+            <p>This site requires JavaScript for full functionality. Without it, you can still explore static content below, including a cryptocurrency portfolio tracker and market cap comparison tool descriptions.</p>
+        </div>
+    </noscript>
+
     <script src="script.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9241cdca188d674a',t:'MTc0MjYwNTc2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9241cdca188d674a',t:'MTc0MjYwNTc2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
 </html>
