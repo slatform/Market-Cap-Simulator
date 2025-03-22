@@ -6,12 +6,22 @@ let selectedIndex = -1;
 let coinAData = null;
 let coinBData = null;
 
+// Static fallback prices (example values as of March 2025)
+const staticPrices = {
+    "bitcoin": 60000,
+    "ethereum": 3000,
+    "binancecoin": 500,
+    "solana": 150,
+    "ripple": 0.5
+};
+
 // Initialize the application
 async function initApp() {
     showGlobalLoader();
     updateLastUpdated();
     await loadCryptoList();
     await loadTopGainersLosers();
+    loadPortfolioTracker();
     hideGlobalLoader();
     
     document.querySelectorAll('.search-container input').forEach(input => {
@@ -73,6 +83,8 @@ function showError(message, targetId = 'comparisonResult') {
     
     if (targetId === 'comparisonResult') {
         document.getElementById('results-section').style.display = 'block';
+    } else if (targetId === 'trackerList') {
+        document.getElementById('tracker-section').style.display = 'block';
     }
 }
 
@@ -369,75 +381,6 @@ function formatPrice(price) {
     return price.toLocaleString(undefined, { minimumFractionDigits: 8, maximumFractionDigits: 8 });
 }
 
-// Create comparison chart
-function createComparisonChart(coinASymbol, coinBSymbol, marketCapA, marketCapB) {
-    const ctx = document.getElementById('comparisonChart').getContext('2d');
-    
-    if (chart) chart.destroy();
-    
-    chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [coinASymbol, coinBSymbol],
-            datasets: [{
-                label: 'Market Cap (USD)',
-                data: [marketCapA, marketCapB],
-                backgroundColor: [
-                    'rgba(255, 140, 0, 0.8)',
-                    'rgba(255, 46, 99, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(255, 140, 0, 1)',
-                    'rgba(255, 46, 99, 1)'
-                ],
-                borderWidth: 2,
-                borderRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: value => '$' + formatMarketCap(value),
-                        color: '#ddd',
-                        font: { size: 12 }
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
-                },
-                x: {
-                    ticks: {
-                        color: '#ddd',
-                        font: { size: 14 }
-                    },
-                    grid: { display: false }
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                    titleFont: { size: 14 },
-                    bodyFont: { size: 12 },
-                    callbacks: {
-                        label: context => 'Market Cap: $' + formatMarketCap(context.raw)
-                    }
-                }
-            },
-            animation: {
-                duration: 1000,
-                easing: 'easeOutQuart'
-            }
-        }
-    });
-    
-    document.getElementById('chartContainer').style.display = 'block';
-}
-
 // Update Portfolio Labels
 function updatePortfolioLabels() {
     const searchInputA = document.getElementById("coinASearch");
@@ -501,6 +444,127 @@ function calculatePortfolioWorth() {
     portfolioSection.classList.remove('fade-in');
     void portfolioSection.offsetWidth;
     portfolioSection.classList.add('fade-in');
+}
+
+// Portfolio Tracker Functions
+function loadPortfolioTracker() {
+    const trackerList = document.getElementById('trackerList');
+    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
+    
+    if (savedPortfolio.length === 0) {
+        trackerList.innerHTML = '<p>Your portfolio is empty. Add coins above to track their value.</p>';
+    } else {
+        renderTrackerList(savedPortfolio);
+    }
+    document.getElementById('tracker-section').style.display = 'block';
+}
+
+function addCoinToTracker() {
+    const coinNameInput = document.getElementById('trackerCoinName');
+    const coinAmountInput = document.getElementById('trackerCoinAmount');
+    const coinName = coinNameInput.value.trim();
+    const coinAmount = parseFloat(coinAmountInput.value) || 0;
+
+    if (!coinName || coinAmount <= 0) {
+        showError("Please enter a valid coin name and amount.", 'trackerList');
+        return;
+    }
+
+    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
+    const coinId = coinName.toLowerCase().replace(/\s+/g, '-');
+    const staticPrice = staticPrices[coinId] || 0;
+    const coinData = {
+        name: coinName,
+        amount: coinAmount,
+        price: staticPrice,
+        value: staticPrice * coinAmount
+    };
+
+    savedPortfolio.push(coinData);
+    localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
+    renderTrackerList(savedPortfolio);
+
+    coinNameInput.value = '';
+    coinAmountInput.value = '';
+}
+
+function renderTrackerList(portfolio) {
+    const trackerList = document.getElementById('trackerList');
+    trackerList.innerHTML = '';
+
+    if (portfolio.length === 0) {
+        trackerList.innerHTML = '<p>Your portfolio is empty. Add coins above to track their value.</p>';
+        return;
+    }
+
+    let totalValue = 0;
+    portfolio.forEach((coin, index) => {
+        totalValue += coin.value;
+        trackerList.innerHTML += `
+            <div class="tracker-row">
+                <div class="coin-info">
+                    <span>${coin.name}</span> - <span>${coin.amount.toFixed(4)}</span>
+                </div>
+                <div class="coin-value">$${formatPrice(coin.value)} ($${coin.price.toLocaleString()})</div>
+                <button class="remove-coin" onclick="removeCoinFromTracker(${index})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    trackerList.innerHTML += `
+        <div class="tracker-row">
+            <div class="coin-info"><strong>Total Value:</strong></div>
+            <div class="coin-value"><strong>$${formatPrice(totalValue)}</strong></div>
+        </div>
+    `;
+}
+
+function removeCoinFromTracker(index) {
+    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
+    savedPortfolio.splice(index, 1);
+    localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
+    renderTrackerList(savedPortfolio);
+}
+
+async function refreshTrackerPrices() {
+    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
+    if (savedPortfolio.length === 0) return;
+
+    showLoading('refreshTrackerButton');
+    const coinNames = savedPortfolio.map(coin => coin.name.toLowerCase().replace(/\s+/g, '-'));
+    const apiUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${coinNames.join(',')}&vs_currencies=usd`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+        }
+        const data = await response.json();
+
+        savedPortfolio.forEach(coin => {
+            const coinId = coin.name.toLowerCase().replace(/\s+/g, '-');
+            if (data[coinId] && data[coinId].usd) {
+                coin.price = data[coinId].usd;
+                coin.value = coin.amount * coin.price;
+            }
+        });
+
+        localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
+        renderTrackerList(savedPortfolio);
+    } catch (error) {
+        console.error("Error refreshing tracker prices:", error);
+        showError("Failed to refresh prices. Using static values.", 'trackerList');
+    } finally {
+        hideLoading('refreshTrackerButton');
+        updateLastUpdated();
+    }
+}
+
+function clearTracker() {
+    localStorage.removeItem('cryptoPortfolio');
+    loadPortfolioTracker();
 }
 
 // Event listeners for real-time portfolio updates
