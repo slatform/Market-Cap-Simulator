@@ -893,6 +893,21 @@ body.light-mode .clear-button:hover {
   font-weight: 400;
 }
 
+/* Styling for clickable coin links */
+.crypto-table .coin-info .coin-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: color var(--duration-normal, 300ms);
+  padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem); /* Padding for larger touch target */
+}
+
+.crypto-table .coin-info .coin-link:hover {
+  color: var(--color-accent-primary);
+  text-decoration: underline;
+}
+
 .crypto-table .percentage {
   font-family: 'Roboto Mono', monospace;
   font-size: var(--font-size-md, 1rem);
@@ -1017,6 +1032,11 @@ body.light-mode .clear-button:hover {
 
   .section-divider {
     margin: var(--space-xl, 2rem) 0;
+  }
+
+  /* Ensure coin links are mobile-friendly */
+  .crypto-table .coin-info .coin-link {
+    padding: var(--space-sm, 0.5rem); /* Larger touch target for mobile */
   }
 }
 

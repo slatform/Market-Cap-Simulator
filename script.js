@@ -138,7 +138,7 @@ async function loadCryptoList() {
     }
 }
 
-// Load top gainers and losers
+// Load top gainers and losers with clickable links to CoinGecko charts
 async function loadTopGainersLosers() {
     const gainersSection = document.getElementById('topGainers');
     const losersSection = document.getElementById('topLosers');
@@ -157,8 +157,10 @@ async function loadTopGainersLosers() {
         gainersSection.innerHTML = topGainers.map(coin => `
             <div class="table-row">
                 <div class="coin-info">
-                    <img src="${coin.image}" alt="${coin.symbol}">
-                    <span>${coin.symbol.toUpperCase()}</span>
+                    <a href="https://www.coingecko.com/en/coins/${coin.id}" target="_blank" rel="noopener noreferrer" class="coin-link">
+                        <img src="${coin.image}" alt="${coin.symbol}">
+                        <span>${coin.symbol.toUpperCase()}</span>
+                    </a>
                 </div>
                 <span class="percentage positive">${coin.price_change_percentage_24h.toFixed(2)}%</span>
             </div>
@@ -167,8 +169,10 @@ async function loadTopGainersLosers() {
         losersSection.innerHTML = topLosers.map(coin => `
             <div class="table-row">
                 <div class="coin-info">
-                    <img src="${coin.image}" alt="${coin.symbol}">
-                    <span>${coin.symbol.toUpperCase()}</span>
+                    <a href="https://www.coingecko.com/en/coins/${coin.id}" target="_blank" rel="noopener noreferrer" class="coin-link">
+                        <img src="${coin.image}" alt="${coin.symbol}">
+                        <span>${coin.symbol.toUpperCase()}</span>
+                    </a>
                 </div>
                 <span class="percentage negative">${coin.price_change_percentage_24h.toFixed(2)}%</span>
             </div>
