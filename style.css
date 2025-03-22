@@ -46,7 +46,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  transition: background var(--duration-normal), color var(--duration-normal);
+  transition: background var(--duration-normal, 300ms), color var(--duration-normal, 300ms);
 }
 
 /* Header */
@@ -108,7 +108,7 @@ header h1:hover .header-icon {
   cursor: pointer;
   color: var(--color-text-primary);
   font-size: var(--font-size-md, 1rem);
-  transition: border-color var(--duration-normal), color var(--duration-normal);
+  transition: border-color var(--duration-normal, 300ms), color var(--duration-normal, 300ms);
 }
 
 .theme-toggle:hover {
@@ -323,7 +323,7 @@ body.light-mode .compare-button:hover {
 
 /* Results Section */
 .results-section {
-  display: none;
+  display: none; /* Hidden by default */
   margin-top: var(--space-3xl, 3rem);
   padding: var(--space-3xl, 3rem);
   background: var(--gradient-card);
@@ -331,6 +331,10 @@ body.light-mode .compare-button:hover {
   box-shadow: var(--shadow-lg, 0 10px 15px var(--shadow-color));
   border: 1px solid rgba(30, 144, 255, 0.1);
   text-align: center;
+}
+
+.results-section.visible {
+  display: block; /* Show when comparison is successful */
 }
 
 .results-section.fade-in {
@@ -562,6 +566,7 @@ body.light-mode .global-loader {
 
 /* Portfolio Section */
 .portfolio-section {
+  display: none; /* Hidden by default */
   margin-top: var(--space-4xl, 4rem);
   padding: var(--space-3xl, 3rem);
   background: var(--gradient-card);
@@ -569,7 +574,10 @@ body.light-mode .global-loader {
   box-shadow: var(--shadow-lg, 0 10px 15px var(--shadow-color));
   border: 1px solid rgba(30, 144, 255, 0.1);
   text-align: center;
-  display: none;
+}
+
+.portfolio-section.visible {
+  display: block; /* Show when comparison is successful */
 }
 
 .portfolio-section.fade-in {
@@ -799,6 +807,15 @@ body.light-mode .clear-button:hover {
   height: 1px;
   background: var(--input-border);
   margin: var(--space-3xl, 3rem) 0;
+  display: block; /* Default display */
+}
+
+/* Hide dividers when adjacent sections are not visible */
+.results-section:not(.visible) + .section-divider,
+.portfolio-section:not(.visible) + .section-divider,
+.section-divider + .results-section:not(.visible),
+.section-divider + .portfolio-section:not(.visible) {
+  display: none;
 }
 
 /* Gainers & Losers Section */
@@ -915,6 +932,7 @@ body.light-mode .clear-button:hover {
 
   .results-section {
     padding: var(--space-xl, 2rem);
+    margin-top: var(--space-xl, 2rem);
   }
 
   .comparison-result .coin-comparison {
@@ -961,6 +979,7 @@ body.light-mode .clear-button:hover {
 
   .portfolio-section {
     padding: var(--space-xl, 2rem);
+    margin-top: var(--space-xl, 2rem);
   }
 
   .portfolio-input input {
@@ -994,6 +1013,10 @@ body.light-mode .clear-button:hover {
 
   .gainers-table h3, .losers-table h3 {
     font-size: var(--font-size-md, 1rem);
+  }
+
+  .section-divider {
+    margin: var(--space-xl, 2rem) 0;
   }
 }
 
@@ -1039,6 +1062,7 @@ body.light-mode .clear-button:hover {
 
   .results-section {
     padding: var(--space-lg, 1.5rem);
+    margin-top: var(--space-lg, 1.5rem);
   }
 
   .comparison-result .coin-detail .coin-label {
@@ -1069,6 +1093,7 @@ body.light-mode .clear-button:hover {
 
   .portfolio-section {
     padding: var(--space-lg, 1.5rem);
+    margin-top: var(--space-lg, 1.5rem);
   }
 
   .portfolio-input label {
@@ -1077,6 +1102,7 @@ body.light-mode .clear-button:hover {
 
   .tracker-section {
     padding: var(--space-lg, 1.5rem);
+    margin-top: var(--space-lg, 1.5rem);
   }
 
   .tracker-section h2 {
@@ -1085,6 +1111,7 @@ body.light-mode .clear-button:hover {
 
   .gainers-losers-section {
     padding: var(--space-lg, 1.5rem);
+    margin-top: var(--space-lg, 1.5rem);
   }
 
   .gainers-losers-section h2 {
@@ -1102,5 +1129,9 @@ body.light-mode .clear-button:hover {
 
   .crypto-table .percentage {
     font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .section-divider {
+    margin: var(--space-lg, 1.5rem) 0;
   }
 }

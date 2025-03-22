@@ -72,7 +72,7 @@ function hideLoading(elementId) {
     isLoading = false;
 }
 
-// Show error message
+// Show error message without showing the section
 function showError(message, targetId = 'comparisonResult') {
     const errorElement = document.createElement('div');
     errorElement.className = 'error-message';
@@ -82,11 +82,9 @@ function showError(message, targetId = 'comparisonResult') {
     target.innerHTML = '';
     target.appendChild(errorElement);
     
-    if (targetId === 'comparisonResult') {
-        document.getElementById('results-section').style.display = 'block';
-    } else if (targetId === 'trackerList') {
-        document.getElementById('tracker-section').style.display = 'block';
-    }
+    // Do not show the section when there's an error
+    const section = targetId === 'comparisonResult' ? document.getElementById('results-section') : document.getElementById('tracker-section');
+    section.classList.remove('visible');
 }
 
 // Update last updated timestamp
@@ -255,10 +253,7 @@ async function compareMarketCaps() {
     const comparisonResult = document.getElementById("comparisonResult");
     
     comparisonResult.innerHTML = "";
-    resultsSection.style.display = "block";
-    resultsSection.classList.remove('fade-in');
-    void resultsSection.offsetWidth;
-    resultsSection.classList.add('fade-in');
+    resultsSection.classList.remove('visible'); // Hide by default until successful comparison
 
     const coinA = searchInputA.dataset.coinId;
     const coinB = searchInputB.dataset.coinId;
@@ -352,6 +347,13 @@ async function compareMarketCaps() {
                 price: priceB,
                 image: coinBImage
             };
+
+            // Show the results section only on successful comparison
+            resultsSection.classList.add('visible');
+            resultsSection.classList.remove('fade-in');
+            void resultsSection.offsetWidth; // Trigger reflow for animation
+            resultsSection.classList.add('fade-in');
+
             calculatePortfolioWorth();
         } else {
             showError("Could not fetch data for the selected cryptocurrencies.");
@@ -398,9 +400,10 @@ function calculatePortfolioWorth() {
     const portfolioSection = document.getElementById('portfolio-section');
     const portfolioResult = document.getElementById('portfolioResult');
     
+    portfolioSection.classList.remove('visible'); // Hide by default
+
     if (!coinAData || !coinBData) {
         portfolioResult.innerHTML = '<p>Please compare two coins first to calculate portfolio worth.</p>';
-        portfolioSection.style.display = 'block';
         return;
     }
 
@@ -409,7 +412,6 @@ function calculatePortfolioWorth() {
 
     if (coinAAmount === 0 && coinBAmount === 0) {
         portfolioResult.innerHTML = '<p>Please enter the amount of at least one cryptocurrency.</p>';
-        portfolioSection.style.display = 'block';
         return;
     }
 
@@ -441,7 +443,7 @@ function calculatePortfolioWorth() {
     }
 
     portfolioResult.innerHTML = portfolioHTML;
-    portfolioSection.style.display = 'block';
+    portfolioSection.classList.add('visible'); // Show only if there’s a result
     portfolioSection.classList.remove('fade-in');
     void portfolioSection.offsetWidth;
     portfolioSection.classList.add('fade-in');
