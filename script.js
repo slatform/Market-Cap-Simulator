@@ -1,7 +1,7 @@
+// script.js
 // Global variables
 let cryptoList = [];
 let isLoading = false;
-let chart = null;
 let selectedIndex = -1;
 let coinAData = null;
 let coinBData = null;
@@ -14,15 +14,16 @@ async function initApp() {
     await loadTopGainersLosers();
     setupThemeToggle();
     hideGlobalLoader();
-    
+
+    // Close dropdowns when clicking outside
     document.querySelectorAll('.search-container input').forEach(input => {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.crypto-selector')) {
-                document.getElementById('coinADropdown').classList.remove('active');
-                document.getElementById('coinBDropdown').classList.remove('active');
+                document.getElementById('coinADropdown')?.classList.remove('active');
+                document.getElementById('coinBDropdown')?.classList.remove('active');
             }
         });
-        
+
         input.addEventListener('focus', () => {
             const searchInputId = input.id;
             const dropdownId = searchInputId.replace('Search', 'Dropdown');
@@ -35,17 +36,20 @@ async function initApp() {
 
 // Show global loader
 function showGlobalLoader() {
-    document.getElementById('globalLoader').style.display = 'flex';
+    const loader = document.getElementById('globalLoader');
+    if (loader) loader.style.display = 'flex';
 }
 
 // Hide global loader
 function hideGlobalLoader() {
-    document.getElementById('globalLoader').style.display = 'none';
+    const loader = document.getElementById('globalLoader');
+    if (loader) loader.style.display = 'none';
 }
 
 // Show loading spinner
 function showLoading(elementId) {
     const element = document.getElementById(elementId);
+    if (!element) return;
     const loadingSpinner = document.createElement('div');
     loadingSpinner.className = 'loading';
     loadingSpinner.id = `${elementId}-loading`;
@@ -56,30 +60,31 @@ function showLoading(elementId) {
 // Hide loading spinner
 function hideLoading(elementId) {
     const loadingSpinner = document.getElementById(`${elementId}-loading`);
-    if (loadingSpinner) {
-        loadingSpinner.remove();
-    }
+    if (loadingSpinner) loadingSpinner.remove();
     isLoading = false;
 }
 
 // Show error message
 function showError(message, targetId = 'comparisonResult') {
+    const target = document.getElementById(targetId);
+    if (!target) return;
     const errorElement = document.createElement('div');
     errorElement.className = 'error-message';
     errorElement.textContent = message;
-    
-    const target = document.getElementById(targetId);
     target.innerHTML = '';
     target.appendChild(errorElement);
-    
+
     const section = targetId === 'comparisonResult' ? document.getElementById('results-section') : document.getElementById('portfolio-section');
-    section.classList.remove('visible');
+    if (section) section.classList.remove('visible');
 }
 
 // Update last updated timestamp
 function updateLastUpdated() {
-    const now = new Date();
-    document.getElementById('lastUpdated').textContent = `Last dynamic update: ${now.toLocaleString()}`;
+    const lastUpdated = document.getElementById('lastUpdated');
+    if (lastUpdated) {
+        const now = new Date();
+        lastUpdated.textContent = `Last dynamic update: ${now.toLocaleString()}`;
+    }
 }
 
 // Fetch top 500 cryptos
@@ -93,8 +98,15 @@ async function loadCryptoList() {
         for (let page = 1; page <= pagesNeeded; page++) {
             const apiUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${coinsPerPage}&page=${page}&sparkline=false`;
             const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error(`API error on page ${page}: ${response.status}`);
+            if (!response.ok) {
+                console.warn(`API error on page ${page}: ${response.status}`);
+                continue; // Skip failed pages
+            }
             const coins = await response.json();
+            if (!Array.isArray(coins)) {
+                console.warn(`Invalid data on page ${page}`);
+                continue;
+            }
             allCoins = allCoins.concat(coins);
             if (allCoins.length >= totalCoins) {
                 allCoins = allCoins.slice(0, totalCoins);
@@ -102,6 +114,9 @@ async function loadCryptoList() {
             }
         }
         cryptoList = allCoins;
+        if (cryptoList.length === 0) {
+            throw new Error("No coins fetched");
+        }
     } catch (error) {
         console.error("Error fetching crypto list:", error);
         showError("Unable to fetch cryptocurrency data at this time.");
@@ -113,13 +128,14 @@ async function loadCryptoList() {
 async function loadTopGainersLosers() {
     const gainersSection = document.getElementById('topGainers');
     const losersSection = document.getElementById('topLosers');
-    
+    if (!gainersSection || !losersSection) return;
+
     try {
         if (cryptoList.length === 0) throw new Error("Crypto list not loaded");
         const sortedByChange = [...cryptoList]
             .filter(coin => coin.price_change_percentage_24h !== null)
             .sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
-        
+
         const topGainers = sortedByChange.slice(0, 10);
         const topLosers = sortedByChange.slice(-10).reverse();
 
@@ -147,12 +163,14 @@ async function loadTopGainersLosers() {
             </div>
         `).join('');
 
-        document.getElementById('gainers-losers-section').style.display = 'block';
+        const section = document.getElementById('gainers-losers-section');
+        if (section) section.style.display = 'block';
     } catch (error) {
         console.error("Error loading gainers and losers:", error);
         gainersSection.innerHTML = '<p>Unable to load live gainers data.</p>';
         losersSection.innerHTML = '<p>Unable to load live losers data.</p>';
-        document.getElementById('gainers-losers-section').style.display = 'block';
+        const section = document.getElementById('gainers-losers-section');
+        if (section) section.style.display = 'block';
     }
 }
 
@@ -160,6 +178,8 @@ async function loadTopGainersLosers() {
 function filterDropdown(searchInputId, dropdownId) {
     const input = document.getElementById(searchInputId);
     const dropdown = document.getElementById(dropdownId);
+    if (!input || !dropdown) return;
+
     const searchValue = input.value.toLowerCase();
     selectedIndex = -1;
 
@@ -169,7 +189,7 @@ function filterDropdown(searchInputId, dropdownId) {
     }
 
     dropdown.innerHTML = "";
-    
+
     if (isLoading || cryptoList.length === 0) {
         const item = document.createElement("div");
         item.className = "dropdown-item disabled";
@@ -178,12 +198,12 @@ function filterDropdown(searchInputId, dropdownId) {
         dropdown.classList.add('active');
         return;
     }
-    
-    const filteredList = cryptoList.filter(coin => 
-        coin.name.toLowerCase().includes(searchValue) || 
+
+    const filteredList = cryptoList.filter(coin =>
+        coin.name.toLowerCase().includes(searchValue) ||
         coin.symbol.toLowerCase().includes(searchValue)
     );
-    
+
     if (filteredList.length === 0) {
         const item = document.createElement("div");
         item.className = "dropdown-item disabled";
@@ -201,18 +221,19 @@ function filterDropdown(searchInputId, dropdownId) {
             item.dataset.symbol = coin.symbol.toUpperCase();
             item.dataset.image = coin.image;
             item.tabIndex = 0;
-            
+
             item.addEventListener('click', () => selectCoin(input, coin, dropdown));
             dropdown.appendChild(item);
         });
     }
-    
+
     dropdown.classList.add('active');
 }
 
 // Handle keyboard navigation
 function navigateDropdown(event, dropdownId) {
     const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
     const items = dropdown.querySelectorAll('.dropdown-item:not(.disabled)');
     if (!items.length) return;
 
@@ -228,7 +249,7 @@ function navigateDropdown(event, dropdownId) {
         event.preventDefault();
         const input = document.getElementById(dropdownId.replace('Dropdown', 'Search'));
         const coin = cryptoList.find(c => c.id === items[selectedIndex].dataset.id);
-        selectCoin(input, coin, dropdown);
+        if (input && coin) selectCoin(input, coin, dropdown);
     }
 }
 
@@ -243,6 +264,7 @@ function selectCoin(input, coin, dropdown) {
     input.value = `${coin.name} (${coin.symbol.toUpperCase()})`;
     input.dataset.coinId = coin.id;
     input.dataset.symbol = coin.symbol.toUpperCase();
+    input.dataset.image = coin.image;
     dropdown.classList.remove('active');
     updatePortfolioLabels();
 }
@@ -253,7 +275,12 @@ async function compareMarketCaps() {
     const searchInputB = document.getElementById("coinBSearch");
     const resultsSection = document.getElementById("results-section");
     const comparisonResult = document.getElementById("comparisonResult");
-    
+
+    if (!searchInputA || !searchInputB || !resultsSection || !comparisonResult) {
+        console.error("Required DOM elements are missing.");
+        return;
+    }
+
     comparisonResult.innerHTML = "";
     resultsSection.classList.remove('visible');
 
@@ -264,14 +291,14 @@ async function compareMarketCaps() {
         showError("Please select valid cryptocurrencies from the dropdown!");
         return;
     }
-    
+
     if (coinA === coinB) {
         showError("Please select two different cryptocurrencies!");
         return;
     }
 
     showLoading('compareButton');
-    
+
     const apiUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${coinA},${coinB}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`;
 
     try {
@@ -279,43 +306,43 @@ async function compareMarketCaps() {
         if (!response.ok) throw new Error(`API request failed: ${response.status}`);
         const data = await response.json();
 
-        if (data[coinA] && data[coinB]) {
+        if (data[coinA] && data[coinB] && data[coinA].usd_market_cap && data[coinB].usd_market_cap) {
             const marketCapA = data[coinA].usd_market_cap;
             const marketCapB = data[coinB].usd_market_cap;
             const priceA = data[coinA].usd;
             const priceB = data[coinB].usd;
-            
+
             const newPriceA = (marketCapB / marketCapA) * priceA;
             const marketCapRatio = marketCapA / marketCapB;
             const barPercentage = marketCapRatio >= 1 ? (marketCapB / marketCapA) * 100 : (marketCapA / marketCapB) * 100;
 
-            const coinAInfo = cryptoList.find(coin => coin.id === coinA);
-            const coinBInfo = cryptoList.find(coin => coin.id === coinB);
-            const coinAImage = coinAInfo ? coinAInfo.image : '';
-            const coinBImage = coinBInfo ? coinBInfo.image : '';
+            const coinAInfo = cryptoList.find(coin => coin.id === coinA) || {};
+            const coinBInfo = cryptoList.find(coin => coin.id === coinB) || {};
+            const coinAImage = coinAInfo.image || '';
+            const coinBImage = coinBInfo.image || '';
 
             comparisonResult.innerHTML = `
                 <div class="coin-comparison">
                     <div class="coin-detail">
-                        <img src="${coinAImage}" alt="${searchInputA.dataset.symbol}">
-                        <span class="coin-label">${searchInputA.dataset.symbol}</span>
+                        <img src="${coinAImage}" alt="${searchInputA.dataset.symbol || 'Coin A'}">
+                        <span class="coin-label">${searchInputA.dataset.symbol || 'Unknown'}</span>
                         <span class="highlight">$${formatMarketCap(marketCapA)}</span>
                     </div>
                     <div class="vs-separator">vs</div>
                     <div class="coin-detail">
-                        <img src="${coinBImage}" alt="${searchInputB.dataset.symbol}">
-                        <span class="coin-label">${searchInputB.dataset.symbol}</span>
+                        <img src="${coinBImage}" alt="${searchInputB.dataset.symbol || 'Coin B'}">
+                        <span class="coin-label">${searchInputB.dataset.symbol || 'Unknown'}</span>
                         <span class="highlight">$${formatMarketCap(marketCapB)}</span>
                     </div>
                 </div>
                 <div class="hypothetical">
-                    <h3>${searchInputA.dataset.symbol} with the Market Cap of ${searchInputB.dataset.symbol}</h3>
+                    <h3>${searchInputA.dataset.symbol || 'Coin A'} with the Market Cap of ${searchInputB.dataset.symbol || 'Coin B'}</h3>
                     <span class="price">$${formatPrice(newPriceA)}</span>
                     <span class="multiplier">(${(newPriceA / priceA).toFixed(2)}x)</span>
                 </div>
                 <div class="marketcap-comparison">
                     <div class="comparison-text">
-                        ${marketCapRatio >= 1 ? searchInputA.dataset.symbol : searchInputB.dataset.symbol} is <span class="highlight">${Math.abs(marketCapRatio).toFixed(2)}x</span> above ${marketCapRatio >= 1 ? searchInputB.dataset.symbol : searchInputA.dataset.symbol}
+                        ${marketCapRatio >= 1 ? (searchInputA.dataset.symbol || 'Coin A') : (searchInputB.dataset.symbol || 'Coin B')} is <span class="highlight">${Math.abs(marketCapRatio).toFixed(2)}x</span> above ${marketCapRatio >= 1 ? (searchInputB.dataset.symbol || 'Coin B') : (searchInputA.dataset.symbol || 'Coin A')}
                     </div>
                     <div class="marketcap-bar">
                         <div class="bar-container">
@@ -324,11 +351,11 @@ async function compareMarketCaps() {
                     </div>
                     <div class="marketcap-values">
                         <div class="value">
-                            <img src="${coinAImage}" alt="${searchInputA.dataset.symbol}">
+                            <img src="${coinAImage}" alt="${searchInputA.dataset.symbol || 'Coin A'}">
                             <span>$${marketCapA.toLocaleString()}</span>
                         </div>
                         <div class="value">
-                            <img src="${coinBImage}" alt="${searchInputB.dataset.symbol}">
+                            <img src="${coinBImage}" alt="${searchInputB.dataset.symbol || 'Coin B'}">
                             <span>$${marketCapB.toLocaleString()}</span>
                         </div>
                     </div>
@@ -345,7 +372,7 @@ async function compareMarketCaps() {
 
             calculatePortfolioWorth();
         } else {
-            showError("Could not fetch data for the selected cryptocurrencies.");
+            showError("Could not fetch complete data for the selected cryptocurrencies.");
         }
     } catch (error) {
         console.error("Error comparing market caps:", error);
@@ -358,6 +385,7 @@ async function compareMarketCaps() {
 
 // Format market cap
 function formatMarketCap(value) {
+    if (typeof value !== 'number' || isNaN(value)) return "N/A";
     if (value >= 1e12) return (value / 1e12).toFixed(2) + "T";
     if (value >= 1e9) return (value / 1e9).toFixed(2) + "B";
     if (value >= 1e6) return (value / 1e6).toFixed(2) + "M";
@@ -366,6 +394,7 @@ function formatMarketCap(value) {
 
 // Format price
 function formatPrice(price) {
+    if (typeof price !== 'number' || isNaN(price)) return "N/A";
     if (price >= 1000) return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     if (price >= 1) return price.toFixed(2);
     if (price >= 0.01) return price.toFixed(4);
@@ -380,15 +409,20 @@ function updatePortfolioLabels() {
     const coinALabel = document.getElementById("coinALabel");
     const coinBLabel = document.getElementById("coinBLabel");
 
-    coinALabel.textContent = searchInputA.dataset.symbol ? `${searchInputA.dataset.symbol} (First Crypto)` : 'First Crypto';
-    coinBLabel.textContent = searchInputB.dataset.symbol ? `${searchInputB.dataset.symbol} (Second Crypto)` : 'Second Crypto';
+    if (coinALabel) {
+        coinALabel.textContent = searchInputA.dataset.symbol ? `${searchInputA.dataset.symbol} (First Crypto)` : 'First Crypto';
+    }
+    if (coinBLabel) {
+        coinBLabel.textContent = searchInputB.dataset.symbol ? `${searchInputB.dataset.symbol} (Second Crypto)` : 'Second Crypto';
+    }
 }
 
 // Portfolio Worth Calculation
 function calculatePortfolioWorth() {
     const portfolioSection = document.getElementById('portfolio-section');
     const portfolioResult = document.getElementById('portfolioResult');
-    
+    if (!portfolioSection || !portfolioResult) return;
+
     portfolioSection.classList.remove('visible');
 
     if (!coinAData || !coinBData) {
@@ -408,6 +442,11 @@ function calculatePortfolioWorth() {
     const coinBCurrentPrice = coinBData.price;
     const coinAMarketCap = coinAData.marketCap;
     const coinBMarketCap = coinBData.marketCap;
+
+    if (!coinACurrentPrice || !coinBCurrentPrice || !coinAMarketCap || !coinBMarketCap) {
+        portfolioResult.innerHTML = '<p>Insufficient data to calculate portfolio worth.</p>';
+        return;
+    }
 
     const coinASupply = coinAMarketCap / coinACurrentPrice;
     const coinBSupply = coinBMarketCap / coinBCurrentPrice;
@@ -441,6 +480,7 @@ function calculatePortfolioWorth() {
 // Theme Toggle Function
 function setupThemeToggle() {
     const toggleButton = document.getElementById('themeToggle');
+    if (!toggleButton) return;
     const body = document.body;
     const savedTheme = localStorage.getItem('theme') || 'dark';
 
@@ -461,8 +501,10 @@ function setupThemeToggle() {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('coinAAmount').addEventListener('input', calculatePortfolioWorth);
-    document.getElementById('coinBAmount').addEventListener('input', calculatePortfolioWorth);
+    const coinAAmount = document.getElementById('coinAAmount');
+    const coinBAmount = document.getElementById('coinBAmount');
+    if (coinAAmount) coinAAmount.addEventListener('input', calculatePortfolioWorth);
+    if (coinBAmount) coinBAmount.addEventListener('input', calculatePortfolioWorth);
     updatePortfolioLabels();
 });
 

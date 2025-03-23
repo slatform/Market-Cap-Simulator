@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Track your cryptocurrency portfolio offline or with real-time CoinGecko data. Updated March 2025.">
+    <meta name="description" content="Track your cryptocurrency portfolio with real-time CoinGecko data, view allocation, P&L, and historical performance. Updated March 2025.">
     <meta name="robots" content="index, follow">
-    <meta name="keywords" content="cryptocurrency, portfolio tracker, crypto prices, CoinGecko">
+    <meta name="keywords" content="cryptocurrency, portfolio tracker, crypto prices, CoinGecko, P&L, allocation">
     <title>Portfolio Tracker - Market Cap Simulator</title>
 
     <!-- Google Analytics -->
@@ -22,6 +22,7 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -45,16 +46,89 @@
     <main>
         <section id="tracker-section" class="tracker-section">
             <h2>Track Your Portfolio</h2>
-            <p>Add your cryptocurrency holdings below to track their value using static prices or refresh with live CoinGecko data.</p>
+            <p>Add your cryptocurrency holdings below to track their value, allocation, and performance with live CoinGecko data.</p>
             <div class="tracker-inputs">
-                <input type="text" id="trackerCoinName" placeholder="Coin Name (e.g., Bitcoin)">
-                <input type="number" id="trackerCoinAmount" min="0" step="0.0001" placeholder="Amount">
+                <div class="crypto-selector">
+                    <label for="trackerCoinSearch">Select Coin</label>
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon" data-tooltip="Search for a coin"></i>
+                        <input 
+                            type="text" 
+                            id="trackerCoinSearch" 
+                            placeholder="Search crypto (e.g., BTC)" 
+                            oninput="filterDropdown('trackerCoinSearch', 'trackerCoinDropdown')"
+                            onkeydown="navigateDropdown(event, 'trackerCoinDropdown')"
+                            aria-autocomplete="list"
+                            aria-controls="trackerCoinDropdown"
+                            data-coin-id="">
+                    </div>
+                    <div id="trackerCoinDropdown" class="coin-dropdown" role="listbox"></div>
+                </div>
+                <div class="input-group">
+                    <label for="trackerCoinAmount">Amount</label>
+                    <input type="number" id="trackerCoinAmount" min="0" step="0.0001" placeholder="Amount">
+                </div>
+                <div class="input-group">
+                    <label for="trackerPurchasePrice">Purchase Price (USD)</label>
+                    <input type="number" id="trackerPurchasePrice" min="0" step="0.01" placeholder="Purchase Price">
+                </div>
                 <button id="addCoinButton" class="add-button" onclick="addCoinToTracker()">
                     <i class="fas fa-plus"></i> Add Coin
                 </button>
             </div>
-            <div id="trackerList" class="tracker-list">
-                <p>Your portfolio is empty. Add coins like Bitcoin or Ethereum to track their value offline or with live updates.</p>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="summary-section" class="summary-section">
+            <h2>Portfolio Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Current Value</span>
+                    <span id="currentValue" class="summary-value">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Daily Change</span>
+                    <span id="dailyChange" class="summary-value change">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total P&L</span>
+                    <span id="totalPnL" class="summary-value change">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Unrealized P&L</span>
+                    <span id="unrealizedPnL" class="summary-value change">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Lifetime Cost</span>
+                    <span id="lifetimeCost" class="summary-value">$0.00</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="pnlChart"></canvas>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="allocation-section" class="allocation-section">
+            <h2>Allocation</h2>
+            <div class="allocation-grid">
+                <div class="chart-container">
+                    <canvas id="allocationChart"></canvas>
+                </div>
+                <div id="allocationList" class="allocation-list">
+                    <p>Add coins to see your portfolio allocation.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section id="holdings-section" class="holdings-section">
+            <h2>Current Holdings</h2>
+            <div id="holdingsList" class="holdings-list">
+                <p>Your portfolio is empty. Add coins to track their value and performance.</p>
             </div>
             <div class="tracker-actions">
                 <button id="refreshTrackerButton" class="refresh-button" onclick="refreshTrackerPrices()">
@@ -65,11 +139,20 @@
                 </button>
             </div>
         </section>
+
+        <div class="section-divider"></div>
+
+        <section id="trades-section" class="trades-section">
+            <h2>Trades Taken</h2>
+            <div id="tradesList" class="trades-list">
+                <p>No trades recorded. Add coins to track your trades.</p>
+            </div>
+        </section>
     </main>
 
     <footer>
         <div class="footer-container">
-            <p>Data provided by CoinGecko API</p>
+            <p>Powered by <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko API</a></p>
             <p id="lastUpdated">Last dynamic update: Loading...</p>
         </div>
     </footer>
@@ -80,7 +163,7 @@
 
     <noscript>
         <style>
-            .tracker-section { display: block !important; }
+            .tracker-section, .summary-section, .allocation-section, .holdings-section, .trades-section { display: block !important; }
             .global-loader { display: none !important; }
         </style>
         <div class="noscript-notice">
