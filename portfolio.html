@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Track your cryptocurrency portfolio offline or with real-time CoinGecko data. Updated March 2025.">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="cryptocurrency, portfolio tracker, crypto prices, CoinGecko">
+    <title>Portfolio Tracker - Market Cap Simulator</title>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WSSWV49R83"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-WSSWV49R83', { 'debug_mode': true });
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1>
+                <i class="fas fa-coins header-icon"></i>
+                <span class="gradient-text">Portfolio Tracker</span>
+            </h1>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <nav class="nav-bar">
+            <ul>
+                <li><a href="index.html" class="nav-link">Market Cap Simulator</a></li>
+                <li><a href="portfolio.html" class="nav-link active">Portfolio Tracker</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="tracker-section" class="tracker-section">
+            <h2>Track Your Portfolio</h2>
+            <p>Add your cryptocurrency holdings below to track their value using static prices or refresh with live CoinGecko data.</p>
+            <div class="tracker-inputs">
+                <input type="text" id="trackerCoinName" placeholder="Coin Name (e.g., Bitcoin)">
+                <input type="number" id="trackerCoinAmount" min="0" step="0.0001" placeholder="Amount">
+                <button id="addCoinButton" class="add-button" onclick="addCoinToTracker()">
+                    <i class="fas fa-plus"></i> Add Coin
+                </button>
+            </div>
+            <div id="trackerList" class="tracker-list">
+                <p>Your portfolio is empty. Add coins like Bitcoin or Ethereum to track their value offline or with live updates.</p>
+            </div>
+            <div class="tracker-actions">
+                <button id="refreshTrackerButton" class="refresh-button" onclick="refreshTrackerPrices()">
+                    <i class="fas fa-sync-alt"></i> Refresh with Live Data
+                </button>
+                <button id="clearTrackerButton" class="clear-button" onclick="clearTracker()">
+                    <i class="fas fa-trash"></i> Clear Portfolio
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p>Data provided by CoinGecko API</p>
+            <p id="lastUpdated">Last dynamic update: Loading...</p>
+        </div>
+    </footer>
+
+    <div id="globalLoader" class="global-loader">
+        <div class="loader-circle"></div>
+    </div>
+
+    <noscript>
+        <style>
+            .tracker-section { display: block !important; }
+            .global-loader { display: none !important; }
+        </style>
+        <div class="noscript-notice">
+            <p>This site requires JavaScript for full functionality. Without it, you can still view static content.</p>
+        </div>
+    </noscript>
+
+    <script src="portfolio.js"></script>
+</body>
+</html>

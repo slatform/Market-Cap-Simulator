@@ -6,23 +6,13 @@ let selectedIndex = -1;
 let coinAData = null;
 let coinBData = null;
 
-// Static fallback prices (example values as of March 2025)
-const staticPrices = {
-    "bitcoin": 60000,
-    "ethereum": 3000,
-    "binancecoin": 500,
-    "solana": 150,
-    "ripple": 0.5
-};
-
 // Initialize the application
 async function initApp() {
     showGlobalLoader();
     updateLastUpdated();
-    loadPortfolioTracker(); // Load static tracker first for immediate content
     await loadCryptoList();
     await loadTopGainersLosers();
-    setupThemeToggle(); // Set up theme toggle after content loads
+    setupThemeToggle();
     hideGlobalLoader();
     
     document.querySelectorAll('.search-container input').forEach(input => {
@@ -72,7 +62,7 @@ function hideLoading(elementId) {
     isLoading = false;
 }
 
-// Show error message without showing the section
+// Show error message
 function showError(message, targetId = 'comparisonResult') {
     const errorElement = document.createElement('div');
     errorElement.className = 'error-message';
@@ -82,8 +72,7 @@ function showError(message, targetId = 'comparisonResult') {
     target.innerHTML = '';
     target.appendChild(errorElement);
     
-    // Do not show the section when there's an error
-    const section = targetId === 'comparisonResult' ? document.getElementById('results-section') : document.getElementById('tracker-section');
+    const section = targetId === 'comparisonResult' ? document.getElementById('results-section') : document.getElementById('portfolio-section');
     section.classList.remove('visible');
 }
 
@@ -93,60 +82,40 @@ function updateLastUpdated() {
     document.getElementById('lastUpdated').textContent = `Last dynamic update: ${now.toLocaleString()}`;
 }
 
-// Fetch top 500 cryptos (2 pages of 250 each)
+// Fetch top 500 cryptos
 async function loadCryptoList() {
-    const coinsPerPage = 250; // Maximum allowed by CoinGecko API
-    const totalCoins = 500; // Target number of coins
-    const pagesNeeded = Math.ceil(totalCoins / coinsPerPage); // 2 pages (500 / 250)
+    const coinsPerPage = 250;
+    const totalCoins = 500;
+    const pagesNeeded = Math.ceil(totalCoins / coinsPerPage);
     let allCoins = [];
 
     try {
-        // Loop through the required pages
         for (let page = 1; page <= pagesNeeded; page++) {
             const apiUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${coinsPerPage}&page=${page}&sparkline=false`;
-            console.log(`Fetching page ${page} of ${pagesNeeded}: ${apiUrl}`);
-
             const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error(`API error on page ${page}: ${response.status}`);
-            }
-
+            if (!response.ok) throw new Error(`API error on page ${page}: ${response.status}`);
             const coins = await response.json();
-            console.log(`Received ${coins.length} coins on page ${page}`);
-
-            // Add coins from this page to the total list
             allCoins = allCoins.concat(coins);
-
-            // Stop if we've reached the desired number of coins
             if (allCoins.length >= totalCoins) {
-                allCoins = allCoins.slice(0, totalCoins); // Trim to exactly 500
+                allCoins = allCoins.slice(0, totalCoins);
                 break;
             }
         }
-
         cryptoList = allCoins;
-        console.log(`Total coins fetched: ${cryptoList.length}`);
-
-        // If we didn't get enough coins, log a warning
-        if (cryptoList.length < totalCoins) {
-            console.warn(`Only fetched ${cryptoList.length} coins, expected ${totalCoins}. API may have fewer coins available.`);
-        }
     } catch (error) {
         console.error("Error fetching crypto list:", error);
-        showError("Unable to fetch cryptocurrency data at this time. Use static features below.");
-        cryptoList = []; // Ensure cryptoList is empty on failure
+        showError("Unable to fetch cryptocurrency data at this time.");
+        cryptoList = [];
     }
 }
 
-// Load top gainers and losers with clickable links to CoinGecko charts
+// Load top gainers and losers
 async function loadTopGainersLosers() {
     const gainersSection = document.getElementById('topGainers');
     const losersSection = document.getElementById('topLosers');
     
     try {
-        if (cryptoList.length === 0) {
-            throw new Error("Crypto list not loaded");
-        }
+        if (cryptoList.length === 0) throw new Error("Crypto list not loaded");
         const sortedByChange = [...cryptoList]
             .filter(coin => coin.price_change_percentage_24h !== null)
             .sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
@@ -181,13 +150,13 @@ async function loadTopGainersLosers() {
         document.getElementById('gainers-losers-section').style.display = 'block';
     } catch (error) {
         console.error("Error loading gainers and losers:", error);
-        gainersSection.innerHTML = '<p>Unable to load live gainers data. Check back later.</p>';
-        losersSection.innerHTML = '<p>Unable to load live losers data. Check back later.</p>';
+        gainersSection.innerHTML = '<p>Unable to load live gainers data.</p>';
+        losersSection.innerHTML = '<p>Unable to load live losers data.</p>';
         document.getElementById('gainers-losers-section').style.display = 'block';
     }
 }
 
-// Filter dropdown based on user input
+// Filter dropdown
 function filterDropdown(searchInputId, dropdownId) {
     const input = document.getElementById(searchInputId);
     const dropdown = document.getElementById(dropdownId);
@@ -286,7 +255,7 @@ async function compareMarketCaps() {
     const comparisonResult = document.getElementById("comparisonResult");
     
     comparisonResult.innerHTML = "";
-    resultsSection.classList.remove('visible'); // Hide by default until successful comparison
+    resultsSection.classList.remove('visible');
 
     const coinA = searchInputA.dataset.coinId;
     const coinB = searchInputB.dataset.coinId;
@@ -307,9 +276,7 @@ async function compareMarketCaps() {
 
     try {
         const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`API request failed: ${response.status}`);
         const data = await response.json();
 
         if (data[coinA] && data[coinB]) {
@@ -368,23 +335,12 @@ async function compareMarketCaps() {
                 </div>
             `;
 
-            coinAData = {
-                symbol: searchInputA.dataset.symbol,
-                marketCap: marketCapA,
-                price: priceA,
-                image: coinAImage
-            };
-            coinBData = {
-                symbol: searchInputB.dataset.symbol,
-                marketCap: marketCapB,
-                price: priceB,
-                image: coinBImage
-            };
+            coinAData = { symbol: searchInputA.dataset.symbol, marketCap: marketCapA, price: priceA, image: coinAImage };
+            coinBData = { symbol: searchInputB.dataset.symbol, marketCap: marketCapB, price: priceB, image: coinBImage };
 
-            // Show the results section only on successful comparison
             resultsSection.classList.add('visible');
             resultsSection.classList.remove('fade-in');
-            void resultsSection.offsetWidth; // Trigger reflow for animation
+            void resultsSection.offsetWidth;
             resultsSection.classList.add('fade-in');
 
             calculatePortfolioWorth();
@@ -393,14 +349,14 @@ async function compareMarketCaps() {
         }
     } catch (error) {
         console.error("Error comparing market caps:", error);
-        showError("Error fetching comparison data. Please try again later.");
+        showError("Error fetching comparison data.");
     } finally {
         hideLoading('compareButton');
         updateLastUpdated();
     }
 }
 
-// Format market cap into T, B, M format
+// Format market cap
 function formatMarketCap(value) {
     if (value >= 1e12) return (value / 1e12).toFixed(2) + "T";
     if (value >= 1e9) return (value / 1e9).toFixed(2) + "B";
@@ -408,7 +364,7 @@ function formatMarketCap(value) {
     return value.toLocaleString();
 }
 
-// Format price based on value
+// Format price
 function formatPrice(price) {
     if (price >= 1000) return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     if (price >= 1) return price.toFixed(2);
@@ -433,7 +389,7 @@ function calculatePortfolioWorth() {
     const portfolioSection = document.getElementById('portfolio-section');
     const portfolioResult = document.getElementById('portfolioResult');
     
-    portfolioSection.classList.remove('visible'); // Hide by default
+    portfolioSection.classList.remove('visible');
 
     if (!coinAData || !coinBData) {
         portfolioResult.innerHTML = '<p>Please compare two coins first to calculate portfolio worth.</p>';
@@ -476,138 +432,17 @@ function calculatePortfolioWorth() {
     }
 
     portfolioResult.innerHTML = portfolioHTML;
-    portfolioSection.classList.add('visible'); // Show only if there’s a result
+    portfolioSection.classList.add('visible');
     portfolioSection.classList.remove('fade-in');
     void portfolioSection.offsetWidth;
     portfolioSection.classList.add('fade-in');
-}
-
-// Portfolio Tracker Functions
-function loadPortfolioTracker() {
-    const trackerList = document.getElementById('trackerList');
-    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
-    
-    if (savedPortfolio.length === 0) {
-        trackerList.innerHTML = '<p>Your portfolio is empty. Add coins like Bitcoin or Ethereum to track their value offline or with live updates.</p>';
-    } else {
-        renderTrackerList(savedPortfolio);
-    }
-    document.getElementById('tracker-section').style.display = 'block';
-}
-
-function addCoinToTracker() {
-    const coinNameInput = document.getElementById('trackerCoinName');
-    const coinAmountInput = document.getElementById('trackerCoinAmount');
-    const coinName = coinNameInput.value.trim();
-    const coinAmount = parseFloat(coinAmountInput.value) || 0;
-
-    if (!coinName || coinAmount <= 0) {
-        showError("Please enter a valid coin name and amount.", 'trackerList');
-        return;
-    }
-
-    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
-    const coinId = coinName.toLowerCase().replace(/\s+/g, '-');
-    const staticPrice = staticPrices[coinId] || 0;
-    const coinData = {
-        name: coinName,
-        amount: coinAmount,
-        price: staticPrice,
-        value: staticPrice * coinAmount
-    };
-
-    savedPortfolio.push(coinData);
-    localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
-    renderTrackerList(savedPortfolio);
-
-    coinNameInput.value = '';
-    coinAmountInput.value = '';
-}
-
-function renderTrackerList(portfolio) {
-    const trackerList = document.getElementById('trackerList');
-    trackerList.innerHTML = '';
-
-    if (portfolio.length === 0) {
-        trackerList.innerHTML = '<p>Your portfolio is empty. Add coins like Bitcoin or Ethereum to track their value offline or with live updates.</p>';
-        return;
-    }
-
-    let totalValue = 0;
-    portfolio.forEach((coin, index) => {
-        totalValue += coin.value;
-        trackerList.innerHTML += `
-            <div class="tracker-row">
-                <div class="coin-info">
-                    <span>${coin.name}</span> - <span>${coin.amount.toFixed(4)}</span>
-                </div>
-                <div class="coin-value">$${formatPrice(coin.value)} ($${coin.price.toLocaleString()})</div>
-                <button class="remove-coin" onclick="removeCoinFromTracker(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-    });
-
-    trackerList.innerHTML += `
-        <div class="tracker-row">
-            <div class="coin-info"><strong>Total Value:</strong></div>
-            <div class="coin-value"><strong>$${formatPrice(totalValue)}</strong></div>
-        </div>
-    `;
-}
-
-function removeCoinFromTracker(index) {
-    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
-    savedPortfolio.splice(index, 1);
-    localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
-    renderTrackerList(savedPortfolio);
-}
-
-async function refreshTrackerPrices() {
-    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
-    if (savedPortfolio.length === 0) return;
-
-    showLoading('refreshTrackerButton');
-    const coinNames = savedPortfolio.map(coin => coin.name.toLowerCase().replace(/\s+/g, '-'));
-    const apiUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${coinNames.join(',')}&vs_currencies=usd`;
-
-    try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
-        }
-        const data = await response.json();
-
-        savedPortfolio.forEach(coin => {
-            const coinId = coin.name.toLowerCase().replace(/\s+/g, '-');
-            if (data[coinId] && data[coinId].usd) {
-                coin.price = data[coinId].usd;
-                coin.value = coin.amount * coin.price;
-            }
-        });
-
-        localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
-        renderTrackerList(savedPortfolio);
-    } catch (error) {
-        console.error("Error refreshing tracker prices:", error);
-        showError("Failed to refresh prices. Using static values.", 'trackerList');
-    } finally {
-        hideLoading('refreshTrackerButton');
-        updateLastUpdated();
-    }
-}
-
-function clearTracker() {
-    localStorage.removeItem('cryptoPortfolio');
-    loadPortfolioTracker();
 }
 
 // Theme Toggle Function
 function setupThemeToggle() {
     const toggleButton = document.getElementById('themeToggle');
     const body = document.body;
-    const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
+    const savedTheme = localStorage.getItem('theme') || 'dark';
 
     if (savedTheme === 'light') {
         body.classList.add('light-mode');
@@ -624,12 +459,12 @@ function setupThemeToggle() {
     });
 }
 
-// Event listeners for real-time portfolio updates
+// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('coinAAmount').addEventListener('input', calculatePortfolioWorth);
     document.getElementById('coinBAmount').addEventListener('input', calculatePortfolioWorth);
     updatePortfolioLabels();
 });
 
-// Load app on page load
+// Load app
 window.onload = initApp;

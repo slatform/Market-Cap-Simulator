@@ -95,6 +95,41 @@ header h1:hover .header-icon {
   font-weight: 800;
 }
 
+/* Navigation Bar */
+.nav-bar {
+  margin-top: var(--space-md, 1rem);
+}
+
+.nav-bar ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg, 1.5rem);
+}
+
+.nav-bar li {
+  display: inline-block;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md, 1rem);
+  font-weight: 500;
+  padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+  border-radius: var(--radius-md, 0.5rem);
+  transition: color var(--duration-normal, 300ms), background var(--duration-normal, 300ms);
+}
+
+.nav-link:hover {
+  color: var(--color-accent-primary);
+}
+
+.nav-link.active {
+  color: var(--color-text-primary);
+  background: var(--input-bg);
+}
+
 /* Theme Toggle Button */
 .theme-toggle {
   position: absolute;
@@ -161,7 +196,6 @@ main {
   grid-template-columns: 1fr 1fr;
   gap: var(--space-lg, 1.5rem);
   margin-bottom: var(--space-xl, 2rem);
-  position: static;
 }
 
 .crypto-selector {
@@ -306,11 +340,11 @@ main {
 }
 
 .compare-button:hover {
-  background: #1c86ee; /* Slightly darker blue for dark mode */
+  background: #1c86ee;
 }
 
 body.light-mode .compare-button:hover {
-  background: #0069d9; /* Adjusted for light mode */
+  background: #0069d9;
 }
 
 .compare-button:active {
@@ -323,7 +357,7 @@ body.light-mode .compare-button:hover {
 
 /* Results Section */
 .results-section {
-  display: none; /* Hidden by default */
+  display: none;
   margin-top: var(--space-3xl, 3rem);
   padding: var(--space-3xl, 3rem);
   background: var(--gradient-card);
@@ -334,7 +368,7 @@ body.light-mode .compare-button:hover {
 }
 
 .results-section.visible {
-  display: block; /* Show when comparison is successful */
+  display: block;
 }
 
 .results-section.fade-in {
@@ -544,12 +578,8 @@ body.light-mode .global-loader {
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Loading Spinner */
@@ -566,7 +596,7 @@ body.light-mode .global-loader {
 
 /* Portfolio Section */
 .portfolio-section {
-  display: none; /* Hidden by default */
+  display: none;
   margin-top: var(--space-4xl, 4rem);
   padding: var(--space-3xl, 3rem);
   background: var(--gradient-card);
@@ -577,7 +607,7 @@ body.light-mode .global-loader {
 }
 
 .portfolio-section.visible {
-  display: block; /* Show when comparison is successful */
+  display: block;
 }
 
 .portfolio-section.fade-in {
@@ -684,11 +714,11 @@ body.light-mode .global-loader {
 }
 
 .add-button:hover {
-  background: #00b446; /* Dark mode */
+  background: #00b446;
 }
 
 body.light-mode .add-button:hover {
-  background: #218838; /* Light mode */
+  background: #218838;
 }
 
 .add-button:active {
@@ -742,11 +772,11 @@ body.light-mode .add-button:hover {
 }
 
 .tracker-list .remove-coin:hover {
-  background: #e0143d; /* Dark mode */
+  background: #e0143d;
 }
 
 body.light-mode .tracker-list .remove-coin:hover {
-  background: #c82333; /* Light mode */
+  background: #c82333;
 }
 
 .tracker-actions {
@@ -772,11 +802,11 @@ body.light-mode .tracker-list .remove-coin:hover {
 }
 
 .refresh-button:hover {
-  background: #1c86ee; /* Dark mode */
+  background: #1c86ee;
 }
 
 body.light-mode .refresh-button:hover {
-  background: #0069d9; /* Light mode */
+  background: #0069d9;
 }
 
 .clear-button {
@@ -795,11 +825,11 @@ body.light-mode .refresh-button:hover {
 }
 
 .clear-button:hover {
-  background: #e0143d; /* Dark mode */
+  background: #e0143d;
 }
 
 body.light-mode .clear-button:hover {
-  background: #c82333; /* Light mode */
+  background: #c82333;
 }
 
 /* Section Divider */
@@ -807,10 +837,9 @@ body.light-mode .clear-button:hover {
   height: 1px;
   background: var(--input-border);
   margin: var(--space-3xl, 3rem) 0;
-  display: block; /* Default display */
+  display: block;
 }
 
-/* Hide dividers when adjacent sections are not visible */
 .results-section:not(.visible) + .section-divider,
 .portfolio-section:not(.visible) + .section-divider,
 .section-divider + .results-section:not(.visible),
@@ -893,14 +922,13 @@ body.light-mode .clear-button:hover {
   font-weight: 400;
 }
 
-/* Styling for clickable coin links */
 .crypto-table .coin-info .coin-link {
   display: flex;
   align-items: center;
   text-decoration: none;
   color: var(--color-text-primary);
   transition: color var(--duration-normal, 300ms);
-  padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem); /* Padding for larger touch target */
+  padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
 }
 
 .crypto-table .coin-info .coin-link:hover {
@@ -1034,9 +1062,14 @@ body.light-mode .clear-button:hover {
     margin: var(--space-xl, 2rem) 0;
   }
 
-  /* Ensure coin links are mobile-friendly */
-  .crypto-table .coin-info .coin-link {
-    padding: var(--space-sm, 0.5rem); /* Larger touch target for mobile */
+  .nav-bar ul {
+    flex-direction: column;
+    gap: var(--space-md, 1rem);
+  }
+
+  .nav-link {
+    padding: var(--space-sm, 0.5rem);
+    font-size: var(--font-size-sm, 0.875rem);
   }
 }
 
@@ -1056,7 +1089,6 @@ body.light-mode .clear-button:hover {
 
   .intro p {
     font-size: var(--font-size-sm, 0.875rem);
-    text-align: center;
   }
 
   .comparison-tool h2 {
