@@ -1613,3 +1613,39 @@ body.light-mode .clear-button:hover {
     height: 250px; /* Smaller height for very small screens */
   }
 }
+/* Center the crypto selectors */
+.crypto-selector {
+  max-width: 300px; /* Limit the width for better centering */
+  margin: 0 auto; /* Center within the grid cell */
+  text-align: center; /* Center the label and input */
+}
+
+.crypto-selector label {
+  text-align: center; /* Ensure the label is centered */
+  width: 100%; /* Make the label take the full width of the container */
+}
+
+.search-container {
+  width: 100%; /* Ensure the input container takes the full width */
+  max-width: 100%; /* Prevent it from exceeding the parent */
+}
+/* Center the crypto selectors */
+.crypto-selector {
+  max-width: 300px; /* Limit the width for better centering */
+  margin: 0 auto; /* Center within the grid cell */
+  text-align: center; /* Center the label and input */
+}
+
+.crypto-selector label {
+  text-align: center; /* Ensure the label is centered */
+  width: 100%; /* Make the label take the full width of the container */
+}
+
+.search-container {
+  width: 100%; /* Ensure the input container takes the full width */
+  max-width: 100%; /* Prevent it from exceeding the parent */
+}
+
+.button-container {
+  margin-bottom: var(--space-lg, 1.5rem); /* Add spacing below the Compare button */
+}
