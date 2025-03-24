@@ -1427,6 +1427,7 @@ body.light-mode .clear-button:hover {
     margin: var(--space-lg, 1.5rem) 0;
   }
 }
+
 /* Tracker Header and Footer */
 .tracker-header, .tracker-footer {
   display: grid;
@@ -1547,6 +1548,7 @@ body.light-mode .clear-button:hover {
     display: none; /* Hide sub-price on very small screens */
   }
 }
+
 /* Add to the end of style.css */
 
 /* Chart Container */
@@ -1583,8 +1585,33 @@ body.light-mode .clear-button:hover {
   /* Adjust holdings table for mobile */
   .holdings-header,
   .holdings-row {
-    grid-template-columns: 1.5fr 1fr 1fr 1fr 40px;
+    grid-template-columns: 1fr 1fr 1fr 30px; /* Coin, Amount/Value (combined), P&L, Remove */
     font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  /* Hide the % of Portfolio column (4th column) */
+  .holdings-header :nth-child(4),
+  .holdings-row .coin-percentage {
+    display: none;
+  }
+
+  /* Combine Amount and Value into the second column */
+  .holdings-row .coin-amount {
+    display: none; /* Hide separate amount */
+  }
+
+  .holdings-row .coin-value {
+    font-size: var(--font-size-sm, 0.875rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Truncate Coin name to prevent overflow */
+  .holdings-row .coin-info {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .holdings-row .coin-info .coin-icon {
@@ -1595,16 +1622,74 @@ body.light-mode .clear-button:hover {
   .holdings-row .coin-value .price-sub {
     display: none; /* Hide sub-price on mobile */
   }
+
+  /* Adjust trades table for mobile */
+  .trades-header,
+  .trades-row {
+    grid-template-columns: 1fr 1fr; /* Coin, Combined P&L */
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  /* Hide the Realized P&L column (3rd column) */
+  .trades-header :nth-child(3),
+  .trades-row .coin-realized {
+    display: none;
+  }
+
+  /* Truncate Coin name to prevent overflow */
+  .trades-row .coin-info {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .trades-row .coin-info .coin-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .trades-row .coin-unrealized {
+    font-size: var(--font-size-sm, 0.875rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 @media (max-width: 480px) {
   .holdings-header,
   .holdings-row {
-    grid-template-columns: 1.5fr 1fr 1fr 1fr 30px;
-    font-size: var(--font-size-sm, 0.875rem);
+    grid-template-columns: 1fr 1fr 1fr 25px; /* Coin, Amount/Value (combined), P&L, Remove */
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+
+  /* Hide the % of Portfolio column (already hidden) */
+  .holdings-header :nth-child(4),
+  .holdings-row .coin-percentage {
+    display: none;
   }
 
   .holdings-row .coin-info .coin-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .holdings-row .coin-value {
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+
+  .holdings-row .coin-pnl {
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+
+  /* Adjust trades table for smaller screens */
+  .trades-header,
+  .trades-row {
+    grid-template-columns: 1fr 1fr; /* Coin, Combined P&L */
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+
+  .trades-row .coin-info .coin-icon {
     width: 16px;
     height: 16px;
   }
@@ -1613,6 +1698,7 @@ body.light-mode .clear-button:hover {
     height: 250px; /* Smaller height for very small screens */
   }
 }
+
 /* Center the crypto selectors */
 .crypto-selector {
   max-width: 300px; /* Limit the width for better centering */
@@ -1629,6 +1715,7 @@ body.light-mode .clear-button:hover {
   width: 100%; /* Ensure the input container takes the full width */
   max-width: 100%; /* Prevent it from exceeding the parent */
 }
+
 /* Center the crypto selectors */
 .crypto-selector {
   max-width: 300px; /* Limit the width for better centering */
