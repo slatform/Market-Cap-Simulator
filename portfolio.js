@@ -1,13 +1,10 @@
 // portfolio.js
-// Global variables
 let isLoading = false;
 let cryptoList = [];
 let selectedIndex = -1;
 let pnlChart = null;
 let allocationChart = null;
-let historicalPnL = [];
 
-// Static fallback prices
 const staticPrices = {
     "bitcoin": 60000,
     "ethereum": 3000,
@@ -16,18 +13,17 @@ const staticPrices = {
     "ripple": 0.5
 };
 
-// Initialize the application
 async function initApp() {
+    console.log("Starting initApp...");
     showGlobalLoader();
     updateLastUpdated();
     await loadCryptoList();
     loadPortfolioTracker();
     setupThemeToggle();
     initializeCharts();
-    loadHistoricalPnL();
+    console.log("Initialization complete (historical P&L skipped).");
     hideGlobalLoader();
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.crypto-selector')) {
             const dropdown = document.getElementById('trackerCoinDropdown');
@@ -35,7 +31,6 @@ async function initApp() {
         }
     });
 
-    // Show dropdown on focus if there's input
     const trackerCoinSearch = document.getElementById('trackerCoinSearch');
     if (trackerCoinSearch) {
         trackerCoinSearch.addEventListener('focus', () => {
@@ -43,22 +38,21 @@ async function initApp() {
                 filterDropdown('trackerCoinSearch', 'trackerCoinDropdown');
             }
         });
+    } else {
+        console.warn("trackerCoinSearch not found.");
     }
 }
 
-// Show global loader
 function showGlobalLoader() {
     const loader = document.getElementById('globalLoader');
     if (loader) loader.style.display = 'flex';
 }
 
-// Hide global loader
 function hideGlobalLoader() {
     const loader = document.getElementById('globalLoader');
     if (loader) loader.style.display = 'none';
 }
 
-// Show loading spinner
 function showLoading(elementId) {
     const element = document.getElementById(elementId);
     if (!element) return;
@@ -69,14 +63,12 @@ function showLoading(elementId) {
     isLoading = true;
 }
 
-// Hide loading spinner
 function hideLoading(elementId) {
     const loadingSpinner = document.getElementById(`${elementId}-loading`);
     if (loadingSpinner) loadingSpinner.remove();
     isLoading = false;
 }
 
-// Show error message
 function showError(message, targetId = 'holdingsList') {
     const target = document.getElementById(targetId);
     if (!target) return;
@@ -87,7 +79,6 @@ function showError(message, targetId = 'holdingsList') {
     target.appendChild(errorElement);
 }
 
-// Update last updated timestamp
 function updateLastUpdated() {
     const lastUpdated = document.getElementById('lastUpdated');
     if (lastUpdated) {
@@ -96,8 +87,8 @@ function updateLastUpdated() {
     }
 }
 
-// Fetch top 500 cryptos
 async function loadCryptoList() {
+    console.log("Fetching crypto list...");
     const coinsPerPage = 250;
     const totalCoins = 500;
     const pagesNeeded = Math.ceil(totalCoins / coinsPerPage);
@@ -112,10 +103,6 @@ async function loadCryptoList() {
                 continue;
             }
             const coins = await response.json();
-            if (!Array.isArray(coins)) {
-                console.warn(`Invalid data on page ${page}`);
-                continue;
-            }
             allCoins = allCoins.concat(coins);
             if (allCoins.length >= totalCoins) {
                 allCoins = allCoins.slice(0, totalCoins);
@@ -123,9 +110,8 @@ async function loadCryptoList() {
             }
         }
         cryptoList = allCoins;
-        if (cryptoList.length === 0) {
-            throw new Error("No coins fetched");
-        }
+        if (cryptoList.length === 0) throw new Error("No coins fetched");
+        console.log(`Loaded ${cryptoList.length} coins.`);
     } catch (error) {
         console.error("Error fetching crypto list:", error);
         showError("Unable to fetch cryptocurrency data. Using static prices.");
@@ -133,7 +119,6 @@ async function loadCryptoList() {
     }
 }
 
-// Filter dropdown
 function filterDropdown(searchInputId, dropdownId) {
     const input = document.getElementById(searchInputId);
     const dropdown = document.getElementById(dropdownId);
@@ -189,7 +174,6 @@ function filterDropdown(searchInputId, dropdownId) {
     dropdown.classList.add('active');
 }
 
-// Handle keyboard navigation
 function navigateDropdown(event, dropdownId) {
     const dropdown = document.getElementById(dropdownId);
     if (!dropdown) return;
@@ -227,7 +211,6 @@ function selectCoin(input, coin, dropdown) {
     dropdown.classList.remove('active');
 }
 
-// Format price
 function formatPrice(price) {
     if (typeof price !== 'number' || isNaN(price)) return "N/A";
     if (price >= 1000) return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -237,15 +220,14 @@ function formatPrice(price) {
     return price.toLocaleString(undefined, { minimumFractionDigits: 8, maximumFractionDigits: 8 });
 }
 
-// Initialize charts
 function initializeCharts() {
     const isLightMode = document.body.classList.contains('light-mode');
     const textColor = isLightMode ? '#333333' : '#ffffff';
     const gridColor = isLightMode ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
 
-    // P&L Chart
     const pnlCtx = document.getElementById('pnlChart')?.getContext('2d');
     if (pnlCtx) {
+        console.log("Initializing P&L chart...");
         pnlChart = new Chart(pnlCtx, {
             type: 'line',
             data: {
@@ -263,38 +245,26 @@ function initializeCharts() {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: {
-                        title: { display: true, text: 'Date', color: textColor },
-                        ticks: { color: textColor },
-                        grid: { color: gridColor }
-                    },
-                    y: {
-                        title: { display: true, text: 'P&L (USD)', color: textColor },
-                        ticks: { color: textColor },
-                        grid: { color: gridColor },
-                        beginAtZero: true
-                    }
+                    x: { title: { display: true, text: 'Date', color: textColor }, ticks: { color: textColor }, grid: { color: gridColor } },
+                    y: { title: { display: true, text: 'P&L (USD)', color: textColor }, ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
                 },
-                plugins: {
-                    legend: { labels: { color: textColor } }
-                }
+                plugins: { legend: { labels: { color: textColor } } }
             }
         });
+    } else {
+        console.error("pnlChart canvas not found.");
     }
 
-    // Allocation Chart
     const allocationCtx = document.getElementById('allocationChart')?.getContext('2d');
     if (allocationCtx) {
+        console.log("Initializing allocation chart...");
         allocationChart = new Chart(allocationCtx, {
             type: 'pie',
             data: {
                 labels: [],
                 datasets: [{
                     data: [],
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                        '#FF9F40', '#C9CB3F', '#7BCB3F', '#3FCB7B', '#3F7BCB'
-                    ],
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CB3F', '#7BCB3F', '#3FCB7B', '#3F7BCB'],
                     borderColor: isLightMode ? '#e0e0e0' : '#0a0e17',
                     borderWidth: 2
                 }]
@@ -302,50 +272,14 @@ function initializeCharts() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'right', labels: { color: textColor } }
-                }
+                plugins: { legend: { position: 'right', labels: { color: textColor } } }
             }
         });
+    } else {
+        console.error("allocationChart canvas not found.");
     }
 }
 
-// Simulate historical P&L data
-function loadHistoricalPnL() {
-    const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
-    if (savedPortfolio.length === 0) return;
-
-    historicalPnL = [];
-    const today = new Date();
-    let totalPnL = 0;
-
-    savedPortfolio.forEach(coin => {
-        const purchaseValue = coin.amount * coin.purchasePrice;
-        const currentValue = coin.value;
-        totalPnL += currentValue - purchaseValue;
-    });
-
-    for (let i = 29; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        const simulatedPnL = totalPnL * (1 + (Math.random() - 0.5) * 0.1);
-        historicalPnL.push({
-            date: date.toISOString().split('T')[0],
-            pnl: simulatedPnL
-        });
-    }
-
-    updatePnLChart();
-}
-
-function updatePnLChart() {
-    if (!pnlChart) return;
-    pnlChart.data.labels = historicalPnL.map(entry => entry.date);
-    pnlChart.data.datasets[0].data = historicalPnL.map(entry => entry.pnl);
-    pnlChart.update();
-}
-
-// Portfolio Tracker Functions
 function loadPortfolioTracker() {
     const savedPortfolio = JSON.parse(localStorage.getItem('cryptoPortfolio')) || [];
     renderPortfolio(savedPortfolio);
@@ -389,7 +323,6 @@ function addCoinToTracker() {
     savedPortfolio.push(coinData);
     localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
     renderPortfolio(savedPortfolio);
-    loadHistoricalPnL();
 
     coinSearchInput.value = '';
     coinSearchInput.dataset.coinId = '';
@@ -549,7 +482,6 @@ function removeCoinFromTracker(index) {
     savedPortfolio.splice(index, 1);
     localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
     renderPortfolio(savedPortfolio);
-    loadHistoricalPnL();
 }
 
 async function refreshTrackerPrices() {
@@ -562,9 +494,7 @@ async function refreshTrackerPrices() {
 
     try {
         const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`API request failed: ${response.status}`);
         const data = await response.json();
 
         savedPortfolio.forEach(coin => {
@@ -580,7 +510,6 @@ async function refreshTrackerPrices() {
 
         localStorage.setItem('cryptoPortfolio', JSON.stringify(savedPortfolio));
         renderPortfolio(savedPortfolio);
-        loadHistoricalPnL();
     } catch (error) {
         console.error("Error refreshing tracker prices:", error);
         showError("Failed to refresh prices. Using last known values.");
@@ -593,11 +522,8 @@ async function refreshTrackerPrices() {
 function clearTracker() {
     localStorage.removeItem('cryptoPortfolio');
     loadPortfolioTracker();
-    historicalPnL = [];
-    updatePnLChart();
 }
 
-// Theme Toggle Function
 function setupThemeToggle() {
     const toggleButton = document.getElementById('themeToggle');
     if (!toggleButton) return;
@@ -644,5 +570,4 @@ function updateChartColors() {
     }
 }
 
-// Load app on page load
 window.onload = initApp;
