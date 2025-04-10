@@ -6,6 +6,19 @@ let selectedIndex = -1;
 let coinAData = null;
 let coinBData = null;
 
+// Debounce function to limit how often filterDropdown is called
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 // Initialize the application
 async function initApp() {
     showGlobalLoader();
@@ -174,8 +187,8 @@ async function loadTopGainersLosers() {
     }
 }
 
-// Filter dropdown
-function filterDropdown(searchInputId, dropdownId) {
+// Filter dropdown (debounced)
+const debouncedFilterDropdown = debounce((searchInputId, dropdownId) => {
     const input = document.getElementById(searchInputId);
     const dropdown = document.getElementById(dropdownId);
     if (!input || !dropdown) return;
@@ -228,6 +241,11 @@ function filterDropdown(searchInputId, dropdownId) {
     }
 
     dropdown.classList.add('active');
+}, 300);
+
+// Wrapper for filterDropdown to use the debounced version
+function filterDropdown(searchInputId, dropdownId) {
+    debouncedFilterDropdown(searchInputId, dropdownId);
 }
 
 // Handle keyboard navigation
@@ -250,6 +268,9 @@ function navigateDropdown(event, dropdownId) {
         const input = document.getElementById(dropdownId.replace('Dropdown', 'Search'));
         const coin = cryptoList.find(c => c.id === items[selectedIndex].dataset.id);
         if (input && coin) selectCoin(input, coin, dropdown);
+    } else if (event.key === 'Escape') {
+        dropdown.classList.remove('active');
+        selectedIndex = -1;
     }
 }
 
@@ -266,6 +287,7 @@ function selectCoin(input, coin, dropdown) {
     input.dataset.symbol = coin.symbol.toUpperCase();
     input.dataset.image = coin.image;
     dropdown.classList.remove('active');
+    selectedIndex = -1;
     updatePortfolioLabels();
 }
 

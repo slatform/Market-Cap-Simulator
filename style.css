@@ -196,14 +196,13 @@ main {
   grid-template-columns: 1fr 1fr;
   gap: var(--space-lg, 1.5rem);
   margin-bottom: var(--space-xl, 2rem);
-  justify-items: center; /* Center the grid items horizontally */
 }
 
 .crypto-selector {
-  max-width: 300px; /* Limit the width for better centering */
-  width: 100%; /* Ensure it takes the full available width up to max-width */
-  margin: 0 auto; /* Center within the grid cell */
-  text-align: center; /* Center the label and input */
+  position: relative;
+  max-width: 300px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .crypto-selector label {
@@ -211,8 +210,8 @@ main {
   font-size: var(--font-size-md, 1rem);
   font-weight: 500;
   margin-bottom: var(--space-sm, 0.5rem);
-  text-align: center; /* Ensure the label is centered */
-  width: 100%; /* Make the label take the full width of the container */
+  text-align: center;
+  width: 100%;
 }
 
 .search-container {
@@ -223,14 +222,15 @@ main {
   border: 1px solid var(--input-border);
   border-radius: var(--radius-md, 0.5rem);
   padding: var(--space-sm, 0.5rem);
-  transition: border-color var(--duration-normal, 300ms);
-  width: 100%; /* Ensure the input container takes the full width */
-  max-width: 100%; /* Prevent it from exceeding the parent */
+  transition: border-color var(--duration-normal, 300ms), box-shadow var(--duration-normal, 300ms);
+  width: 100%;
+  max-width: 100%;
 }
 
 .search-container:hover,
 .search-container:focus-within {
   border-color: var(--color-accent-primary);
+  box-shadow: 0 0 8px rgba(30, 144, 255, 0.3);
 }
 
 .search-icon {
@@ -282,13 +282,13 @@ main {
   left: 0;
   right: 0;
   background: var(--gradient-card);
-  border: 1px solid var(--input-border);
+  border: 1px solid var(--color-accent-primary);
   border-radius: var(--radius-md, 0.5rem);
   max-height: 300px;
   overflow-y: auto;
   z-index: 1000;
   display: none;
-  box-shadow: var(--shadow-lg, 0 10px 15px var(--shadow-color));
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   opacity: 0;
   transform: translateY(5px);
   transition: opacity var(--duration-fast, 200ms) ease, transform var(--duration-fast, 200ms) ease;
@@ -305,12 +305,13 @@ main {
   align-items: center;
   padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
   cursor: pointer;
-  transition: background var(--duration-normal, 300ms);
+  transition: background var(--duration-normal, 300ms), color var(--duration-normal, 300ms);
 }
 
 .dropdown-item:hover,
 .dropdown-item.selected {
-  background: var(--input-bg);
+  background: var(--color-accent-primary);
+  color: #ffffff;
 }
 
 .dropdown-item.disabled {
@@ -685,12 +686,14 @@ body.light-mode .global-loader {
   gap: var(--space-md, 1rem);
   justify-content: center;
   margin-bottom: var(--space-xl, 2rem);
+  align-items: flex-end;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm, 0.5rem);
+  max-width: 150px;
 }
 
 .input-group label {
@@ -707,7 +710,7 @@ body.light-mode .global-loader {
   font-size: var(--font-size-md, 1rem);
   outline: none;
   transition: border-color var(--duration-normal, 300ms);
-  width: 150px;
+  width: 100%;
 }
 
 .input-group input:focus {
@@ -1207,80 +1210,6 @@ body.light-mode .clear-button:hover {
   font-weight: 500;
 }
 
-/* Tracker Header and Footer */
-.tracker-header, .tracker-footer {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
-  font-weight: 600;
-  background: var(--input-bg);
-  border-bottom: 1px solid var(--input-border);
-  align-items: center;
-}
-
-.tracker-footer {
-  border-top: 1px solid var(--input-border);
-  border-bottom: none;
-  background: var(--gradient-card);
-}
-
-.tracker-footer .total-value {
-  color: var(--color-accent-primary);
-  font-family: 'Roboto Mono', monospace;
-}
-
-/* Enhanced Tracker Row */
-.tracker-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 50px;
-  padding: var(--space-md, 1rem);
-  align-items: center;
-  transition: background var(--duration-normal, 300ms);
-}
-
-.tracker-row:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.tracker-row .coin-info {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm, 0.5rem);
-}
-
-.tracker-row .coin-info .coin-icon {
-  width: 24px;
-  height: 24px;
-}
-
-.tracker-row .coin-info .coin-amount {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm, 0.875rem);
-}
-
-.tracker-row .coin-value {
-  font-family: 'Roboto Mono', monospace;
-  color: var(--color-accent-primary);
-}
-
-.tracker-row .coin-value .price-sub {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm, 0.875rem);
-}
-
-.tracker-row .coin-change {
-  font-family: 'Roboto Mono', monospace;
-  font-size: var(--font-size-md, 1rem);
-}
-
-.tracker-row .coin-change.positive {
-  color: var(--color-positive);
-}
-
-.tracker-row .coin-change.negative {
-  color: var(--color-negative);
-}
-
 /* Mobile Adjustments */
 @media (max-width: 768px) {
   .comparison-grid {
@@ -1393,116 +1322,6 @@ body.light-mode .clear-button:hover {
 
   .nav-link {
     padding: var(--space-sm, 0.5rem);
-    font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .tracker-section,
-  .summary-section,
-  .allocation-section,
-  .holdings-section,
-  .trades-section,
-  .portfolio-section,
-  .gainers-losers-section,
-  .results-section {
-    padding: var(--space-lg, 1.5rem);
-    margin-top: var(--space-lg, 1.5rem);
-  }
-
-  .allocation-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-md, 1rem);
-  }
-
-  .allocation-list {
-    align-items: center;
-  }
-
-  .holdings-header,
-  .holdings-row {
-    grid-template-columns: 1fr 1fr 1fr 30px;
-    font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .holdings-header :nth-child(4),
-  .holdings-row .coin-percentage {
-    display: none;
-  }
-
-  .holdings-row .coin-amount {
-    display: none;
-  }
-
-  .holdings-row .coin-value {
-    font-size: var(--font-size-sm, 0.875rem);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .holdings-row .coin-info {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .holdings-row .coin-info .coin-icon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .holdings-row .coin-value .price-sub {
-    display: none;
-  }
-
-  .trades-header,
-  .trades-row {
-    grid-template-columns: 1fr 1fr;
-    font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .trades-header :nth-child(3),
-  .trades-row .coin-realized {
-    display: none;
-  }
-
-  .trades-row .coin-info {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .trades-row .coin-info .coin-icon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .trades-row .coin-unrealized {
-    font-size: var(--font-size-sm, 0.875rem);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .tracker-header, .tracker-footer {
-    grid-template-columns: 1fr 1fr 1fr;
-    font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .tracker-row {
-    grid-template-columns: 1fr 1fr 1fr 40px;
-    padding: var(--space-sm, 0.5rem);
-  }
-
-  .tracker-row .coin-info .coin-icon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .tracker-row .coin-value {
-    font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .tracker-row .coin-change {
     font-size: var(--font-size-sm, 0.875rem);
   }
 }
@@ -1620,7 +1439,227 @@ body.light-mode .clear-button:hover {
   .section-divider {
     margin: var(--space-lg, 1.5rem) 0;
   }
+}
 
+/* Tracker Header and Footer */
+.tracker-header, .tracker-footer {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+  font-weight: 600;
+  background: var(--input-bg);
+  border-bottom: 1px solid var(--input-border);
+  align-items: center;
+}
+
+.tracker-footer {
+  border-top: 1px solid var(--input-border);
+  border-bottom: none;
+  background: var(--gradient-card);
+}
+
+.tracker-footer .total-value {
+  color: var(--color-accent-primary);
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Enhanced Tracker Row */
+.tracker-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 50px;
+  padding: var(--space-md, 1rem);
+  align-items: center;
+  transition: background var(--duration-normal, 300ms);
+}
+
+.tracker-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tracker-row .coin-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm, 0.5rem);
+}
+
+.tracker-row .coin-info .coin-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.tracker-row .coin-info .coin-amount {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+.tracker-row .coin-value {
+  font-family: 'Roboto Mono', monospace;
+  color: var(--color-accent-primary);
+}
+
+.tracker-row .coin-value .price-sub {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+.tracker-row .coin-change {
+  font-family: 'Roboto Mono', monospace;
+  font-size: var(--font-size-md, 1rem);
+}
+
+.tracker-row .coin-change.positive {
+  color: var(--color-positive);
+}
+
+.tracker-row .coin-change.negative {
+  color: var(--color-negative);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .tracker-header, .tracker-footer {
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .tracker-row {
+    grid-template-columns: 1fr 1fr 1fr 40px;
+    padding: var(--space-sm, 0.5rem);
+  }
+
+  .tracker-row .coin-info .coin-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .tracker-row .coin-value {
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .tracker-row .coin-change {
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .tracker-header, .tracker-footer {
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: var(--space-sm, 0.5rem);
+  }
+
+  .tracker-row {
+    grid-template-columns: 1fr 1fr 1fr 30px;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .tracker-row .coin-info .coin-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .tracker-row .coin-value .price-sub {
+    display: none;
+  }
+}
+
+/* Chart Container */
+.chart-container {
+  max-width: 800px;
+  margin: 0 auto;
+  height: 300px;
+}
+
+/* Adjust section padding for mobile */
+@media (max-width: 768px) {
+  .tracker-section,
+  .summary-section,
+  .allocation-section,
+  .holdings-section,
+  .trades-section,
+  .portfolio-section,
+  .gainers-losers-section,
+  .results-section {
+    padding: var(--space-lg, 1.5rem);
+    margin-top: var(--space-lg, 1.5rem);
+  }
+
+  .allocation-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md, 1rem);
+  }
+
+  .allocation-list {
+    align-items: center;
+  }
+
+  .holdings-header,
+  .holdings-row {
+    grid-template-columns: 1fr 1fr 1fr 30px;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .holdings-header :nth-child(4),
+  .holdings-row .coin-percentage {
+    display: none;
+  }
+
+  .holdings-row .coin-amount {
+    display: none;
+  }
+
+  .holdings-row .coin-value {
+    font-size: var(--font-size-sm, 0.875rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .holdings-row .coin-info {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .holdings-row .coin-info .coin-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .holdings-row .coin-value .price-sub {
+    display: none;
+  }
+
+  .trades-header,
+  .trades-row {
+    grid-template-columns: 1fr 1fr;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .trades-header :nth-child(3),
+  .trades-row .coin-realized {
+    display: none;
+  }
+
+  .trades-row .coin-info {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .trades-row .coin-info .coin-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .trades-row .coin-unrealized {
+    font-size: var(--font-size-sm, 0.875rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 480px) {
   .holdings-header,
   .holdings-row {
     grid-template-columns: 1fr 1fr 1fr 25px;
@@ -1653,24 +1692,5 @@ body.light-mode .clear-button:hover {
 
   .chart-container {
     height: 250px;
-  }
-
-  .tracker-header, .tracker-footer {
-    grid-template-columns: 1fr 1fr 1fr;
-    padding: var(--space-sm, 0.5rem);
-  }
-
-  .tracker-row {
-    grid-template-columns: 1fr 1fr 1fr 30px;
-    font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .tracker-row .coin-info .coin-icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .tracker-row .coin-value .price-sub {
-    display: none;
   }
 }

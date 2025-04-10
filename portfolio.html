@@ -7,6 +7,8 @@
     <meta name="robots" content="index, follow">
     <meta name="keywords" content="cryptocurrency, portfolio tracker, crypto prices, CoinGecko, P&L, allocation">
     <title>Portfolio Tracker - Market Cap Simulator</title>
+
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WSSWV49R83"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -14,7 +16,10 @@
         gtag('js', new Date());
         gtag('config', 'G-WSSWV49R83', { 'debug_mode': true });
     </script>
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -47,15 +52,17 @@
                     <label for="trackerCoinSearch">Select Coin</label>
                     <div class="search-container">
                         <i class="fas fa-search search-icon" data-tooltip="Search for a coin"></i>
-                        <input 
-                            type="text" 
-                            id="trackerCoinSearch" 
-                            placeholder="Search crypto (e.g., BTC)" 
+                        <input
+                            type="text"
+                            id="trackerCoinSearch"
+                            placeholder="Search crypto (e.g., BTC)"
                             oninput="filterDropdown('trackerCoinSearch', 'trackerCoinDropdown')"
                             onkeydown="navigateDropdown(event, 'trackerCoinDropdown')"
                             aria-autocomplete="list"
                             aria-controls="trackerCoinDropdown"
-                            data-coin-id="">
+                            data-coin-id=""
+                            data-symbol=""
+                            data-image="">
                     </div>
                     <div id="trackerCoinDropdown" class="coin-dropdown" role="listbox"></div>
                 </div>
@@ -92,18 +99,12 @@
                 </div>
                 <div class="summary-item">
                     <span class="summary-label">Unrealized P&L</span>
-                    <span id="unrealizedPnL" class="summary-value change">$0.00</span> <!-- Fixed ID -->
+                    <span id="unrealizedPnL" class="summary-value change">$0.00</span>
                 </div>
                 <div class="summary-item">
                     <span class="summary-label">Lifetime Cost</span>
                     <span id="lifetimeCost" class="summary-value">$0.00</span>
                 </div>
-            </div>
-            <div class="chart-controls">
-                <button class="chart-timeframe" data-days="7" onclick="updateHistoricalPnL(7)">7D</button>
-                <button class="chart-timeframe" data-days="30" onclick="updateHistoricalPnL(30)">30D</button>
-                <button class="chart-timeframe" data-days="90" onclick="updateHistoricalPnL(90)">90D</button>
-                <button class="chart-timeframe" data-days="365" onclick="updateHistoricalPnL(365)">1Y</button>
             </div>
             <div class="chart-container">
                 <canvas id="pnlChart"></canvas>
