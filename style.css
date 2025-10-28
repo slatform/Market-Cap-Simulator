@@ -1694,3 +1694,112 @@ body.light-mode .clear-button:hover {
     height: 250px;
   }
 }
+/* ==== PATCH: minimal, non-destructive overrides ==== */
+
+/* 1) Normalize icon-only danger buttons (e.g., the red "x") */
+button.remove-coin {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, var(--card-bg, #151d2e), var(--bg, #0f1420));
+  color: var(--text, #e8ecf3);
+  box-shadow: none;
+  transition: background .15s, border-color .15s, transform .06s;
+}
+button.remove-coin:hover {
+  background: color-mix(in srgb, #ef4444 20%, var(--card-bg, #151d2e));
+  border-color: color-mix(in srgb, #ef4444 60%, rgba(255,255,255,0.08));
+}
+
+/* 2) Lock “Current Holdings” columns to prevent drift */
+#holdingsList .holdings-header,
+#holdingsList .holding-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr 1.2fr 1fr 1fr 1fr 1.1fr 44px; /* Coin | Amount | Value | % | Avg | Price | P&L | X */
+  align-items: center;
+  gap: 12px;
+}
+#holdingsList .holding-row { margin-top: 10px; }
+
+/* Cost-on-second-line stays muted and tight */
+#holdingsList .coin-value .muted {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted, #9aa6bf);
+}
+
+/* 3) Lock “Trades Taken” columns + consistent money formatting color */
+#tradesList .trades-header,
+#tradesList .trades-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr; /* Asset | Unrealized | Realized */
+  align-items: center;
+  gap: 12px;
+}
+#tradesList .trades-row { margin-top: 10px; }
+#tradesList .positive { color: var(--success, #22c55e) !important; }
+#tradesList .negative { color: var(--danger, #ef4444) !important; }
+
+/* 4) Fix the search dropdown (visibility, hover, scroll) */
+#trackerCoinDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0; right: 0;
+  z-index: 9999;
+  background: var(--bg, #0f1420);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  max-height: 340px;
+  overflow: auto;
+  padding: 6px;
+  display: none;
+}
+#trackerCoinDropdown.active { display: block; }
+#trackerCoinDropdown .dropdown-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .12s ease;
+}
+#trackerCoinDropdown .dropdown-item:hover,
+#trackerCoinDropdown .dropdown-item.selected {
+  background: color-mix(in srgb, var(--accent, #60a5fa) 16%, transparent);
+}
+#trackerCoinDropdown .coin-icon { width: 20px; height: 20px; border-radius: 50%; }
+
+/* 5) Kill unexpected “white box” default buttons/inputs from browser UA styles */
+button, .button, input, select, textarea {
+  background-clip: padding-box;
+  outline: none;
+}
+.button { border-radius: 12px; }
+
+/* 6) Summary chips never wrap weirdly */
+.summary-value { white-space: nowrap; }
+
+/* 7) Responsive keeps columns aligned but sensible on narrow screens */
+@media (max-width: 1024px) {
+  #holdingsList .holdings-header,
+  #holdingsList .holding-row {
+    grid-template-columns: 2fr 0.9fr 1.1fr 0.9fr 1fr 1fr 1fr 40px;
+  }
+}
+@media (max-width: 720px) {
+  /* collapse less-critical columns on phones */
+  #holdingsList .holdings-header,
+  #holdingsList .holding-row {
+    grid-template-columns: 2fr 1fr 1.2fr 1fr 1fr;
+  }
+  #holdingsList .holdings-header > :nth-last-child(-n+3),
+  #holdingsList .holding-row   > :nth-last-child(-n+3) { display: none; }
+
+  #tradesList .trades-header, #tradesList .trades-row {
+    grid-template-columns: 1.8fr 1fr;
+  }
+  #tradesList .trades-header > :last-child,
+  #tradesList .trades-row    > :last-child { display: none; }
+}
