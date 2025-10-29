@@ -523,24 +523,69 @@ function setupNavigation() {
     const tabs = document.querySelectorAll('.nav-tab');
     const pages = document.querySelectorAll('.page');
     
-    tabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetPage = tab.getAttribute('href').substring(1);
-            
-            // Update active states
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            
-            pages.forEach(page => {
-                if (page.id === targetPage + 'Page') {
-                    page.classList.add('active');
+    // Check if we're on index.html (which has both sections) or portfolio.html
+    const isIndexPage = document.getElementById('simulatorPage') !== null;
+    
+    if (isIndexPage) {
+        // Single page navigation for index.html
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = tab.getAttribute('href');
+                
+                // Handle hash navigation for index.html
+                if (href.startsWith('#')) {
+                    const targetPage = href.substring(1);
+                    
+                    // Update active states
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    pages.forEach(page => {
+                        if (page.id === targetPage + 'Page') {
+                            page.classList.add('active');
+                        } else {
+                            page.classList.remove('active');
+                        }
+                    });
+                    
+                    // Update URL hash
+                    window.location.hash = targetPage;
                 } else {
-                    page.classList.remove('active');
+                    // If it's a file link, navigate to it
+                    window.location.href = href;
                 }
             });
         });
-    });
+        
+        // Handle initial hash on page load
+        const hash = window.location.hash.substring(1);
+        if (hash === 'portfolio') {
+            const portfolioTab = document.querySelector('.nav-tab[href="#portfolio"]');
+            const simulatorTab = document.querySelector('.nav-tab[href="#simulator"]');
+            const portfolioPage = document.getElementById('portfolioPage');
+            const simulatorPage = document.getElementById('simulatorPage');
+            
+            if (portfolioTab && portfolioPage) {
+                tabs.forEach(t => t.classList.remove('active'));
+                portfolioTab.classList.add('active');
+                pages.forEach(p => p.classList.remove('active'));
+                portfolioPage.classList.add('active');
+            }
+        }
+    } else {
+        // For portfolio.html, just handle navigation to other files
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                const href = tab.getAttribute('href');
+                if (!href.startsWith('#')) {
+                    // Let normal navigation happen for file links
+                    return;
+                }
+                e.preventDefault();
+            });
+        });
+    }
 }
 
 // ===== SIMULATOR =====
