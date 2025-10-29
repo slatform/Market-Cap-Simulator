@@ -77,6 +77,9 @@ html {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 16px;
     line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
 }
 
 body {
@@ -84,6 +87,9 @@ body {
     color: var(--text-primary);
     transition: background 0.3s ease, color 0.3s ease;
     min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
 }
 
 /* ===== HEADER ===== */
@@ -914,50 +920,244 @@ button {
     background: var(--text-tertiary);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== MOBILE TOUCH IMPROVEMENTS ===== */
 @media (max-width: 768px) {
+    /* Prevent overscroll bounce on mobile */
+    html, body {
+        overscroll-behavior-y: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Prevent pull-to-refresh on mobile */
+    body {
+        overscroll-behavior: none;
+    }
+    
+    /* Make touch targets larger */
+    button, a, input {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Improve tap highlighting */
+    * {
+        -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Prevent text selection during scroll */
+    * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    /* Allow text selection in inputs and content areas */
+    input, textarea, [contenteditable] {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+    
+    /* Smooth scrolling on mobile */
+    main {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ===== EXTRA SMALL MOBILE (480px and below) ===== */
+@media (max-width: 480px) {
     .header-content {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 1rem;
+        padding: 0.875rem;
     }
     
     header h1 {
-        font-size: 1.25rem;
-        justify-self: center;
+        font-size: 1rem;
+    }
+    
+    .nav-tab {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+    
+    .theme-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    main {
+        padding: 1rem 0.75rem;
+    }
+    
+    .summary-card {
+        padding: 1rem;
+    }
+    
+    .card-value {
+        font-size: 1.5rem;
+    }
+    
+    .add-coin-section,
+    .holdings-section,
+    .chart-section,
+    .trades-section {
+        padding: 1rem;
+    }
+    
+    .simulator-content {
+        padding: 1rem;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .header-content {
+        grid-template-columns: auto 1fr auto;
+        gap: 0.75rem;
+        padding: 1rem;
+        position: relative;
+    }
+    
+    header h1 {
+        font-size: 1.125rem;
+        justify-self: start;
+        gap: 0.5rem;
+    }
+    
+    header h1 i {
+        font-size: 1rem;
     }
     
     .nav-tabs {
         justify-self: center;
-        width: 100%;
-        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .nav-tab {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.875rem;
+    }
+    
+    .nav-tab i {
+        display: none;
     }
     
     .theme-toggle {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
+        justify-self: end;
     }
     
     main {
-        padding: 1rem;
+        padding: 1.5rem 1rem;
     }
     
     .summary-cards {
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .summary-card {
+        padding: 1.25rem;
+    }
+    
+    .card-value {
+        font-size: 1.75rem;
+    }
+    
+    .add-coin-section {
+        padding: 1.5rem;
+    }
+    
+    .add-coin-form {
+        grid-template-columns: 1fr;
+        gap: 0.875rem;
+    }
+    
+    .holdings-section,
+    .chart-section,
+    .trades-section {
+        padding: 1.5rem;
+    }
+    
+    .section-header h3 {
+        font-size: 1rem;
     }
     
     .holdings-header,
     .holdings-row {
         grid-template-columns: 2fr 1fr 1fr;
         font-size: 0.8125rem;
+        padding: 0.75rem 0.5rem;
     }
     
-    .holdings-row > div:nth-child(4) {
-        display: none;
-    }
-    
+    .holdings-row > div:nth-child(4),
     .holdings-header > span:nth-child(4) {
         display: none;
+    }
+    
+    .coin-info img {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .remove-coin {
+        right: 0.5rem;
+        width: 24px;
+        height: 24px;
+        font-size: 1rem;
+    }
+    
+    .trades-header,
+    .trades-row {
+        grid-template-columns: 2fr 1fr 1fr;
+        font-size: 0.8125rem;
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .simulator-container {
+        padding: 0;
+    }
+    
+    .simulator-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .simulator-header p {
+        font-size: 0.9375rem;
+    }
+    
+    .simulator-content {
+        padding: 1.5rem;
+    }
+    
+    .comparison-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    
+    .btn-large {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9375rem;
+    }
+    
+    .result-card {
+        padding: 1.5rem;
+    }
+    
+    .result-price {
+        font-size: 2rem;
+    }
+    
+    .result-change {
+        font-size: 1.25rem;
+    }
+    
+    .result-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 }
