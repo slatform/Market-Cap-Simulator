@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Cap Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dark-mode">
+    <!-- Global Loader -->
+    <div id="globalLoader" class="global-loader">
+        <div class="loader-circle"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1>
+                <i class="fas fa-chart-pie"></i>
+                Portfolio Tracker
+            </h1>
+            <nav class="nav-tabs">
+                <a href="index.html" class="nav-tab active">
+                    <i class="fas fa-calculator"></i>
+                    Simulator
+                </a>
+                <a href="portfolio.html" class="nav-tab">
+                    <i class="fas fa-briefcase"></i>
+                    Portfolio
+                </a>
+            </nav>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="page active">
+            <div class="simulator-container">
+                <div class="simulator-header">
+                    <h2>Market Cap Simulator</h2>
+                    <p>Calculate what a cryptocurrency's price would be at another coin's market cap</p>
+                </div>
+
+                <div class="simulator-content">
+                    <div class="comparison-grid">
+                        <div class="crypto-selector">
+                            <label>If this coin</label>
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input 
+                                    type="text" 
+                                    id="simCoin1Search" 
+                                    placeholder="Search coin..."
+                                    autocomplete="off"
+                                >
+                            </div>
+                            <div id="simCoin1Dropdown" class="coin-dropdown"></div>
+                            <div id="sim1Selected" class="selected-coin-display"></div>
+                        </div>
+
+                        <div class="crypto-selector">
+                            <label>Had this coin's market cap</label>
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input 
+                                    type="text" 
+                                    id="simCoin2Search" 
+                                    placeholder="Search coin..."
+                                    autocomplete="off"
+                                >
+                            </div>
+                            <div id="simCoin2Dropdown" class="coin-dropdown"></div>
+                            <div id="sim2Selected" class="selected-coin-display"></div>
+                        </div>
+                    </div>
+
+                    <button id="swapButton" class="btn-secondary">
+                        <i class="fas fa-exchange-alt"></i>
+                        Swap
+                    </button>
+
+                    <button id="calculateButton" class="btn-primary btn-large">
+                        <i class="fas fa-calculator"></i>
+                        Calculate Price
+                    </button>
+
+                    <div id="simulatorResults" class="simulator-results"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // SIMULATOR-ONLY VERSION
+        let cryptoList = [];
+        let selectedSimCoin1 = null;
+        let selectedSimCoin2 = null;
+
+        function initApp() {
+            showGlobalLoader();
+            loadCryptoList()
+                .then(() => {
+                    setupThemeToggle();
+                    setupSimulator();
+                    hideGlobalLoader();
+                })
+                .catch((error) => {
+                    hideGlobalLoader();
+                    console.error('Failed to initialize:', error);
+                    alert("Failed to load cryptocurrency data. Please check your internet connection.");
+                });
+        }
+
+        function showGlobalLoader() {
+            const loader = document.getElementById('globalLoader');
+            if (loader) loader.style.display = 'flex';
+        }
+
+        function hideGlobalLoader() {
+            const loader = document.getElementById('globalLoader');
+            if (loader) loader.style.display = 'none';
+        }
+
+        async function loadCryptoList() {
+            const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false';
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                cryptoList = await response.json();
+                return cryptoList;
+            } catch (error) {
+                console.error('Error loading crypto list:', error);
+                throw error;
+            }
+        }
+
+        function setupSimulator() {
+            setupSimulatorSearch('simCoin1Search', 'simCoin1Dropdown', 'sim1Selected', 1);
+            setupSimulatorSearch('simCoin2Search', 'simCoin2Dropdown', 'sim2Selected', 2);
+            
+            const calculateButton = document.getElementById('calculateButton');
+            const swapButton = document.getElementById('swapButton');
+            
+            if (calculateButton) calculateButton.addEventListener('click', calculateSimulation);
+            if (swapButton) swapButton.addEventListener('click', swapSimCoins);
+        }
+
+        function setupSimulatorSearch(inputId, dropdownId, displayId, coinNumber) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            
+            if (!input || !dropdown) return;
+            
+            input.addEventListener('input', () => {
+                const value = input.value.toLowerCase().trim();
+                dropdown.innerHTML = '';
+                
+                if (!value) {
+                    dropdown.classList.remove('active');
+                    return;
+                }
+                
+                const matches = cryptoList.filter(coin =>
+                    coin.name.toLowerCase().includes(value) ||
+                    coin.symbol.toLowerCase().includes(value)
+                ).slice(0, 8);
+                
+                if (matches.length === 0) {
+                    dropdown.innerHTML = '<div class="dropdown-item disabled">No results found</div>';
+                } else {
+                    matches.forEach(coin => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerHTML = `
+                            <img src="${coin.image}" class="coin-icon" alt="${coin.name}">
+                            <span>${coin.name} (${coin.symbol.toUpperCase()})</span>
+                        `;
+                        div.onclick = () => selectSimCoin(coin, coinNumber, input, dropdown, displayId);
+                        dropdown.appendChild(div);
+                    });
+                }
+                
+                dropdown.classList.add('active');
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        }
+
+        function selectSimCoin(coin, coinNumber, input, dropdown, displayId) {
+            if (coinNumber === 1) {
+                selectedSimCoin1 = coin;
+            } else {
+                selectedSimCoin2 = coin;
+            }
+            
+            input.value = '';
+            dropdown.classList.remove('active');
+            
+            const display = document.getElementById(displayId);
+            if (display) {
+                display.innerHTML = `
+                    <img src="${coin.image}" alt="${coin.name}">
+                    <div class="coin-details">
+                        <div class="coin-name">${coin.name} (${coin.symbol.toUpperCase()})</div>
+                        <div class="coin-price">$${formatNumber(coin.current_price)}</div>
+                    </div>
+                `;
+                display.classList.add('active');
+            }
+        }
+
+        async function calculateSimulation() {
+            const resultsDiv = document.getElementById('simulatorResults');
+            
+            if (!selectedSimCoin1 || !selectedSimCoin2) {
+                alert('Please select both cryptocurrencies');
+                return;
+            }
+            
+            try {
+                const [res1, res2] = await Promise.all([
+                    fetch(`https://api.coingecko.com/api/v3/coins/${selectedSimCoin1.id}`),
+                    fetch(`https://api.coingecko.com/api/v3/coins/${selectedSimCoin2.id}`)
+                ]);
+                
+                const [data1, data2] = await Promise.all([res1.json(), res2.json()]);
+                
+                const coin1Supply = data1.market_data.circulating_supply;
+                const coin1Price = data1.market_data.current_price.usd;
+                const coin2MarketCap = data2.market_data.market_cap.usd;
+                
+                if (!coin1Supply) {
+                    resultsDiv.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>Missing supply data</p>
+                            <span>${selectedSimCoin1.name} circulating supply data is not available</span>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const newPrice = coin2MarketCap / coin1Supply;
+                const change = ((newPrice / coin1Price) - 1) * 100;
+                const multiplier = newPrice / coin1Price;
+                
+                resultsDiv.innerHTML = `
+                    <div class="result-card">
+                        <div class="result-label">
+                            ${data1.symbol.toUpperCase()} at ${data2.symbol.toUpperCase()}'s market cap
+                        </div>
+                        <div class="result-price">$${formatNumber(newPrice)}</div>
+                        <div class="result-change">
+                            ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
+                        </div>
+                        <div class="result-stats">
+                            <div class="result-stat">
+                                <div class="result-stat-label">Current Price</div>
+                                <div class="result-stat-value">$${formatNumber(coin1Price)}</div>
+                            </div>
+                            <div class="result-stat">
+                                <div class="result-stat-label">Multiplier</div>
+                                <div class="result-stat-value">${multiplier.toFixed(2)}x</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error calculating:', error);
+                resultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Calculation failed</p>
+                        <span>Please try again</span>
+                    </div>
+                `;
+            }
+        }
+
+        function swapSimCoins() {
+            const temp = selectedSimCoin1;
+            selectedSimCoin1 = selectedSimCoin2;
+            selectedSimCoin2 = temp;
+            
+            if (selectedSimCoin1) {
+                const display1 = document.getElementById('sim1Selected');
+                if (display1) {
+                    display1.innerHTML = `
+                        <img src="${selectedSimCoin1.image}" alt="${selectedSimCoin1.name}">
+                        <div class="coin-details">
+                            <div class="coin-name">${selectedSimCoin1.name} (${selectedSimCoin1.symbol.toUpperCase()})</div>
+                            <div class="coin-price">$${formatNumber(selectedSimCoin1.current_price)}</div>
+                        </div>
+                    `;
+                    display1.classList.add('active');
+                }
+            } else {
+                document.getElementById('sim1Selected')?.classList.remove('active');
+            }
+            
+            if (selectedSimCoin2) {
+                const display2 = document.getElementById('sim2Selected');
+                if (display2) {
+                    display2.innerHTML = `
+                        <img src="${selectedSimCoin2.image}" alt="${selectedSimCoin2.name}">
+                        <div class="coin-details">
+                            <div class="coin-name">${selectedSimCoin2.name} (${selectedSimCoin2.symbol.toUpperCase()})</div>
+                            <div class="coin-price">$${formatNumber(selectedSimCoin2.current_price)}</div>
+                        </div>
+                    `;
+                    display2.classList.add('active');
+                }
+            } else {
+                document.getElementById('sim2Selected')?.classList.remove('active');
+            }
+            
+            document.getElementById('simulatorResults').innerHTML = '';
+        }
+
+        function formatNumber(num) {
+            if (isNaN(num) || num === null) return "0.00";
+            if (num >= 1000000) return (num / 1000000).toFixed(2) + "M";
+            if (num >= 1000) return (num / 1000).toFixed(2) + "K";
+            return num.toFixed(2);
+        }
+
+        function setupThemeToggle() {
+            const button = document.getElementById('themeToggle');
+            if (!button) return;
+            
+            const body = document.body;
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            
+            if (savedTheme === 'light') {
+                body.classList.remove('dark-mode');
+            } else {
+                body.classList.add('dark-mode');
+            }
+            
+            updateThemeIcon();
+            
+            button.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                const isDark = body.classList.contains('dark-mode');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                updateThemeIcon();
+            });
+        }
+
+        function updateThemeIcon() {
+            const button = document.getElementById('themeToggle');
+            const isDark = document.body.classList.contains('dark-mode');
+            if (button) {
+                button.innerHTML = `<i class="fas fa-${isDark ? 'sun' : 'moon'}"></i>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

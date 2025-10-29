@@ -2,176 +2,195 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Track your cryptocurrency portfolio with real-time CoinGecko data, view allocation, P&L, and historical performance. Updated March 2025.">
-    <meta name="robots" content="index, follow">
-    <meta name="keywords" content="cryptocurrency, portfolio tracker, crypto prices, CoinGecko, P&L, allocation">
-    <title>Portfolio Tracker - Market Cap Simulator</title>
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WSSWV49R83"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-WSSWV49R83', { 'debug_mode': true });
-    </script>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Portfolio Tracker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
-<body>
-    <header>
-        <div class="header-container">
-            <h1>
-                <i class="fas fa-coins header-icon"></i>
-                <span class="gradient-text">Portfolio Tracker</span>
-            </h1>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
-        <nav class="nav-bar">
-            <ul>
-                <li><a href="index.html" class="nav-link">Market Cap Simulator</a></li>
-                <li><a href="portfolio.html" class="nav-link active">Portfolio Tracker</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section id="tracker-section" class="tracker-section">
-            <h2>Track Your Portfolio</h2>
-            <p>Add your cryptocurrency holdings below to track their value, allocation, and performance with live CoinGecko data.</p>
-            <div class="tracker-inputs">
-                <div class="crypto-selector">
-                    <label for="trackerCoinSearch">Select Coin</label>
-                    <div class="search-container">
-                        <i class="fas fa-search search-icon" data-tooltip="Search for a coin"></i>
-                        <input
-                            type="text"
-                            id="trackerCoinSearch"
-                            placeholder="Search crypto (e.g., BTC)"
-                            oninput="filterDropdown('trackerCoinSearch', 'trackerCoinDropdown')"
-                            onkeydown="navigateDropdown(event, 'trackerCoinDropdown')"
-                            aria-autocomplete="list"
-                            aria-controls="trackerCoinDropdown"
-                            data-coin-id=""
-                            data-symbol=""
-                            data-image="">
-                    </div>
-                    <div id="trackerCoinDropdown" class="coin-dropdown" role="listbox"></div>
-                </div>
-                <div class="input-group">
-                    <label for="trackerCoinAmount">Amount</label>
-                    <input type="number" id="trackerCoinAmount" min="0" step="0.0001" placeholder="Amount">
-                </div>
-                <div class="input-group">
-                    <label for="trackerPurchasePrice">Purchase Price (USD)</label>
-                    <input type="number" id="trackerPurchasePrice" min="0" step="0.01" placeholder="Purchase Price">
-                </div>
-                <button id="addCoinButton" class="add-button" onclick="addCoinToTracker()">
-                    <i class="fas fa-plus"></i> Add Coin
-                </button>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <section id="summary-section" class="summary-section">
-            <h2>Portfolio Summary</h2>
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <span class="summary-label">Current Value</span>
-                    <span id="currentValue" class="summary-value">$0.00</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Daily Change</span>
-                    <span id="dailyChange" class="summary-value change">$0.00</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Total P&L</span>
-                    <span id="totalPnL" class="summary-value change">$0.00</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Unrealized P&L</span>
-                    <span id="unrealizedPnL" class="summary-value change">$0.00</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Lifetime Cost</span>
-                    <span id="lifetimeCost" class="summary-value">$0.00</span>
-                </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="pnlChart"></canvas>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <section id="allocation-section" class="allocation-section">
-            <h2>Allocation</h2>
-            <div class="allocation-grid">
-                <div class="chart-container">
-                    <canvas id="allocationChart"></canvas>
-                </div>
-                <div id="allocationList" class="allocation-list">
-                    <p>Add coins to see your portfolio allocation.</p>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <section id="holdings-section" class="holdings-section">
-            <h2>Current Holdings</h2>
-            <div id="holdingsList" class="holdings-list">
-                <p>Your portfolio is empty. Add coins to track their value and performance.</p>
-            </div>
-            <div class="tracker-actions">
-                <button id="refreshTrackerButton" class="refresh-button" onclick="refreshTrackerPrices()">
-                    <i class="fas fa-sync-alt"></i> Refresh with Live Data
-                </button>
-                <button id="clearTrackerButton" class="clear-button" onclick="clearTracker()">
-                    <i class="fas fa-trash"></i> Clear Portfolio
-                </button>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <section id="trades-section" class="trades-section">
-            <h2>Trades Taken</h2>
-            <div id="tradesList" class="trades-list">
-                <p>No trades recorded. Add coins to track your trades.</p>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-container">
-            <p>Powered by <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko API</a></p>
-            <p id="lastUpdated">Last dynamic update: Loading...</p>
-        </div>
-    </footer>
-
+<body class="dark-mode">
+    <!-- Global Loader -->
     <div id="globalLoader" class="global-loader">
         <div class="loader-circle"></div>
     </div>
 
-    <noscript>
-        <style>
-            .tracker-section, .summary-section, .allocation-section, .holdings-section, .trades-section { display: block !important; }
-            .global-loader { display: none !important; }
-        </style>
-        <div class="noscript-notice">
-            <p>This site requires JavaScript for full functionality. Without it, you can still view static content.</p>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1>
+                <i class="fas fa-chart-pie"></i>
+                Portfolio Tracker
+            </h1>
+            <nav class="nav-tabs">
+                <a href="index.html" class="nav-tab">
+                    <i class="fas fa-calculator"></i>
+                    Simulator
+                </a>
+                <a href="portfolio.html" class="nav-tab active">
+                    <i class="fas fa-briefcase"></i>
+                    Portfolio
+                </a>
+            </nav>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
-    </noscript>
+    </header>
+
+    <main>
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="card-header">
+                    <i class="fas fa-wallet"></i>
+                    <span>Portfolio Value</span>
+                </div>
+                <div class="card-value" id="totalValue">$0.00</div>
+                <div class="card-subtext" id="invested">$0 invested</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Total Profit</span>
+                </div>
+                <div class="card-value positive" id="totalProfit">+$0.00</div>
+                <div class="card-subtext">
+                    <span id="profitPercent">+0.00%</span>
+                    <span class="daily-change" id="dailyChange">-$0.00 ▼ 0.00% daily</span>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="card-header">
+                    <i class="fas fa-percentage"></i>
+                    <span>IRR</span>
+                </div>
+                <div class="card-value" id="irr">0.00%</div>
+                <div class="card-subtext">
+                    <span id="irrCurrent">0.00%</span> current holdings
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="card-header">
+                    <i class="fas fa-coins"></i>
+                    <span>Passive Income</span>
+                </div>
+                <div class="card-value" id="passivePercent">3.27%</div>
+                <div class="card-subtext">
+                    <span id="passive">$0 annually</span>
+                    <span class="gain-badge">▲ 7.6%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Coin Section -->
+        <div class="add-coin-section">
+            <h3>Add to Portfolio</h3>
+            <div class="add-coin-form">
+                <div class="crypto-selector">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input 
+                            type="text" 
+                            id="trackerCoinSearch" 
+                            placeholder="Search cryptocurrency..."
+                            autocomplete="off"
+                        >
+                    </div>
+                    <div id="trackerCoinDropdown" class="coin-dropdown"></div>
+                </div>
+                
+                <input 
+                    type="number" 
+                    id="coinAmount" 
+                    placeholder="Amount"
+                    step="any"
+                    min="0"
+                >
+                
+                <input 
+                    type="number" 
+                    id="purchasePrice" 
+                    placeholder="Purchase Price ($)"
+                    step="any"
+                    min="0"
+                >
+                
+                <button id="addCoinButton" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Add
+                </button>
+            </div>
+        </div>
+
+        <!-- Portfolio Content Grid -->
+        <div class="portfolio-grid">
+            <!-- Holdings List -->
+            <div class="holdings-section">
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-list"></i>
+                        Holdings
+                    </h3>
+                    <div class="section-actions">
+                        <button id="refreshTrackerButton" class="btn-icon" title="Refresh prices">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button id="clearTrackerButton" class="btn-icon btn-danger" title="Clear all">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="holdingsList" class="holdings-list">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No holdings yet</p>
+                        <span>Add your first cryptocurrency above</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Allocation Chart -->
+            <div class="chart-section">
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-chart-pie"></i>
+                        Allocation
+                    </h3>
+                    <button class="btn-menu">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="allocationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trades Section -->
+        <div class="trades-section">
+            <div class="section-header">
+                <h3>
+                    <i class="fas fa-exchange-alt"></i>
+                    Trades
+                </h3>
+            </div>
+            <div id="tradesList" class="trades-list">
+                <div class="empty-state">
+                    <i class="fas fa-chart-line"></i>
+                    <p>No trades recorded</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Last Updated -->
+        <div class="last-updated">
+            <i class="fas fa-clock"></i>
+            <span id="lastUpdated">Last update: Never</span>
+        </div>
+    </main>
 
     <script src="portfolio.js"></script>
 </body>

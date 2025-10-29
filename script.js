@@ -105,34 +105,21 @@ async function loadCryptoList() {
     const coinsPerPage = 250;
     const totalCoins = 500;
     const pagesNeeded = Math.ceil(totalCoins / coinsPerPage);
-    let allCoins = [];
+    const fetchPromises = [];
+
+    for (let page = 1; page <= pagesNeeded; page++) {
+        const apiUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${coinsPerPage}&page=${page}&sparkline=false`;
+        fetchPromises.push(fetch(apiUrl).then(res => res.ok ? res.json() : []));
+    }
 
     try {
-        for (let page = 1; page <= pagesNeeded; page++) {
-            const apiUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${coinsPerPage}&page=${page}&sparkline=false`;
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                console.warn(`API error on page ${page}: ${response.status}`);
-                continue; // Skip failed pages
-            }
-            const coins = await response.json();
-            if (!Array.isArray(coins)) {
-                console.warn(`Invalid data on page ${page}`);
-                continue;
-            }
-            allCoins = allCoins.concat(coins);
-            if (allCoins.length >= totalCoins) {
-                allCoins = allCoins.slice(0, totalCoins);
-                break;
-            }
-        }
-        cryptoList = allCoins;
-        if (cryptoList.length === 0) {
-            throw new Error("No coins fetched");
-        }
+        const allPages = await Promise.all(fetchPromises);
+        let allCoins = allPages.flat();
+        cryptoList = allCoins.slice(0, totalCoins);
+        if (cryptoList.length === 0) throw new Error("No coins fetched");
     } catch (error) {
         console.error("Error fetching crypto list:", error);
-        showError("Unable to fetch cryptocurrency data at this time.");
+        showError("Unable to fetch cryptocurrency data. Using static prices.");
         cryptoList = [];
     }
 }

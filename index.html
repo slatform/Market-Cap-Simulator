@@ -2,170 +2,255 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Compare cryptocurrency market caps, calculate portfolio worth, track your holdings offline or with real-time CoinGecko data, and monitor top gainers and losers. A comprehensive crypto toolset updated March 2025.">
-    <meta name="robots" content="index, follow">
-    <meta name="keywords" content="cryptocurrency, market cap simulator, portfolio tracker, crypto prices, CoinGecko, top gainers losers">
-    <title>Market Cap Simulator - Crypto Tools & Portfolio Tracker</title>
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WSSWV49R83"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-WSSWV49R83', { 'debug_mode': true });
-    </script>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Portfolio Tracker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
-<body>
-    <header>
-        <div class="header-container">
-            <h1>
-                <i class="fas fa-coins header-icon"></i>
-                <span class="gradient-text">Market Cap Simulator</span>
-            </h1>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
-        <nav class="nav-bar">
-            <ul>
-                <li><a href="index.html" class="nav-link active">Market Cap Simulator</a></li>
-                <li><a href="portfolio.html" class="nav-link">Portfolio Tracker</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    <main>
-        <section class="intro">
-            <h2>Welcome to Market Cap Simulator</h2>
-            <p>Explore the world of cryptocurrencies with our tools. Compare market caps of your favorite coins like Bitcoin and Ethereum, calculate what your portfolio could be worth under different market conditions, and monitor top gainers and losers in real-time.</p>
-        </section>
-
-        <section class="comparison-tool">
-            <h2>Compare Market Caps</h2>
-            <div class="comparison-grid">
-                <div class="crypto-selector">
-                    <label for="coinASearch">First Crypto</label>
-                    <div class="search-container">
-                        <i class="fas fa-search search-icon" data-tooltip="Search for a coin"></i>
-                        <input
-                            type="text"
-                            id="coinASearch"
-                            placeholder="Search crypto (e.g., BTC)"
-                            oninput="filterDropdown('coinASearch', 'coinADropdown')"
-                            onkeydown="navigateDropdown(event, 'coinADropdown')"
-                            aria-autocomplete="list"
-                            aria-controls="coinADropdown"
-                            data-coin-id=""
-                            data-symbol=""
-                            data-image="">
-                    </div>
-                    <div id="coinADropdown" class="coin-dropdown" role="listbox"></div>
-                </div>
-                <div class="crypto-selector">
-                    <label for="coinBSearch">Second Crypto</label>
-                    <div class="search-container">
-                        <i class="fas fa-search search-icon" data-tooltip="Search for a coin"></i>
-                        <input
-                            type="text"
-                            id="coinBSearch"
-                            placeholder="Search crypto (e.g., ETH)"
-                            oninput="filterDropdown('coinBSearch', 'coinBDropdown')"
-                            onkeydown="navigateDropdown(event, 'coinBDropdown')"
-                            aria-autocomplete="list"
-                            aria-controls="coinBDropdown"
-                            data-coin-id=""
-                            data-symbol=""
-                            data-image="">
-                    </div>
-                    <div id="coinBDropdown" class="coin-dropdown" role="listbox"></div>
-                </div>
-            </div>
-            <div class="button-container">
-                <button id="compareButton" class="compare-button" onclick="compareMarketCaps()">
-                    <i class="fas fa-exchange-alt"></i> Compare
-                </button>
-            </div>
-        </section>
-
-        <section id="results-section" class="results-section">
-            <div id="comparisonResult" class="comparison-result">
-                <p>Select two cryptocurrencies above to compare their market caps and see hypothetical price scenarios based on real-time data.</p>
-            </div>
-        </section>
-
-        <section id="portfolio-section" class="portfolio-section">
-            <h2>Your Portfolio Worth</h2>
-            <p>Input your holdings below to calculate their value if they matched the market cap of another coin.</p>
-            <div class="portfolio-inputs">
-                <div class="portfolio-input">
-                    <label for="coinAAmount">Amount of <span id="coinALabel">First Crypto</span>:</label>
-                    <input type="number" id="coinAAmount" min="0" step="0.0001" placeholder="e.g., 1000">
-                </div>
-                <div class="portfolio-input">
-                    <label for="coinBAmount">Amount of <span id="coinBLabel">Second Crypto</span>:</label>
-                    <input type="number" id="coinBAmount" min="0" step="0.0001" placeholder="e.g., 0">
-                </div>
-            </div>
-            <div id="portfolioResult" class="portfolio-result">
-                <p>Enter amounts above after comparing coins to calculate your portfolio's potential value.</p>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <section id="gainers-losers-section" class="gainers-losers-section">
-            <h2>Top 10 Gainers & Losers (24h)</h2>
-            <p>View the top 10 cryptocurrencies with the highest gains and largest losses over the past 24 hours, updated in real-time.</p>
-            <div class="gainers-losers-grid">
-                <div class="gainers-table">
-                    <h3>Top Gainers</h3>
-                    <div id="topGainers" class="crypto-table">
-                        <p>Live data on the top 10 cryptocurrencies with the highest 24-hour gains will appear here once loaded.</p>
-                    </div>
-                </div>
-                <div class="losers-table">
-                    <h3>Top Losers</h3>
-                    <div id="topLosers" class="crypto-table">
-                        <p>Live data on the top 10 cryptocurrencies with the largest 24-hour losses will appear here once loaded.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    
-    <footer>
-        <div class="footer-container">
-            <p>Powered by <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko API</a></p>
-            <p id="lastUpdated">Last dynamic update: Loading...</p>
-        </div>
-    </footer>
-
+<body class="dark-mode">
+    <!-- Global Loader -->
     <div id="globalLoader" class="global-loader">
         <div class="loader-circle"></div>
     </div>
 
-    <noscript>
-        <style>
-            .results-section, .portfolio-section, .gainers-losers-section {
-                display: block !important;
-            }
-            .global-loader {
-                display: none !important;
-            }
-        </style>
-        <div class="noscript-notice">
-            <p>This site requires JavaScript for full functionality. Without it, you can still explore static content below.</p>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1>
+                <i class="fas fa-chart-pie"></i>
+                Portfolio Tracker
+            </h1>
+            <nav class="nav-tabs">
+                <a href="#simulator" class="nav-tab active">
+                    <i class="fas fa-calculator"></i>
+                    Simulator
+                </a>
+                <a href="#portfolio" class="nav-tab">
+                    <i class="fas fa-briefcase"></i>
+                    Portfolio
+                </a>
+            </nav>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
-    </noscript>
+    </header>
 
-    <script src="script.js"></script>
+    <main>
+        <!-- Simulator Page (Default/Homepage) -->
+        <section id="simulatorPage" class="page active">
+            <div class="simulator-container">
+                <div class="simulator-header">
+                    <h2>Market Cap Simulator</h2>
+                    <p>Calculate what a cryptocurrency's price would be at another coin's market cap</p>
+                </div>
+
+                <div class="simulator-content">
+                    <div class="comparison-grid">
+                        <div class="crypto-selector">
+                            <label>If this coin</label>
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input 
+                                    type="text" 
+                                    id="simCoin1Search" 
+                                    placeholder="Search coin..."
+                                    autocomplete="off"
+                                >
+                            </div>
+                            <div id="simCoin1Dropdown" class="coin-dropdown"></div>
+                            <div id="sim1Selected" class="selected-coin-display"></div>
+                        </div>
+
+                        <div class="crypto-selector">
+                            <label>Had this coin's market cap</label>
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input 
+                                    type="text" 
+                                    id="simCoin2Search" 
+                                    placeholder="Search coin..."
+                                    autocomplete="off"
+                                >
+                            </div>
+                            <div id="simCoin2Dropdown" class="coin-dropdown"></div>
+                            <div id="sim2Selected" class="selected-coin-display"></div>
+                        </div>
+                    </div>
+
+                    <button id="swapButton" class="btn-secondary">
+                        <i class="fas fa-exchange-alt"></i>
+                        Swap
+                    </button>
+
+                    <button id="calculateButton" class="btn-primary btn-large">
+                        <i class="fas fa-calculator"></i>
+                        Calculate Price
+                    </button>
+
+                    <div id="simulatorResults" class="simulator-results"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Page -->
+        <section id="portfolioPage" class="page">
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="card-header">
+                        <i class="fas fa-wallet"></i>
+                        <span>Portfolio Value</span>
+                    </div>
+                    <div class="card-value" id="totalValue">$0.00</div>
+                    <div class="card-subtext" id="invested">$0 invested</div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Total Profit</span>
+                    </div>
+                    <div class="card-value positive" id="totalProfit">+$0.00</div>
+                    <div class="card-subtext">
+                        <span id="profitPercent">+0.00%</span>
+                        <span class="daily-change" id="dailyChange">-$0.00 ▼ 0.00% daily</span>
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="card-header">
+                        <i class="fas fa-percentage"></i>
+                        <span>IRR</span>
+                    </div>
+                    <div class="card-value" id="irr">0.00%</div>
+                    <div class="card-subtext">
+                        <span id="irrCurrent">0.00%</span> current holdings
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="card-header">
+                        <i class="fas fa-coins"></i>
+                        <span>Passive Income</span>
+                    </div>
+                    <div class="card-value" id="passivePercent">3.27%</div>
+                    <div class="card-subtext">
+                        <span id="passive">$0 annually</span>
+                        <span class="gain-badge">▲ 7.6%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Coin Section -->
+            <div class="add-coin-section">
+                <h3>Add to Portfolio</h3>
+                <div class="add-coin-form">
+                    <div class="crypto-selector">
+                        <div class="search-container">
+                            <i class="fas fa-search"></i>
+                            <input 
+                                type="text" 
+                                id="trackerCoinSearch" 
+                                placeholder="Search cryptocurrency..."
+                                autocomplete="off"
+                            >
+                        </div>
+                        <div id="trackerCoinDropdown" class="coin-dropdown"></div>
+                    </div>
+                    
+                    <input 
+                        type="number" 
+                        id="coinAmount" 
+                        placeholder="Amount"
+                        step="any"
+                        min="0"
+                    >
+                    
+                    <input 
+                        type="number" 
+                        id="purchasePrice" 
+                        placeholder="Purchase Price ($)"
+                        step="any"
+                        min="0"
+                    >
+                    
+                    <button id="addCoinButton" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Add
+                    </button>
+                </div>
+            </div>
+
+            <!-- Portfolio Content Grid -->
+            <div class="portfolio-grid">
+                <!-- Holdings List -->
+                <div class="holdings-section">
+                    <div class="section-header">
+                        <h3>
+                            <i class="fas fa-list"></i>
+                            Holdings
+                        </h3>
+                        <div class="section-actions">
+                            <button id="refreshTrackerButton" class="btn-icon" title="Refresh prices">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button id="clearTrackerButton" class="btn-icon btn-danger" title="Clear all">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="holdingsList" class="holdings-list">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No holdings yet</p>
+                            <span>Add your first cryptocurrency above</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Allocation Chart -->
+                <div class="chart-section">
+                    <div class="section-header">
+                        <h3>
+                            <i class="fas fa-chart-pie"></i>
+                            Allocation
+                        </h3>
+                        <button class="btn-menu">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="allocationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trades Section -->
+            <div class="trades-section">
+                <div class="section-header">
+                    <h3>
+                        <i class="fas fa-exchange-alt"></i>
+                        Trades
+                    </h3>
+                </div>
+                <div id="tradesList" class="trades-list">
+                    <div class="empty-state">
+                        <i class="fas fa-chart-line"></i>
+                        <p>No trades recorded</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last Updated -->
+            <div class="last-updated">
+                <i class="fas fa-clock"></i>
+                <span id="lastUpdated">Last update: Never</span>
+            </div>
+        </section>
+    </main>
+
+    <script src="portfolio.js"></script>
 </body>
 </html>
