@@ -9,6 +9,16 @@ function initApp() {
     showGlobalLoader();
     updateLastUpdated();
     
+    // Show loading message
+    const loader = document.getElementById('globalLoader');
+    if (loader) {
+        const loaderText = document.createElement('div');
+        loaderText.style.marginTop = '10px';
+        loaderText.style.color = 'white';
+        loaderText.textContent = 'Loading top 1000 cryptocurrencies...';
+        loader.appendChild(loaderText);
+    }
+    
     loadCryptoList()
         .then(() => {
             loadPortfolioTracker();
@@ -53,16 +63,46 @@ function updateLastUpdated() {
 
 // ===== LOAD CRYPTO DATA =====
 async function loadCryptoList() {
-    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false';
+    const perPage = 250; // Maximum allowed by CoinGecko API
+    const totalPages = 4; // 4 pages × 250 = 1000 cryptocurrencies
+    let allCoins = [];
     
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
-        cryptoList = await response.json();
+        // Fetch all pages in parallel for faster loading
+        const promises = [];
+        for (let page = 1; page <= totalPages; page++) {
+            const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=${page}&sparkline=false`;
+            promises.push(fetch(url).then(response => {
+                if (!response.ok) throw new Error(`Failed to fetch page ${page}`);
+                return response.json();
+            }));
+        }
+        
+        // Wait for all requests to complete
+        const results = await Promise.all(promises);
+        
+        // Combine all results
+        results.forEach(pageData => {
+            allCoins = allCoins.concat(pageData);
+        });
+        
+        cryptoList = allCoins;
+        console.log(`Loaded ${cryptoList.length} cryptocurrencies`);
         return cryptoList;
     } catch (error) {
         console.error('Error loading crypto list:', error);
-        throw error;
+        // Try to load at least the first page if multiple pages fail
+        try {
+            const fallbackUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false';
+            const response = await fetch(fallbackUrl);
+            if (!response.ok) throw new Error('Fallback request also failed');
+            cryptoList = await response.json();
+            console.log(`Loaded ${cryptoList.length} cryptocurrencies (fallback mode)`);
+            return cryptoList;
+        } catch (fallbackError) {
+            console.error('Fallback also failed:', fallbackError);
+            throw error;
+        }
     }
 }
 
@@ -84,7 +124,7 @@ function filterDropdown() {
     const matches = cryptoList.filter(coin => 
         coin.name.toLowerCase().includes(value) || 
         coin.symbol.toLowerCase().includes(value)
-    ).slice(0, 10);
+    ).slice(0, 15);
     
     if (matches.length === 0) {
         dropdown.innerHTML = '<div class="dropdown-item disabled">No results found</div>';
@@ -339,65 +379,176 @@ function initializeCharts() {
     const ctx = document.getElementById('allocationChart');
     if (!ctx) return;
     
+    // Destroy existing chart if it exists
+    if (allocationChart) {
+        allocationChart.destroy();
+    }
+    
+    // Check if we're in dark mode
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    
     allocationChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: [],
+            labels: ['No Data'],
             datasets: [{
-                data: [],
+                data: [1],
                 backgroundColor: [
-                    '#60a5fa',
-                    '#34d399',
-                    '#fbbf24',
-                    '#a78bfa',
-                    '#f472b6',
-                    '#fb923c',
-                    '#22d3ee'
+                    '#3b82f6', // Bright blue
+                    '#10b981', // Emerald green
+                    '#f59e0b', // Amber
+                    '#8b5cf6', // Violet
+                    '#ec4899', // Pink
+                    '#ef4444', // Red
+                    '#06b6d4', // Cyan
+                    '#84cc16', // Lime
+                    '#f97316', // Orange
+                    '#a855f7', // Purple
+                    '#14b8a6', // Teal
+                    '#fbbf24', // Yellow
+                    '#6366f1', // Indigo
+                    '#22c55e', // Green
+                    '#fb7185'  // Rose
                 ],
-                borderWidth: 0
+                borderWidth: isDarkMode ? 3 : 2,
+                borderColor: isDarkMode ? '#1e293b' : '#ffffff',
+                hoverBorderColor: isDarkMode ? '#334155' : '#e2e8f0',
+                hoverBorderWidth: 4
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: true,
+            cutout: '65%', // Makes the doughnut hole bigger
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        padding: 15,
+                        padding: 20,
                         font: {
-                            size: 12,
-                            family: 'Inter'
+                            size: 14,
+                            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            weight: '500'
                         },
-                        color: getComputedStyle(document.documentElement)
-                            .getPropertyValue('--text-secondary').trim()
+                        color: isDarkMode ? '#ffffff' : '#1f2937', // White for dark mode, dark gray for light mode
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                const currentIsDark = document.body.classList.contains('dark-mode');
+                                return data.labels.map((label, i) => {
+                                    const dataset = data.datasets[0];
+                                    const value = dataset.data[i];
+                                    const total = dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    
+                                    return {
+                                        text: `${label} (${percentage}%)`,
+                                        fillStyle: dataset.backgroundColor[i],
+                                        strokeStyle: dataset.backgroundColor[i],
+                                        fontColor: currentIsDark ? '#ffffff' : '#1f2937',
+                                        hidden: false,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
+                    },
+                    onHover: function(event, legendItem) {
+                        document.body.style.cursor = 'pointer';
+                    },
+                    onLeave: function(event, legendItem) {
+                        document.body.style.cursor = 'default';
                     }
                 },
                 tooltip: {
+                    backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
+                    titleColor: isDarkMode ? '#ffffff' : '#1f2937',
+                    bodyColor: isDarkMode ? '#e2e8f0' : '#4b5563',
+                    borderColor: isDarkMode ? '#334155' : '#e5e7eb',
+                    borderWidth: 1,
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: true,
                     callbacks: {
                         label: function(context) {
                             const label = context.label || '';
                             const value = context.parsed || 0;
                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = ((value / total) * 100).toFixed(1);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
                             return `${label}: $${formatNumber(value)} (${percentage}%)`;
                         }
                     }
                 }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true
             }
         }
     });
 }
 
 function updateChart(groups) {
-    if (!allocationChart) return;
+    if (!allocationChart) {
+        initializeCharts();
+        if (!allocationChart) return;
+    }
+    
+    // Check current theme
+    const isDarkMode = document.body.classList.contains('dark-mode');
     
     const labels = Object.keys(groups);
     const data = labels.map(key => groups[key].value);
     
-    allocationChart.data.labels = labels;
-    allocationChart.data.datasets[0].data = data;
-    allocationChart.update();
+    // If no data, show placeholder
+    if (labels.length === 0 || data.length === 0) {
+        allocationChart.data.labels = ['No Holdings'];
+        allocationChart.data.datasets[0].data = [1];
+        allocationChart.data.datasets[0].backgroundColor = ['#94a3b8'];
+    } else {
+        // Update with actual data
+        allocationChart.data.labels = labels;
+        allocationChart.data.datasets[0].data = data;
+        
+        // Enhanced color palette with better contrast
+        const colors = [
+            '#3b82f6', // Bright blue
+            '#10b981', // Emerald green
+            '#f59e0b', // Amber
+            '#8b5cf6', // Violet
+            '#ec4899', // Pink
+            '#ef4444', // Red
+            '#06b6d4', // Cyan
+            '#84cc16', // Lime
+            '#f97316', // Orange
+            '#a855f7', // Purple
+            '#14b8a6', // Teal
+            '#fbbf24', // Yellow
+            '#6366f1', // Indigo
+            '#22c55e', // Green
+            '#fb7185'  // Rose
+        ];
+        
+        allocationChart.data.datasets[0].backgroundColor = colors.slice(0, labels.length);
+        allocationChart.data.datasets[0].borderColor = isDarkMode ? '#1e293b' : '#ffffff';
+        allocationChart.data.datasets[0].hoverBorderColor = isDarkMode ? '#334155' : '#e2e8f0';
+    }
+    
+    // Update chart colors based on current theme - use white for dark mode
+    if (allocationChart.options.plugins.legend) {
+        allocationChart.options.plugins.legend.labels.color = isDarkMode ? '#ffffff' : '#1f2937';
+    }
+    if (allocationChart.options.plugins.tooltip) {
+        allocationChart.options.plugins.tooltip.backgroundColor = isDarkMode ? '#1e293b' : '#ffffff';
+        allocationChart.options.plugins.tooltip.titleColor = isDarkMode ? '#ffffff' : '#1f2937';
+        allocationChart.options.plugins.tooltip.bodyColor = isDarkMode ? '#e2e8f0' : '#4b5563';
+        allocationChart.options.plugins.tooltip.borderColor = isDarkMode ? '#334155' : '#e5e7eb';
+    }
+    
+    allocationChart.update('active'); // Smooth animation
 }
 
 // ===== TRADES =====
@@ -500,12 +651,24 @@ function setupThemeToggle() {
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
         updateThemeIcon();
         
-        // Update chart colors
+        // Reinitialize chart with new theme colors
         if (allocationChart) {
-            allocationChart.options.plugins.legend.labels.color = 
-                getComputedStyle(document.documentElement)
-                    .getPropertyValue('--text-secondary').trim();
-            allocationChart.update();
+            // Store current data
+            const currentLabels = allocationChart.data.labels;
+            const currentData = allocationChart.data.datasets[0].data;
+            
+            // Destroy and recreate chart with new theme
+            allocationChart.destroy();
+            allocationChart = null;
+            initializeCharts();
+            
+            // Restore data if it exists
+            if (currentLabels && currentData && currentLabels.length > 0) {
+                const portfolio = JSON.parse(localStorage.getItem('cryptoPortfolio') || '[]');
+                if (portfolio.length > 0) {
+                    loadPortfolioTracker();
+                }
+            }
         }
     });
 }
@@ -544,6 +707,15 @@ function setupNavigation() {
                     pages.forEach(page => {
                         if (page.id === targetPage + 'Page') {
                             page.classList.add('active');
+                            // Reinitialize chart when switching to portfolio
+                            if (targetPage === 'portfolio') {
+                                setTimeout(() => {
+                                    if (!allocationChart) {
+                                        initializeCharts();
+                                    }
+                                    loadPortfolioTracker();
+                                }, 100);
+                            }
                         } else {
                             page.classList.remove('active');
                         }
@@ -571,6 +743,14 @@ function setupNavigation() {
                 portfolioTab.classList.add('active');
                 pages.forEach(p => p.classList.remove('active'));
                 portfolioPage.classList.add('active');
+                
+                // Initialize chart for portfolio view
+                setTimeout(() => {
+                    if (!allocationChart) {
+                        initializeCharts();
+                    }
+                    loadPortfolioTracker();
+                }, 100);
             }
         }
     } else {
@@ -612,7 +792,7 @@ function setupSimulatorSearch(inputId, dropdownId, displayId, coinNumber) {
         const matches = cryptoList.filter(coin =>
             coin.name.toLowerCase().includes(value) ||
             coin.symbol.toLowerCase().includes(value)
-        ).slice(0, 8);
+        ).slice(0, 15);
         
         if (matches.length === 0) {
             dropdown.innerHTML = '<div class="dropdown-item disabled">No results found</div>';
