@@ -3,10 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Cap Simulator</title>
+    <title>Simulator</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<script>
+/* Minimal pull-to-refresh: drag down from top → refresh */
+(function () {
+  var startY = 0, lastY = 0, pulling = false, THRESHOLD = 70;
+
+  function atTop() {
+    return (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0) === 0;
+  }
+
+  window.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) return;
+    if (!atTop()) { pulling = false; return; }
+    startY = lastY = e.touches[0].clientY;
+    pulling = true;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', function (e) {
+    if (!pulling) return;
+    lastY = e.touches[0].clientY;
+    if (lastY < startY) pulling = false; // user moved up; cancel
+  }, { passive: true });
+
+  window.addEventListener('touchend', function () {
+    if (!pulling) return;
+    var delta = lastY - startY;
+    pulling = false;
+    if (delta > THRESHOLD && atTop()) {
+      location.reload();
+    }
+  }, { passive: true });
+})();
+</script>
 <body class="dark-mode">
     <!-- Global Loader -->
     <div id="globalLoader" class="global-loader">
@@ -18,7 +50,7 @@
         <div class="header-content">
             <h1>
                 <i class="fas fa-chart-pie"></i>
-                Portfolio Tracker
+                Market Cap Simulator
             </h1>
             <nav class="nav-tabs">
                 <a href="index.html" class="nav-tab active">
@@ -47,7 +79,7 @@
                 <div class="simulator-content">
                     <div class="comparison-grid">
                         <div class="crypto-selector">
-                            <label>If this coin</label>
+                            <label>Coin X</label>
                             <div class="search-container">
                                 <i class="fas fa-search"></i>
                                 <input 
@@ -62,7 +94,7 @@
                         </div>
 
                         <div class="crypto-selector">
-                            <label>Had this coin's market cap</label>
+                            <label>Coin Y</label>
                             <div class="search-container">
                                 <i class="fas fa-search"></i>
                                 <input 

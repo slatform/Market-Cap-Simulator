@@ -8,6 +8,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
+<script>
+/* Minimal pull-to-refresh: drag down from top → refresh */
+(function () {
+  var startY = 0, lastY = 0, pulling = false, THRESHOLD = 70;
+
+  function atTop() {
+    return (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0) === 0;
+  }
+
+  window.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) return;
+    if (!atTop()) { pulling = false; return; }
+    startY = lastY = e.touches[0].clientY;
+    pulling = true;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', function (e) {
+    if (!pulling) return;
+    lastY = e.touches[0].clientY;
+    if (lastY < startY) pulling = false; // user moved up; cancel
+  }, { passive: true });
+
+  window.addEventListener('touchend', function () {
+    if (!pulling) return;
+    var delta = lastY - startY;
+    pulling = false;
+    if (delta > THRESHOLD && atTop()) {
+      location.reload();
+    }
+  }, { passive: true });
+})();
+</script>
 <body class="dark-mode">
     <!-- Global Loader -->
     <div id="globalLoader" class="global-loader">
