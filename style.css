@@ -170,6 +170,13 @@ header h1 {
     width: 32px;
     height: 32px;
     object-fit: contain;
+    /* Invert logo colors in light mode since logo is black */
+    filter: none;
+}
+
+/* Invert logo in dark mode to make it white */
+body.dark-mode .logo-icon {
+    filter: invert(1);
 }
 
 /* Navigation Tabs */
