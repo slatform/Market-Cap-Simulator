@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Orbytt - Crypto Market Cap Simulator & Portfolio Tracker</title>
+    <link rel="icon" type="image/jpeg" href="IMG_1011.jpeg">
+    <link rel="apple-touch-icon" href="IMG_1011.jpeg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -18,8 +20,15 @@
     <header>
         <div class="header-content">
             <h1>
-                <!-- Replace logo.png with your actual logo file -->
-                <img src="logo.png" alt="Orbytt" class="logo-icon">
+                <div class="logo-wrapper">
+                    <img src="IMG_1011.jpeg" alt="Orbytt" class="logo-icon">
+                    <!-- Fallback SVG logo -->
+                    <svg class="logo-svg" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+                        <ellipse cx="16" cy="16" rx="14" ry="10" fill="currentColor"/>
+                        <ellipse cx="16" cy="16" rx="8" ry="5" fill="var(--bg-primary)"/>
+                        <path d="M 28 12 Q 30 16 28 20" fill="none" stroke="var(--bg-primary)" stroke-width="2"/>
+                    </svg>
+                </div>
                 Orbytt
             </h1>
             <nav class="nav-tabs">
@@ -253,5 +262,25 @@
     </main>
 
     <script src="portfolio.js"></script>
+    <script>
+        // Handle logo loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoImg = document.querySelector('.logo-icon');
+            const logoSvg = document.querySelector('.logo-svg');
+            
+            if (logoImg) {
+                logoImg.onerror = function() {
+                    this.style.display = 'none';
+                    if (logoSvg) logoSvg.style.display = 'block';
+                };
+                
+                // Check if image loads successfully
+                if (logoImg.complete && logoImg.naturalHeight === 0) {
+                    logoImg.style.display = 'none';
+                    if (logoSvg) logoSvg.style.display = 'block';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
