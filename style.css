@@ -150,20 +150,25 @@ header {
 .header-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 24px;
-    height: 64px;
+    padding: 16px 24px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    position: relative;
+    min-height: 64px;
 }
 
+/* Logo and Title - Positioned on the left */
 header h1 {
-    font-size: 1.5rem;
+    position: absolute;
+    left: 24px;
+    font-size: 1.25rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 10px;
     letter-spacing: -0.02em;
+    margin: 0;
 }
 
 /* Logo wrapper */
@@ -180,7 +185,7 @@ header h1 {
     width: 32px;
     height: 32px;
     object-fit: contain;
-    border-radius: 4px;
+    border-radius: 6px;
     display: block;
 }
 
@@ -206,47 +211,68 @@ body.dark-mode .logo-icon {
     filter: invert(1);
 }
 
-/* Navigation Tabs */
+/* Centered Pill Navigation */
 .nav-tabs {
     display: flex;
-    gap: 4px;
+    align-items: center;
+    gap: 0;
     background: var(--bg-tertiary);
+    border-radius: 100px;
     padding: 4px;
-    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
 }
 
 .nav-tab {
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 10px 20px;
+    border-radius: 100px;
     text-decoration: none;
     color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     font-weight: 500;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 8px;
-    border: 1px solid transparent;
+    border: none;
+    background: transparent;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.nav-tab i {
+    font-size: 1rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
 }
 
 .nav-tab:hover {
     color: var(--text-primary);
-    background: var(--bg-hover);
+}
+
+.nav-tab:hover i {
+    opacity: 1;
 }
 
 .nav-tab.active {
     background: var(--bg-primary);
     color: var(--text-primary);
-    border-color: var(--border-color);
+    box-shadow: var(--shadow-xs);
 }
 
-/* Theme Toggle */
+.nav-tab.active i {
+    opacity: 1;
+}
+
+/* Theme Toggle - Positioned on the right */
 .theme-toggle {
+    position: absolute;
+    right: 24px;
     width: 40px;
     height: 40px;
-    border-radius: 8px;
+    border-radius: 50%;
     border: 1px solid var(--border-color);
-    background: var(--bg-primary);
+    background: var(--bg-tertiary);
     color: var(--text-primary);
     display: flex;
     align-items: center;
@@ -256,8 +282,12 @@ body.dark-mode .logo-icon {
 }
 
 .theme-toggle:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--border-dark);
+    background: var(--bg-hover);
+    transform: scale(1.05);
+}
+
+.theme-toggle i {
+    font-size: 1.125rem;
 }
 
 /* ===== MAIN CONTENT ===== */
@@ -1125,7 +1155,48 @@ main {
 
 @media (max-width: 768px) {
     .header-content {
-        padding: 0 16px;
+        padding: 12px 16px;
+    }
+    
+    header h1 {
+        left: 16px;
+        font-size: 1.125rem;
+        gap: 8px;
+    }
+    
+    .logo-wrapper {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .logo-icon,
+    .logo-svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .nav-tabs {
+        padding: 3px;
+    }
+    
+    .nav-tab {
+        padding: 8px 16px;
+        font-size: 0.875rem;
+        gap: 6px;
+    }
+    
+    .nav-tab i {
+        font-size: 0.9375rem;
+    }
+    
+    .theme-toggle {
+        right: 16px;
+        width: 36px;
+        height: 36px;
+    }
+    
+    .theme-toggle i {
+        font-size: 1rem;
     }
     
     main {
@@ -1153,24 +1224,43 @@ main {
     .simulator-container {
         padding: 24px 20px;
     }
-    
-    .nav-tabs {
-        gap: 2px;
-    }
-    
-    .nav-tab {
-        padding: 8px 12px;
-        font-size: 0.813rem;
-    }
-    
-    .nav-tab i {
-        display: none;
-    }
 }
 
 @media (max-width: 480px) {
     header h1 {
-        font-size: 1.25rem;
+        font-size: 1rem;
+        left: 12px;
+    }
+    
+    .logo-wrapper {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .logo-icon,
+    .logo-svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .nav-tabs {
+        padding: 3px;
+    }
+    
+    .nav-tab {
+        padding: 7px 14px;
+        font-size: 0.8125rem;
+        gap: 5px;
+    }
+    
+    .nav-tab i {
+        font-size: 0.875rem;
+    }
+    
+    .theme-toggle {
+        right: 12px;
+        width: 34px;
+        height: 34px;
     }
     
     .card-value {
@@ -1187,6 +1277,17 @@ main {
         padding-left: 0;
         border-left: none;
         margin-top: 4px;
+    }
+}
+
+/* Very small mobile - hide icons in nav to save space */
+@media (max-width: 380px) {
+    .nav-tab i {
+        display: none;
+    }
+    
+    .nav-tab {
+        padding: 7px 12px;
     }
 }
 

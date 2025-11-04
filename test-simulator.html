@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulator Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #000;
+            color: #fff;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+        }
+        
+        .coin-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .coin-dropdown.active {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .dropdown-item:hover {
+            background: #2a2a2a;
+        }
+        
+        .coin-icon {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .selected-coin-display {
+            display: none;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        
+        .selected-coin-display.active {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .selected-coin-display img {
+            width: 40px;
+            height: 40px;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background: #fff;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background: #e0e0e0;
+        }
+        
+        #simulatorResults {
+            margin-top: 30px;
+            padding: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            min-height: 100px;
+        }
+        
+        .result-price {
+            font-size: 32px;
+            font-weight: bold;
+            color: #22c55e;
+        }
+        
+        .loader {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Orbytt Simulator Test</h1>
+    <p>This is a minimal test page to verify the simulator functionality works.</p>
+    
+    <div id="status" style="background: #1a1a1a; padding: 15px; margin-bottom: 20px;">
+        <strong>Status:</strong> Loading...
+    </div>
+    
+    <h3>Coin 1</h3>
+    <div class="search-container">
+        <input type="text" id="simCoin1Search" placeholder="Search for first coin...">
+        <div id="simCoin1Dropdown" class="coin-dropdown"></div>
+    </div>
+    <div id="sim1Selected" class="selected-coin-display"></div>
+    
+    <h3>Coin 2</h3>
+    <div class="search-container">
+        <input type="text" id="simCoin2Search" placeholder="Search for second coin...">
+        <div id="simCoin2Dropdown" class="coin-dropdown"></div>
+    </div>
+    <div id="sim2Selected" class="selected-coin-display"></div>
+    
+    <button id="swapButton">Swap Coins</button>
+    <button id="calculateButton">Calculate Price</button>
+    
+    <div id="simulatorResults"></div>
+    
+    <script src="portfolio.js"></script>
+    
+    <script>
+        // Additional test logging
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusDiv = document.getElementById('status');
+            
+            // Check if elements exist
+            setTimeout(() => {
+                const checks = {
+                    'Calculate Button': document.getElementById('calculateButton'),
+                    'Swap Button': document.getElementById('swapButton'),
+                    'Coin 1 Search': document.getElementById('simCoin1Search'),
+                    'Coin 2 Search': document.getElementById('simCoin2Search'),
+                    'Results Div': document.getElementById('simulatorResults')
+                };
+                
+                let status = 'Elements Check:<br>';
+                for (const [name, element] of Object.entries(checks)) {
+                    status += `${name}: ${element ? '✓' : '✗'}<br>`;
+                }
+                
+                statusDiv.innerHTML = status;
+            }, 1000);
+            
+            // Test button click
+            const calcBtn = document.getElementById('calculateButton');
+            if (calcBtn) {
+                calcBtn.addEventListener('click', () => {
+                    console.log('TEST: Button clicked directly!');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
