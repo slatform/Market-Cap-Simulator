@@ -51,7 +51,7 @@ function updateLastUpdated() {
 async function loadCryptoList() {
     try {
         console.log('Loading coins...');
-        // ONLY CHANGE: increase per_page to 250 to include top 250 coins
+        // Top 250 coins for simulator & tracker
         const response = await fetch(
             'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false'
         );
@@ -91,79 +91,88 @@ async function calculateSimulation() {
         return;
     }
     
-    console.log('Coin 1:', selectedSimCoin1.name);
-    console.log('Coin 2:', selectedSimCoin2.name);
-
-    // Ensure results container is visible
-    if (resultsDiv) resultsDiv.classList.add('active');
-
-    resultsDiv.innerHTML = '<div class="empty-state"><div class="loader-circle"></div><p>Calculating...</p></div>';
+    if (resultsDiv) {
+        resultsDiv.classList.add('active');
+        resultsDiv.innerHTML = '<div class="empty-state"><div class="loader-circle"></div><p>Calculating...</p></div>';
+        revealResults(resultsDiv);
+    }
     
     try {
         // Get supply for coin 1
         let coin1Supply = selectedSimCoin1.circulating_supply;
-        
-        // If we don't have supply, calculate it
         if (!coin1Supply || coin1Supply === 0) {
             coin1Supply = selectedSimCoin1.market_cap / selectedSimCoin1.current_price;
-            console.log('Calculated supply for', selectedSimCoin1.name, '=', coin1Supply);
         }
         
         const coin1Price = selectedSimCoin1.current_price;
         const coin2MarketCap = selectedSimCoin2.market_cap;
-        
-        console.log('Supply:', coin1Supply);
-        console.log('Current price:', coin1Price);
-        console.log('Target market cap:', coin2MarketCap);
         
         // THE CALCULATION
         const newPrice = coin2MarketCap / coin1Supply;
         const change = ((newPrice / coin1Price) - 1) * 100;
         const multiplier = newPrice / coin1Price;
         
-        console.log('NEW PRICE:', newPrice);
-        console.log('Change:', change, '%');
-        console.log('Multiplier:', multiplier, 'x');
-        
         // Show result
-        resultsDiv.innerHTML = `
-            <div class="result-card" style="background: var(--bg-elevated); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color);">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 8px;">
-                        ${selectedSimCoin1.symbol.toUpperCase()} at ${selectedSimCoin2.symbol.toUpperCase()}'s market cap
+        if (resultsDiv) {
+            resultsDiv.classList.add('active');
+            resultsDiv.innerHTML = `
+                <div class="result-card" style="background: var(--bg-elevated); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 8px;">
+                            ${selectedSimCoin1.symbol.toUpperCase()} at ${selectedSimCoin2.symbol.toUpperCase()}'s market cap
+                        </div>
+                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
+                            $${formatNumber(newPrice)}
+                        </div>
+                        <div style="font-size: 1.25rem; font-weight: 600; color: ${change >= 0 ? '#22c55e' : '#ef4444'};">
+                            ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
+                        </div>
                     </div>
-                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
-                        $${formatNumber(newPrice)}
-                    </div>
-                    <div style="font-size: 1.25rem; font-weight: 600; color: ${change >= 0 ? '#22c55e' : '#ef4444'};">
-                        ${change >= 0 ? '↑' : '↓'} ${Math.abs(change).toFixed(2)}%
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 4px;">Current Price</div>
+                            <div style="font-size: 1.125rem; font-weight: 600;">$${formatNumber(coin1Price)}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 4px;">Multiplier</div>
+                            <div style="font-size: 1.125rem; font-weight: 600;">${multiplier.toFixed(2)}x</div>
+                        </div>
                     </div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 4px;">Current Price</div>
-                        <div style="font-size: 1.125rem; font-weight: 600;">$${formatNumber(coin1Price)}</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 4px;">Multiplier</div>
-                        <div style="font-size: 1.125rem; font-weight: 600;">${multiplier.toFixed(2)}x</div>
-                    </div>
-                </div>
-            </div>
-        `;
+            `;
+            // Ensure visibility on mobile
+            revealResults(resultsDiv);
+        }
         
         console.log('✓ SUCCESS!');
         
     } catch (error) {
         console.error('ERROR:', error);
-        resultsDiv.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-exclamation-circle"></i>
-                <p>Calculation Error</p>
-                <span>${error.message}</span>
-            </div>
-        `;
+        if (resultsDiv) {
+            resultsDiv.classList.add('active');
+            resultsDiv.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Calculation Error</p>
+                    <span>${error.message}</span>
+                </div>
+            `;
+            // Ensure visibility on mobile
+            revealResults(resultsDiv);
+        }
     }
+}
+
+// Ensure results are visible on mobile without changing CSS/layout
+function revealResults(el) {
+    try {
+        // If a virtual keyboard is open, a small delay helps prevent jumpiness
+        setTimeout(() => {
+            if (!el) return;
+            // Scroll the result card into view; block: 'nearest' avoids huge jumps
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 50);
+    } catch (_) {}
 }
 
 function formatNumber(num) {
@@ -638,7 +647,6 @@ function setupNavigation() {
             tab.classList.add('active');
             
             // Find and activate the correct page
-            // href="#simulator" should activate id="simulatorPage"
             const targetPage = document.getElementById(target + 'Page');
             if (targetPage) {
                 targetPage.classList.add('active');
