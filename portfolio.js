@@ -51,7 +51,10 @@ function updateLastUpdated() {
 async function loadCryptoList() {
     try {
         console.log('Loading coins...');
-        const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false');
+        // ONLY CHANGE: increase per_page to 250 to include top 250 coins
+        const response = await fetch(
+            'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false'
+        );
         
         if (response.ok) {
             cryptoList = await response.json();
@@ -90,7 +93,10 @@ async function calculateSimulation() {
     
     console.log('Coin 1:', selectedSimCoin1.name);
     console.log('Coin 2:', selectedSimCoin2.name);
-    
+
+    // Ensure results container is visible
+    if (resultsDiv) resultsDiv.classList.add('active');
+
     resultsDiv.innerHTML = '<div class="empty-state"><div class="loader-circle"></div><p>Calculating...</p></div>';
     
     try {
