@@ -593,7 +593,6 @@ main {
     
     .markets-table {
         width: 100%;
-        table-layout: fixed;
     }
     
     /* Hide Volume and Market Cap columns on mobile */
@@ -606,31 +605,34 @@ main {
     
     .markets-table th,
     .markets-table td {
-        padding: 12px 6px;
+        padding: 10px 8px;
         font-size: 0.875rem;
     }
     
-    /* Column widths that actually fit */
+    /* Rank column */
     .markets-table th:nth-child(1),
     .markets-table td:nth-child(1) {
-        width: 40px;
+        width: 10%;
         text-align: center;
     }
     
+    /* Name column */
     .markets-table th:nth-child(2),
     .markets-table td:nth-child(2) {
-        width: calc(100% - 200px);
+        width: 45%;
     }
     
+    /* Price column */
     .markets-table th:nth-child(3),
     .markets-table td:nth-child(3) {
-        width: 85px;
+        width: 25%;
         text-align: right;
     }
     
+    /* 24h % column */
     .markets-table th:nth-child(4),
     .markets-table td:nth-child(4) {
-        width: 75px;
+        width: 20%;
         text-align: right;
     }
     
@@ -652,7 +654,6 @@ main {
     
     .coin-symbol {
         font-size: 0.75rem;
-        white-space: nowrap;
     }
 }
 
@@ -663,28 +664,34 @@ main {
     
     .markets-table th,
     .markets-table td {
-        padding: 10px 4px;
+        padding: 8px 4px;
         font-size: 0.8125rem;
     }
     
+    /* Rank */
     .markets-table th:nth-child(1),
     .markets-table td:nth-child(1) {
-        width: 35px;
+        width: 12%;
     }
     
+    /* Name */
     .markets-table th:nth-child(2),
     .markets-table td:nth-child(2) {
-        width: calc(100% - 175px);
+        width: 40%;
     }
     
+    /* Price */
     .markets-table th:nth-child(3),
     .markets-table td:nth-child(3) {
-        width: 75px;
+        width: 28%;
+        font-size: 0.75rem;
     }
     
+    /* 24h % */
     .markets-table th:nth-child(4),
     .markets-table td:nth-child(4) {
-        width: 65px;
+        width: 20%;
+        font-size: 0.75rem;
     }
     
     .coin-logo {
