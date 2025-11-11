@@ -586,132 +586,149 @@ main {
 /* Mobile Responsive for Markets Table */
 @media (max-width: 768px) {
     .markets-table-section {
-        padding: 0 16px 32px;
+        padding: 0 8px 32px;
     }
     
     .table-container {
         overflow-x: visible;
+        border-radius: 12px;
     }
     
     .markets-table {
         width: 100%;
-        min-width: 0;
+        min-width: 0 !important;
+        table-layout: auto;
     }
     
-    /* Hide Volume and Market Cap columns on mobile */
+    /* Hide Market Cap and Volume columns on mobile */
     .markets-table th:nth-child(5),
     .markets-table td:nth-child(5),
     .markets-table th:nth-child(6),
     .markets-table td:nth-child(6) {
-        display: none;
+        display: none !important;
     }
     
     .markets-table th,
     .markets-table td {
-        padding: 10px 6px;
-        font-size: 0.8125rem;
+        padding: 8px 3px !important;
+        font-size: 0.7rem !important;
+        white-space: nowrap;
     }
     
-    /* Rank column */
+    /* Rank - super narrow */
     .markets-table th:nth-child(1),
     .markets-table td:nth-child(1) {
-        width: 40px;
-        padding: 10px 4px;
+        width: 30px !important;
+        padding: 8px 2px !important;
         text-align: center;
+        font-size: 0.65rem !important;
     }
     
-    /* Name column */
+    /* Name - compact with ellipsis */
     .markets-table th:nth-child(2),
     .markets-table td:nth-child(2) {
-        padding: 10px 8px;
+        max-width: 110px !important;
+        padding: 8px 4px !important;
     }
     
-    /* Price column */
+    /* Price - compact */
     .markets-table th:nth-child(3),
     .markets-table td:nth-child(3) {
-        width: 85px;
+        width: 70px !important;
         text-align: right;
-        padding: 10px 6px;
+        padding: 8px 3px !important;
+        font-size: 0.7rem !important;
     }
     
-    /* 24h % column */
+    /* 24h % - compact */
     .markets-table th:nth-child(4),
     .markets-table td:nth-child(4) {
-        width: 70px;
+        width: 60px !important;
         text-align: right;
-        padding: 10px 6px;
+        padding: 8px 3px !important;
+        font-size: 0.7rem !important;
     }
     
     .coin-logo {
-        width: 26px;
-        height: 26px;
+        width: 20px !important;
+        height: 20px !important;
     }
     
     .coin-name-cell {
-        gap: 8px;
+        gap: 4px !important;
+        min-width: 0;
+    }
+    
+    .coin-info {
+        min-width: 0;
+        overflow: hidden;
     }
     
     .coin-name {
-        font-size: 0.8125rem;
+        font-size: 0.7rem !important;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        max-width: 85px;
     }
     
     .coin-symbol {
-        font-size: 0.7rem;
+        font-size: 0.6rem !important;
+        white-space: nowrap;
+    }
+    
+    .price-change {
+        font-size: 0.65rem !important;
     }
 }
 
 @media (max-width: 480px) {
     .markets-table-section {
-        padding: 0 12px 24px;
+        padding: 0 6px 24px;
     }
     
     .markets-table th,
     .markets-table td {
-        padding: 8px 4px;
-        font-size: 0.75rem;
+        padding: 7px 2px !important;
+        font-size: 0.65rem !important;
     }
     
-    /* Rank */
     .markets-table th:nth-child(1),
     .markets-table td:nth-child(1) {
-        width: 35px;
-        padding: 8px 2px;
+        width: 28px !important;
+        padding: 7px 1px !important;
     }
     
-    /* Name */
     .markets-table th:nth-child(2),
     .markets-table td:nth-child(2) {
-        padding: 8px 6px;
+        max-width: 100px !important;
+        padding: 7px 3px !important;
     }
     
-    /* Price */
     .markets-table th:nth-child(3),
     .markets-table td:nth-child(3) {
-        width: 75px;
-        padding: 8px 4px;
+        width: 65px !important;
+        padding: 7px 2px !important;
     }
     
-    /* 24h % */
     .markets-table th:nth-child(4),
     .markets-table td:nth-child(4) {
-        width: 65px;
-        padding: 8px 4px;
+        width: 55px !important;
+        padding: 7px 2px !important;
     }
     
     .coin-logo {
-        width: 22px;
-        height: 22px;
+        width: 18px !important;
+        height: 18px !important;
     }
     
     .coin-name {
-        font-size: 0.75rem;
+        font-size: 0.65rem !important;
+        max-width: 75px;
     }
     
     .coin-symbol {
-        font-size: 0.65rem;
+        font-size: 0.55rem !important;
     }
 }
 
