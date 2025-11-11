@@ -1890,6 +1890,14 @@ a:focus-visible {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 28px;
+    align-items: start;
+}
+
+/* Ensure 3 columns on larger screens */
+@media (min-width: 1025px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
 }
 
 /* Product Card */
@@ -2071,9 +2079,9 @@ a:focus-visible {
 }
 
 /* Products Responsive */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
     .products-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 24px;
     }
     
