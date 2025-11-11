@@ -400,6 +400,188 @@ main {
 }
 
 /* ===== SIMULATOR PAGE ===== */
+
+/* Markets Header */
+.markets-header {
+    text-align: center;
+    padding: 40px 24px 24px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.markets-header h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+}
+
+.markets-header p {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+}
+
+/* Category Filters */
+.category-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 24px 32px;
+    flex-wrap: wrap;
+}
+
+.category-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-pill:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-dark);
+    color: var(--text-primary);
+}
+
+.category-pill.active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--bg-primary);
+}
+
+.category-pill i {
+    font-size: 0.875rem;
+}
+
+/* Markets Table */
+.markets-table-section {
+    padding: 0 24px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.table-container {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.markets-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.markets-table thead {
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.markets-table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.markets-table th:first-child {
+    width: 60px;
+    text-align: center;
+}
+
+.markets-table tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+}
+
+.markets-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.markets-table tbody tr:hover {
+    background: var(--bg-hover);
+}
+
+.markets-table td {
+    padding: 16px;
+    font-size: 0.9375rem;
+}
+
+.markets-table td:first-child {
+    text-align: center;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.coin-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.coin-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.coin-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.coin-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.coin-symbol {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+}
+
+.price-change {
+    font-weight: 500;
+}
+
+.price-change.positive {
+    color: var(--success-text);
+}
+
+.price-change.negative {
+    color: var(--danger-text);
+}
+
+.loading-state {
+    padding: 60px 20px !important;
+    text-align: center;
+}
+
+.loading-state .loader-circle {
+    margin: 0 auto 16px;
+}
+
+.loading-state span {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+}
+
+/* Simulator Container (now at bottom) */
 .simulator-container {
     background: var(--bg-elevated);
     border: 1px solid var(--border-color);
@@ -1304,6 +1486,48 @@ main {
         padding: 24px 16px;
     }
     
+    .markets-header {
+        padding: 32px 16px 20px;
+    }
+    
+    .markets-header h2 {
+        font-size: 1.75rem;
+    }
+    
+    .category-filters {
+        padding: 0 16px 24px;
+        gap: 8px;
+    }
+    
+    .category-pill {
+        padding: 8px 16px;
+        font-size: 0.8125rem;
+    }
+    
+    .markets-table-section {
+        padding: 0 16px 32px;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .markets-table {
+        min-width: 700px;
+    }
+    
+    .markets-table th,
+    .markets-table td {
+        padding: 12px 10px;
+        font-size: 0.875rem;
+    }
+    
+    .coin-logo {
+        width: 28px;
+        height: 28px;
+    }
+    
     .comparison-grid {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -1886,17 +2110,18 @@ a:focus-visible {
     margin: 0 auto;
 }
 
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
+.products-section > .products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 28px !important;
     align-items: start;
 }
 
 /* Ensure 3 columns on larger screens */
 @media (min-width: 1025px) {
-    .products-grid {
+    .products-section > .products-grid {
         grid-template-columns: repeat(3, 1fr) !important;
+        display: grid !important;
     }
 }
 
@@ -2080,7 +2305,7 @@ a:focus-visible {
 
 /* Products Responsive */
 @media (max-width: 900px) {
-    .products-grid {
+    .products-section > .products-grid {
         grid-template-columns: 1fr !important;
         gap: 24px;
     }

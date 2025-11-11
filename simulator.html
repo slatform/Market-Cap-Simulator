@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orbytt - Crypto Market Cap Simulator</title>
+    <title>Orbytt - Markets</title>
     <link rel="icon" type="image/jpeg" href="IMG_1011.jpeg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -33,8 +33,8 @@
 
             <nav class="nav-tabs">
                 <a href="simulator.html" class="nav-tab active">
-                    <i class="fas fa-calculator"></i>
-                    Simulator
+                    <i class="fas fa-chart-bar"></i>
+                    Markets
                 </a>
                 <a href="portfolio.html" class="nav-tab">
                     <i class="fas fa-briefcase"></i>
@@ -92,6 +92,63 @@
     </div>
 
     <main>
+        <!-- Markets Header -->
+        <section class="markets-header">
+            <h2>Cryptocurrency Markets</h2>
+            <p>Live prices and market data for top cryptocurrencies</p>
+        </section>
+
+        <!-- Category Filters -->
+        <section class="category-filters">
+            <button class="category-pill active" data-category="all">
+                <i class="fas fa-globe"></i>
+                All
+            </button>
+            <button class="category-pill" data-category="defi">
+                <i class="fas fa-coins"></i>
+                DeFi
+            </button>
+            <button class="category-pill" data-category="layer1">
+                <i class="fas fa-layer-group"></i>
+                Layer 1
+            </button>
+            <button class="category-pill" data-category="meme">
+                <i class="fas fa-dog"></i>
+                Meme
+            </button>
+            <button class="category-pill" data-category="stable">
+                <i class="fas fa-anchor"></i>
+                Stablecoin
+            </button>
+        </section>
+
+        <!-- Markets Table -->
+        <section class="markets-table-section">
+            <div class="table-container">
+                <table class="markets-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>24h %</th>
+                            <th>Market Cap</th>
+                            <th>Volume (24h)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marketsTableBody">
+                        <tr>
+                            <td colspan="6" class="loading-state">
+                                <div class="loader-circle"></div>
+                                <span>Loading market data...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Market Cap Simulator Section (Moved to Bottom) -->
         <section class="page active">
             <div class="simulator-container">
                 <div class="simulator-header">
@@ -142,7 +199,7 @@
     <footer class="site-footer">
         <div class="footer-content">
             <p class="footer-text">
-                 Data provided by 
+                Cryptocurrency data provided by 
                 <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer" class="footer-link">
                     <img src="https://static.coingecko.com/s/coingecko-logo-8903d34ce19ca4be1c81f0db30e924154750d208683fad7ae6f2ce06c76d0a56.png" alt="CoinGecko" class="coingecko-logo">
                     CoinGecko

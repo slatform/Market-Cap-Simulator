@@ -16,6 +16,8 @@ function initApp() {
             setupEventListeners();
             setupSimulator();
             loadMarketStats(); // Load market stats after crypto list is loaded
+            renderMarketsTable(); // Render markets table
+            setupCategoryFilters(); // Setup category filters
             hideGlobalLoader();
             console.log('✓ App ready!');
         })
@@ -896,6 +898,147 @@ function startMarketStatsAutoScroll() {
             setTimeout(() => isPaused = false, 3000); // Resume after 3 seconds
         });
     }
+}
+
+// ===== MARKETS TABLE FUNCTIONS =====
+function renderMarketsTable() {
+    console.log('Rendering markets table...');
+    const tbody = document.getElementById('marketsTableBody');
+    
+    if (!tbody) {
+        console.log('Markets table body not found');
+        return;
+    }
+    
+    if (!cryptoList || cryptoList.length === 0) {
+        console.log('No crypto data available yet');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="loading-state">
+                    <div class="loader-circle"></div>
+                    <span>Loading market data...</span>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    console.log(`✓ Rendering ${cryptoList.length} coins to table`);
+    
+    // Get top 50 coins
+    const topCoins = cryptoList.slice(0, 50);
+    
+    tbody.innerHTML = topCoins.map((coin, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td>
+                <div class="coin-name-cell">
+                    <img src="${coin.image}" alt="${coin.name}" class="coin-logo" onerror="this.style.display='none'">
+                    <div class="coin-info">
+                        <div class="coin-name">${coin.name}</div>
+                        <div class="coin-symbol">${coin.symbol.toUpperCase()}</div>
+                    </div>
+                </div>
+            </td>
+            <td>$${formatNumber(coin.current_price)}</td>
+            <td>
+                <span class="price-change ${coin.price_change_percentage_24h >= 0 ? 'positive' : 'negative'}">
+                    ${coin.price_change_percentage_24h >= 0 ? '↑' : '↓'} ${Math.abs(coin.price_change_percentage_24h || 0).toFixed(2)}%
+                </span>
+            </td>
+            <td>$${(coin.market_cap / 1e9).toFixed(2)}B</td>
+            <td>$${(coin.total_volume / 1e9).toFixed(2)}B</td>
+        </tr>
+    `).join('');
+    
+    console.log('✓ Markets table rendered successfully');
+}
+
+// Category filter functionality
+function setupCategoryFilters() {
+    const filterButtons = document.querySelectorAll('.category-pill');
+    if (filterButtons.length === 0) return;
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active to clicked button
+            this.classList.add('active');
+            
+            // Filter and render
+            const category = this.dataset.category;
+            console.log('Filter by category:', category);
+            filterMarketsByCategory(category);
+        });
+    });
+}
+
+// Filter markets table by category
+function filterMarketsByCategory(category) {
+    const tbody = document.getElementById('marketsTableBody');
+    if (!tbody || !cryptoList || cryptoList.length === 0) return;
+    
+    let filteredCoins = cryptoList.slice(0, 50);
+    
+    // Define category mappings (based on common categorizations)
+    const categoryMap = {
+        'defi': ['uniswap', 'aave', 'maker', 'curve-dao-token', 'compound', 'sushi', 'pancakeswap-token', 
+                 'thorchain', '1inch', 'balancer', 'yearn-finance', 'convex-finance', 'frax', 'rocket-pool'],
+        'layer1': ['bitcoin', 'ethereum', 'binancecoin', 'solana', 'cardano', 'avalanche-2', 'polkadot', 
+                   'polygon', 'near', 'cosmos', 'algorand', 'fantom', 'tezos', 'flow', 'harmony', 'elrond-erd-2',
+                   'hedera-hashgraph', 'internet-computer', 'aptos', 'sui', 'celestia', 'sei-network'],
+        'meme': ['dogecoin', 'shiba-inu', 'pepe', 'floki', 'bonk', 'dogwifcoin', 'baby-doge-coin', 
+                 'mog-coin', 'cat-in-a-dogs-world', 'popcat', 'book-of-meme', 'myro', 'mew'],
+        'stable': ['tether', 'usd-coin', 'dai', 'first-digital-usd', 'true-usd', 'paxos-standard', 
+                   'frax', 'gemini-dollar', 'usdd', 'liquity-usd']
+    };
+    
+    // Filter if not "all"
+    if (category !== 'all' && categoryMap[category]) {
+        filteredCoins = cryptoList.filter(coin => 
+            categoryMap[category].includes(coin.id)
+        );
+        console.log(`Found ${filteredCoins.length} coins in ${category} category`);
+    }
+    
+    // Render filtered results
+    if (filteredCoins.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 12px; display: block;"></i>
+                    No coins found in this category
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = filteredCoins.map((coin, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td>
+                <div class="coin-name-cell">
+                    <img src="${coin.image}" alt="${coin.name}" class="coin-logo" onerror="this.style.display='none'">
+                    <div class="coin-info">
+                        <div class="coin-name">${coin.name}</div>
+                        <div class="coin-symbol">${coin.symbol.toUpperCase()}</div>
+                    </div>
+                </div>
+            </td>
+            <td>$${formatNumber(coin.current_price)}</td>
+            <td>
+                <span class="price-change ${coin.price_change_percentage_24h >= 0 ? 'positive' : 'negative'}">
+                    ${coin.price_change_percentage_24h >= 0 ? '↑' : '↓'} ${Math.abs(coin.price_change_percentage_24h || 0).toFixed(2)}%
+                </span>
+            </td>
+            <td>$${(coin.market_cap / 1e9).toFixed(2)}B</td>
+            <td>$${(coin.total_volume / 1e9).toFixed(2)}B</td>
+        </tr>
+    `).join('');
+    
+    console.log(`✓ Rendered ${filteredCoins.length} filtered coins`);
 }
 
 // ===== START =====
