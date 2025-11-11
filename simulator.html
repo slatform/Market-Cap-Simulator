@@ -47,6 +47,46 @@
         </div>
     </header>
 
+    <!-- Market Stats Bar -->
+    <div class="market-stats-bar">
+        <div class="market-stat">
+            <div class="stat-label">Market Cap</div>
+            <div class="stat-value" id="globalMarketCap">$0.00T</div>
+        </div>
+        <div class="market-stat">
+            <div class="stat-label">24h Volume</div>
+            <div class="stat-value" id="global24hVolume">$0.00B</div>
+        </div>
+        <div class="market-stat">
+            <div class="stat-label">24h %</div>
+            <div class="stat-value" id="marketCapChange">0.00%</div>
+        </div>
+        <div class="market-stat">
+            <div class="stat-label">Fear & Greed</div>
+            <div class="stat-value" id="fearGreedIndex">--</div>
+        </div>
+        <div class="market-stat">
+            <div class="stat-label">Stablecoin Share</div>
+            <div class="stat-value" id="stablecoinShare">0.0%</div>
+        </div>
+        <div class="market-stat">
+            <div class="stat-label">ETH Gas (gwei)</div>
+            <div class="stat-value" id="ethGas">0</div>
+        </div>
+        <div class="market-stat">
+            <div class="stat-label">Top Gainer</div>
+            <div class="stat-value" id="topGainer">--</div>
+        </div>
+        <div class="market-stat">
+            <div class="stat-label">Top Loser</div>
+            <div class="stat-value" id="topLoser">--</div>
+        </div>
+        <div class="market-stat">
+            <div class="stat-label">Top Volume</div>
+            <div class="stat-value" id="topVolume">--</div>
+        </div>
+    </div>
+
     <main>
         <section class="page active">
             <div class="simulator-container">
@@ -93,6 +133,20 @@
             </div>
         </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                Cryptocurrency data provided by 
+                <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    <img src="https://static.coingecko.com/s/coingecko-logo-8903d34ce19ca4be1c81f0db30e924154750d208683fad7ae6f2ce06c76d0a56.png" alt="CoinGecko" class="coingecko-logo">
+                    CoinGecko
+                </a>
+            </p>
+            <p class="footer-copyright">© 2024 Orbytt. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="portfolio.js"></script>
 

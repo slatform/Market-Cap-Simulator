@@ -297,6 +297,87 @@ main {
     padding: 32px 24px;
 }
 
+/* ===== MARKET STATS BAR ===== */
+.market-stats-bar {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
+
+.market-stats-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.market-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: fit-content;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.stat-label {
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.stat-value {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.stat-value.positive {
+    color: var(--success-text);
+}
+
+.stat-value.negative {
+    color: var(--danger-text);
+}
+
+/* Responsive market stats */
+@media (max-width: 1024px) {
+    .market-stats-bar {
+        gap: 24px;
+        padding: 12px 16px;
+        justify-content: flex-start;
+    }
+    
+    .market-stat {
+        min-width: 110px;
+    }
+}
+
+@media (max-width: 768px) {
+    .market-stats-bar {
+        gap: 20px;
+        padding: 10px 12px;
+    }
+    
+    .market-stat {
+        min-width: 100px;
+    }
+}
+
+/* ===== MAIN CONTENT ===== */
+main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
 /* Page Sections */
 .page {
     display: none;
@@ -322,10 +403,11 @@ main {
 .simulator-container {
     background: var(--bg-elevated);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 32px;
+    border-radius: 24px;
+    padding: 40px;
     max-width: 800px;
     margin: 0 auto;
+    box-shadow: var(--shadow-md);
 }
 
 .simulator-header {
@@ -374,7 +456,7 @@ main {
 
 .search-container i {
     position: absolute;
-    left: 12px;
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-tertiary);
@@ -383,9 +465,9 @@ main {
 
 .search-container input {
     width: 100%;
-    padding: 10px 12px 10px 36px;
+    padding: 12px 16px 12px 44px;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 100px;
     background: var(--bg-primary);
     color: var(--text-primary);
     font-size: 0.875rem;
@@ -396,6 +478,7 @@ main {
     outline: none;
     border-color: var(--accent-primary);
     background: var(--bg-primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .search-container input::placeholder {
@@ -410,7 +493,7 @@ main {
     right: 0;
     background: var(--bg-elevated);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 16px;
     box-shadow: var(--shadow-lg);
     max-height: 240px;
     overflow-y: auto;
@@ -465,10 +548,12 @@ main {
 /* Selected Coin Display */
 .selected-coin-display {
     margin-top: 12px;
-    padding: 16px;
+    padding: 12px 20px;
     background: var(--bg-tertiary);
-    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 100px;
     display: none;
+    transition: all 0.2s ease;
 }
 
 .selected-coin-display.active {
@@ -548,9 +633,9 @@ main {
 .btn-primary {
     background: var(--accent-primary);
     color: var(--bg-primary);
-    padding: 12px 24px;
+    padding: 12px 28px;
     border: none;
-    border-radius: 8px;
+    border-radius: 100px;
     font-weight: 500;
     font-size: 0.875rem;
     cursor: pointer;
@@ -558,31 +643,21 @@ main {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
     background: var(--accent-hover);
-    transform: translateY(-1px);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
-}
-
-.btn-large {
-    padding: 14px 32px;
-    font-size: 1rem;
-    width: 100%;
-    justify-content: center;
-    margin-top: 8px;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-secondary {
-    background: transparent;
+    background: var(--bg-tertiary);
     color: var(--text-primary);
-    padding: 10px 20px;
+    padding: 12px 28px;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 100px;
     font-weight: 500;
     font-size: 0.875rem;
     cursor: pointer;
@@ -593,8 +668,22 @@ main {
 }
 
 .btn-secondary:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--border-dark);
+    background: var(--bg-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+.btn-large {
+    padding: 16px 36px;
+    font-size: 1rem;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
 }
 
 #swapButton {
@@ -613,13 +702,16 @@ main {
 
 .simulator-results.active {
     display: block;
+    animation: fadeIn 0.4s ease;
 }
 
 .result-card {
     background: var(--bg-tertiary);
-    border-radius: 8px;
-    padding: 24px;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 32px;
     text-align: center;
+    box-shadow: var(--shadow-sm);
 }
 
 .result-label {
@@ -1754,5 +1846,76 @@ a:focus-visible {
 
     .cta-content p {
         font-size: 1rem;
+    }
+}
+
+/* ===== FOOTER ===== */
+.site-footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    padding: 32px 24px;
+    margin-top: 60px;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.footer-link:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-1px);
+}
+
+.coingecko-logo {
+    height: 16px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.footer-copyright {
+    color: var(--text-tertiary);
+    font-size: 0.8125rem;
+    margin: 0;
+}
+
+/* Footer responsive */
+@media (max-width: 480px) {
+    .site-footer {
+        padding: 24px 16px;
+        margin-top: 40px;
+    }
+
+    .footer-text {
+        font-size: 0.8125rem;
+    }
+
+    .footer-copyright {
+        font-size: 0.75rem;
     }
 }

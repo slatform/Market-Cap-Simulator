@@ -15,6 +15,7 @@ function initApp() {
             initializeCharts();
             setupEventListeners();
             setupSimulator();
+            loadMarketStats(); // Load market stats after crypto list is loaded
             hideGlobalLoader();
             console.log('✓ App ready!');
         })
@@ -729,6 +730,172 @@ function setupEventListeners() {
             }
         }
     });
+}
+
+// ===== MARKET STATS FUNCTIONS =====
+async function loadMarketStats() {
+    console.log('Loading market stats...');
+    try {
+        // Fetch global market data from CoinGecko
+        const globalResponse = await fetch('https://api.coingecko.com/api/v3/global');
+        if (globalResponse.ok) {
+            const globalData = await globalResponse.json();
+            const data = globalData.data;
+            
+            // Update Market Cap
+            const marketCapEl = document.getElementById('globalMarketCap');
+            if (marketCapEl) {
+                marketCapEl.textContent = `$${(data.total_market_cap.usd / 1e12).toFixed(2)}T`;
+            }
+            
+            // Update 24h Volume
+            const volumeEl = document.getElementById('global24hVolume');
+            if (volumeEl) {
+                volumeEl.textContent = `$${(data.total_volume.usd / 1e9).toFixed(2)}B`;
+            }
+            
+            // Update 24h % Change
+            const changeEl = document.getElementById('marketCapChange');
+            if (changeEl) {
+                const change = data.market_cap_change_percentage_24h_usd;
+                changeEl.textContent = `${change >= 0 ? '' : ''}${change.toFixed(2)}%`;
+                changeEl.className = `stat-value ${change >= 0 ? 'positive' : 'negative'}`;
+            }
+            
+            // Update Stablecoin Share
+            const stablecoinEl = document.getElementById('stablecoinShare');
+            if (stablecoinEl) {
+                const stablecoinShare = (data.market_cap_percentage.usdt || 0) + 
+                                       (data.market_cap_percentage.usdc || 0);
+                stablecoinEl.textContent = `${stablecoinShare.toFixed(1)}%`;
+            }
+            
+            console.log('✓ Global market data loaded');
+        }
+        
+        // Fetch Fear & Greed Index
+        try {
+            const fearGreedResponse = await fetch('https://api.alternative.me/fng/?limit=1');
+            if (fearGreedResponse.ok) {
+                const fearGreedData = await fearGreedResponse.json();
+                const fearGreedEl = document.getElementById('fearGreedIndex');
+                if (fearGreedEl && fearGreedData.data && fearGreedData.data[0]) {
+                    const value = parseInt(fearGreedData.data[0].value);
+                    const classification = fearGreedData.data[0].value_classification;
+                    fearGreedEl.textContent = `${value} ${classification}`;
+                    
+                    // Color based on value
+                    if (value >= 75) {
+                        fearGreedEl.className = 'stat-value positive';
+                    } else if (value <= 25) {
+                        fearGreedEl.className = 'stat-value negative';
+                    } else {
+                        fearGreedEl.className = 'stat-value';
+                    }
+                    console.log('✓ Fear & Greed loaded');
+                }
+            }
+        } catch (e) {
+            console.warn('Fear & Greed API failed:', e);
+        }
+        
+        // Fetch ETH Gas Price (with fallback if no API key)
+        try {
+            const gasResponse = await fetch('https://api.etherscan.io/api?module=gastracker&action=gasoracle');
+            if (gasResponse.ok) {
+                const gasData = await gasResponse.json();
+                const gasEl = document.getElementById('ethGas');
+                if (gasEl && gasData.result && gasData.result.SafeGasPrice) {
+                    const gasPrice = parseInt(gasData.result.SafeGasPrice);
+                    gasEl.textContent = gasPrice;
+                    console.log('✓ ETH Gas loaded');
+                }
+            }
+        } catch (e) {
+            console.warn('ETH Gas API failed:', e);
+            const gasEl = document.getElementById('ethGas');
+            if (gasEl) gasEl.textContent = '--';
+        }
+        
+        // Get top gainer, loser, and volume from loaded crypto list
+        if (cryptoList && cryptoList.length > 0) {
+            // Top Gainer
+            const topGainer = cryptoList.reduce((max, coin) => 
+                (coin.price_change_percentage_24h > (max.price_change_percentage_24h || -Infinity)) ? coin : max
+            );
+            const topGainerEl = document.getElementById('topGainer');
+            if (topGainerEl && topGainer.price_change_percentage_24h) {
+                topGainerEl.textContent = `${topGainer.symbol.toUpperCase()} ${topGainer.price_change_percentage_24h.toFixed(2)}%`;
+                topGainerEl.className = 'stat-value positive';
+            }
+            
+            // Top Loser
+            const topLoser = cryptoList.reduce((min, coin) => 
+                (coin.price_change_percentage_24h < (min.price_change_percentage_24h || Infinity)) ? coin : min
+            );
+            const topLoserEl = document.getElementById('topLoser');
+            if (topLoserEl && topLoser.price_change_percentage_24h) {
+                topLoserEl.textContent = `${topLoser.symbol.toUpperCase()} ${topLoser.price_change_percentage_24h.toFixed(2)}%`;
+                topLoserEl.className = 'stat-value negative';
+            }
+            
+            // Top Volume
+            const topVolume = cryptoList.reduce((max, coin) => 
+                (coin.total_volume > (max.total_volume || 0)) ? coin : max
+            );
+            const topVolumeEl = document.getElementById('topVolume');
+            if (topVolumeEl && topVolume.total_volume) {
+                topVolumeEl.textContent = `${topVolume.symbol.toUpperCase()} $${(topVolume.total_volume / 1e9).toFixed(2)}B`;
+            }
+            
+            console.log('✓ Top coins loaded');
+        }
+        
+        // Start auto-scroll animation for mobile
+        startMarketStatsAutoScroll();
+        
+    } catch (error) {
+        console.error('Error loading market stats:', error);
+    }
+}
+
+// Auto-scroll market stats bar for mobile
+function startMarketStatsAutoScroll() {
+    const statsBar = document.querySelector('.market-stats-bar');
+    if (!statsBar) return;
+    
+    // Only auto-scroll on mobile/tablet
+    if (window.innerWidth <= 1024) {
+        let scrollAmount = 0;
+        const scrollSpeed = 0.5; // pixels per frame
+        const maxScroll = statsBar.scrollWidth - statsBar.clientWidth;
+        
+        function autoScroll() {
+            if (!statsBar) return;
+            
+            scrollAmount += scrollSpeed;
+            
+            // Reset when reaching the end
+            if (scrollAmount >= maxScroll) {
+                scrollAmount = 0;
+            }
+            
+            statsBar.scrollLeft = scrollAmount;
+            requestAnimationFrame(autoScroll);
+        }
+        
+        // Start auto-scroll
+        autoScroll();
+        
+        // Pause on hover/touch
+        let isPaused = false;
+        statsBar.addEventListener('mouseenter', () => isPaused = true);
+        statsBar.addEventListener('mouseleave', () => isPaused = false);
+        statsBar.addEventListener('touchstart', () => isPaused = true);
+        statsBar.addEventListener('touchend', () => {
+            setTimeout(() => isPaused = false, 3000); // Resume after 3 seconds
+        });
+    }
 }
 
 // ===== START =====
