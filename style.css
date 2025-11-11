@@ -584,11 +584,11 @@ main {
 /* Mobile Responsive for Markets Table */
 @media (max-width: 768px) {
     .markets-table-section {
-        padding: 0 12px 32px;
+        padding: 0 16px 32px;
     }
     
     .table-container {
-        overflow: hidden;
+        overflow-x: visible;
     }
     
     .markets-table {
@@ -596,7 +596,7 @@ main {
         table-layout: fixed;
     }
     
-    /* Hide Volume and Market Cap on tablets */
+    /* Hide Volume and Market Cap columns on mobile */
     .markets-table th:nth-child(5),
     .markets-table td:nth-child(5),
     .markets-table th:nth-child(6),
@@ -606,62 +606,94 @@ main {
     
     .markets-table th,
     .markets-table td {
-        padding: 12px 4px;
-        font-size: 0.8125rem;
+        padding: 12px 6px;
+        font-size: 0.875rem;
     }
     
-    /* Rank column - very narrow */
+    /* Column widths that actually fit */
     .markets-table th:nth-child(1),
     .markets-table td:nth-child(1) {
-        width: 32px;
-        padding: 12px 2px;
+        width: 40px;
         text-align: center;
     }
     
-    /* Name column - takes remaining space */
     .markets-table th:nth-child(2),
     .markets-table td:nth-child(2) {
-        width: auto;
-        padding-left: 8px;
+        width: calc(100% - 200px);
     }
     
-    /* Price column - compact */
     .markets-table th:nth-child(3),
     .markets-table td:nth-child(3) {
-        width: 80px;
+        width: 85px;
         text-align: right;
-        padding-right: 8px;
     }
     
-    /* 24h % column - compact */
     .markets-table th:nth-child(4),
     .markets-table td:nth-child(4) {
-        width: 70px;
+        width: 75px;
         text-align: right;
-        padding-right: 8px;
+    }
+    
+    .coin-logo {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .coin-name-cell {
+        gap: 8px;
+    }
+    
+    .coin-name {
+        font-size: 0.875rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .coin-symbol {
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .markets-table-section {
+        padding: 0 12px 24px;
+    }
+    
+    .markets-table th,
+    .markets-table td {
+        padding: 10px 4px;
+        font-size: 0.8125rem;
+    }
+    
+    .markets-table th:nth-child(1),
+    .markets-table td:nth-child(1) {
+        width: 35px;
+    }
+    
+    .markets-table th:nth-child(2),
+    .markets-table td:nth-child(2) {
+        width: calc(100% - 175px);
+    }
+    
+    .markets-table th:nth-child(3),
+    .markets-table td:nth-child(3) {
+        width: 75px;
+    }
+    
+    .markets-table th:nth-child(4),
+    .markets-table td:nth-child(4) {
+        width: 65px;
     }
     
     .coin-logo {
         width: 24px;
         height: 24px;
-        flex-shrink: 0;
-    }
-    
-    .coin-name-cell {
-        gap: 6px;
-        min-width: 0;
-    }
-    
-    .coin-info {
-        min-width: 0;
-        overflow: hidden;
     }
     
     .coin-name {
         font-size: 0.8125rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
     
     .coin-symbol {
@@ -669,51 +701,7 @@ main {
     }
 }
 
-@media (max-width: 480px) {
-    .markets-table-section {
-        padding: 0 8px 24px;
-    }
-    
-    .markets-table th,
-    .markets-table td {
-        padding: 10px 3px;
-        font-size: 0.75rem;
-    }
-    
-    /* Rank column - even narrower */
-    .markets-table th:nth-child(1),
-    .markets-table td:nth-child(1) {
-        width: 28px;
-        font-size: 0.7rem;
-    }
-    
-    /* Price column */
-    .markets-table th:nth-child(3),
-    .markets-table td:nth-child(3) {
-        width: 70px;
-        font-size: 0.7rem;
-    }
-    
-    /* 24h % column */
-    .markets-table th:nth-child(4),
-    .markets-table td:nth-child(4) {
-        width: 60px;
-        font-size: 0.7rem;
-    }
-    
-    .coin-logo {
-        width: 20px;
-        height: 20px;
-    }
-    
-    .coin-name {
-        font-size: 0.75rem;
-    }
-    
-    .coin-symbol {
-        font-size: 0.65rem;
-    }
-}
+/* Simulator Container (now at bottom) */
 
 /* Simulator Container (now at bottom) */
 .simulator-container {
