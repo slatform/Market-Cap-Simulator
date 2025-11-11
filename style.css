@@ -581,6 +581,75 @@ main {
     font-size: 0.9375rem;
 }
 
+/* Mobile Responsive for Markets Table */
+@media (max-width: 768px) {
+    .markets-table-section {
+        padding: 0 16px 32px;
+    }
+    
+    .table-container {
+        overflow-x: visible;
+    }
+    
+    .markets-table th,
+    .markets-table td {
+        padding: 12px 8px;
+        font-size: 0.8125rem;
+    }
+    
+    .markets-table th:first-child,
+    .markets-table td:first-child {
+        width: 40px;
+        padding: 12px 6px;
+    }
+    
+    /* Hide Volume column on mobile */
+    .markets-table th:last-child,
+    .markets-table td:last-child {
+        display: none;
+    }
+    
+    .coin-logo {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .coin-name-cell {
+        gap: 8px;
+    }
+    
+    .coin-name {
+        font-size: 0.875rem;
+    }
+    
+    .coin-symbol {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .markets-table th,
+    .markets-table td {
+        padding: 10px 6px;
+        font-size: 0.75rem;
+    }
+    
+    /* Also hide Market Cap column on very small screens */
+    .markets-table th:nth-child(5),
+    .markets-table td:nth-child(5) {
+        display: none;
+    }
+    
+    .coin-logo {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .coin-name {
+        font-size: 0.8125rem;
+    }
+}
+
 /* Simulator Container (now at bottom) */
 .simulator-container {
     background: var(--bg-elevated);
